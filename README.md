@@ -10,7 +10,7 @@ Primary law: **Backend speaks SEO. Frontend speaks business.**
 
 ## Status
 
-This repository contains specifications, not an implemented application. Documents 00–06 establish canonical product intent. Documents 07–13 contain the architecture readiness review and proposed implementation contracts, boundaries and decision gates. Documents 14–23 define the Phase 2 capability universe, skill/source governance, archetype activation and the first read-only Brain slice. Documents24–39 close Phase3 contracts and record accepted engineering defaults. Document39 declares readiness for the narrowly scoped M1 in38; production and later milestones remain gated.
+This repository contains canonical specifications and the tested M1 persistence foundation. The complete Search Brain is not implemented yet. Documents 00–06 establish canonical product intent. Documents 07–13 contain the architecture readiness review and proposed implementation contracts, boundaries and decision gates. Documents 14–23 define the Phase 2 capability universe, skill/source governance, archetype activation and the first read-only Brain slice. Documents24–39 close Phase3 contracts and record accepted engineering defaults. Document39 declares readiness for the narrowly scoped M1 in38; production and later milestones remain gated.
 
 ## Required reading order
 
@@ -64,4 +64,19 @@ Then read [ADRs001–006](docs/decisions/001-transactional-domain-core.md) in fi
 
 Preserve the persistent, domain-native Brain. Do not reinterpret it as a conventional SEO dashboard, a SEMrush/Ahrefs clone, disconnected tools, a generic chatbot or a website builder.
 
-Surface conflicts with the constitution and record accepted changes explicitly. Start with the findings in 07 and decision gates in 13 before requesting application implementation. Neither specification phase scaffolds the application. Read documents38–39 for the current implementation boundary; all website mutations remain out of scope for the first slice.
+Surface conflicts with the constitution and record accepted changes explicitly. Start with the findings in 07 and decision gates in 13 before requesting application implementation. Specification phases do not scaffold the application. Read documents38–39 for the current implementation boundary; all website mutations remain out of scope for the first slice.
+
+## Local M1 verification
+
+Requires Node24 and PostgreSQL17 binaries (`PG_BIN` if not on PATH). No customer URL, credentials, model account or existing database is needed.
+
+```sh
+npm ci --ignore-scripts
+npm run typecheck
+npm run build
+npm test
+```
+
+`npm test` creates a private disposable PostgreSQL cluster using Unix sockets, runs the real storage/isolation/restart suite, then removes it. It never uses an existing database service. On Homebrew, PostgreSQL17 can coexist with other installed versions; set `PG_BIN=/opt/homebrew/opt/postgresql@17/bin` when needed. The blob adapter accepts only the local synthetic profile.
+
+The compiled libraries and their schemas/migrations are in ignored `dist/`. M1 has no server or UI to launch. See [actual results and limitations](reports/M1-IMPLEMENTATION.md). The next milestone is M2 in document38; it has not been started.

@@ -32,3 +32,5 @@ Tests are adversarial integration tests for those seven criteria, plus schema re
 | M5 Returnable read-only product | M4; authenticated APIs, business projections and simple mobile web client | apps/api, apps/web, interpretation; E2E submit→reopen, auth/CSRF, accessibility and evidence drill-down | Entire36 path persists through crashes; max3 useful next steps, missing sources honest; no3D/expert dashboard default |
 
 M5 is a working persistent read-only Brain, not a mock dashboard. Native mobile, deeper expert console, private search integrations, territory visibility, experiments, controlled website actuators and global learning each require later scoped authorization/contracts. Do not pretend M1 implements the full product.
+
+M1 execution evidence: [implementation report](../reports/M1-IMPLEMENTATION.md). This report does not authorize M2.
