@@ -11,6 +11,7 @@ import { Registry } from '../packages/skills/index.js';
 import { Jobs,type Budget,type Lease } from '../packages/jobs/index.js';
 import { DeletionLedger } from '../packages/policy/deletion.js';
 import { canonical,manifestHash } from '../packages/contracts/index.js';
+import { PostgresReadOnlyStore, ReadOnlyApi } from '../packages/api/index.js';
 const cfg={host:process.env.AIOS_TEST_SOCKET!,port:55439,database:'aios_jobs_test'};
 const root=process.env.AIOS_TEST_ROOT!;
 let admin:pg.Pool,runtime:pg.Pool,scheduler:pg.Pool,operator:pg.Pool,evaluator:pg.Pool;
@@ -98,6 +99,17 @@ test('M2 transitive revocation blocks admission, dispatch, and result acceptance
  await registry.change(dep,'revoked','test revocation');await assert.rejects(worker.complete(l,bundle),/skill_revoked/);await assert.rejects(worker.reserve(l,'tokens',1),/skill_revoked/);
  const id=await commands.submit(p,site,randomUUID(),budget());await assert.rejects(commands.enqueue(p,site,id,bundle,parent,'revoked'),/skill_revoked/);await stopAll();
  const revokedRelease=await approve();await run(revokedRelease);await registry.change(revokedRelease,'revoked','before dispatch');assert.equal(await worker.claim(),null);await stopAll();
+});
+test('M5 durable API adapter submits and reopens a persisted run',async()=>{
+ const store=new PostgresReadOnlyStore(runtime,ledger,deletions),api=new ReadOnlyApi(store,'csrf');
+ const accepted=await api.handle({method:'POST',path:'/v1/sites/discovery-runs',principal:p,csrf:'csrf',body:{url:'https://jobs.example/',idempotency_key:'m5-durable-0123456'}});
+ assert.equal(accepted.status,202);
+ const run=await api.handle({method:'GET',path:`/v1/discovery-runs/${(accepted.body as any).run_id}`,principal:p});
+ assert.equal(run.status,200);assert.equal((run.body as any).state,'queued');
+ const now=new Date().toISOString();
+ await admin.query("INSERT INTO aios.publication(tenant_id,site_id,watermark,twin_revision_id,cards,graph,coverage,missing_sources) VALUES($1,$2,1,NULL,'[]',$3,$4,$5)",[p.tenantId,site,JSON.stringify({site_id:site,watermark:1,known_at:now,valid_at:now,view:'client',nodes:[],edges:[],truncated:false,next_cursor:null},),JSON.stringify({status:'unknown',requested:0,observed:0,failed:0,excluded:0,deferred:0,denominator:'unknown_population',reason:'not_connected'}),['gsc','analytics','bing','serp','rankings','ai_answers']]);
+ const reopened=await api.handle({method:'GET',path:`/v1/sites/${site}/understanding`,principal:p});assert.equal(reopened.status,200);assert.equal((reopened.body as any).watermark,1);
+ await stopAll();
 });
 test('M2 deletion tombstone survives a stale database epoch and blocks acceptance',async()=>{
  await run();const l=(await worker.claim())!;await deletions.record(p.tenantId,site);

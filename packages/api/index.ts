@@ -1,6 +1,11 @@
 import { randomUUID } from "node:crypto";
 import { base, validate } from "../contracts/index.js";
 import type { Principal } from "../persistence/index.js";
+import type { Pool } from "pg";
+import { Ledger } from "../persistence/index.js";
+import { Jobs, type Budget } from "../jobs/index.js";
+import { DeletionLedger } from "../policy/deletion.js";
+import { scope, transaction } from "../persistence/transaction.js";
 
 export type Run = { run_id:string; site_id:string; state:"queued"|"running"|"complete_in_scope"|"partial"|"blocked"|"failed"|"cancelled"; stage:string; coverage:{status:"complete_in_scope"|"partial"|"unknown"|"not_applicable";requested:number;observed:number;failed:number;excluded:number;deferred:number;denominator:"requested_scope"|"unknown_population";reason:string|null}; watermark:number|null; error:null };
 export type Understanding = { site_id:string; twin_revision_id:string|null; watermark:number; cards:any[]; coverage:Run["coverage"]; missing_sources:("gsc"|"analytics"|"bing"|"serp"|"rankings"|"ai_answers")[] };
@@ -31,3 +36,15 @@ export class ReadOnlyApi {
 }
 export function emptyUnderstanding(siteId:string):Understanding { return {site_id:siteId,twin_revision_id:null,watermark:0,cards:[],coverage:{status:"unknown",requested:0,observed:0,failed:0,excluded:0,deferred:0,denominator:"unknown_population",reason:"projection_pending"},missing_sources:["gsc","analytics","bing","serp","rankings","ai_answers"]}; }
 export const requestId=()=>randomUUID();
+
+/** Durable local-profile adapter. Authentication is supplied by the caller; it is never inferred from request data. */
+export class PostgresReadOnlyStore implements ReadOnlyStore {
+  private jobs: Jobs;
+  private budget: Budget = {http_requests:750,render_requests:0,render_pages:0,model_calls:0,tokens:0,cost_microusd:0,deadline:new Date(Date.now()+1200000).toISOString()};
+  constructor(private pool:Pool, private ledger:Ledger, deletion:DeletionLedger) { this.jobs=new Jobs(pool,deletion); }
+  async submit(p:Principal,url:string,key:string) { const site=await this.ledger.registerSite(p,url); const run=await this.jobs.submit(p,site,key,this.budget); return {run_id:run,site_id:site}; }
+  async run(p:Principal,id:string):Promise<Run> { return transaction(this.pool,"aios_runtime",async c=>{await scope(c,p,null,"read");const r=(await c.query("SELECT * FROM crawl WHERE tenant_id=$1 AND id=$2",[p.tenantId,id])).rows[0];if(!r)throw new Error("not_found");return {run_id:r.id,site_id:r.site_id,state:r.state,stage:r.stage,coverage:{status:r.state==='complete_in_scope'?"complete_in_scope":"unknown",requested:0,observed:0,failed:0,excluded:0,deferred:0,denominator:"unknown_population",reason:r.completion_reason},watermark:null,error:null};}); }
+  async understanding(p:Principal,site:string):Promise<Understanding> { return transaction(this.pool,"aios_runtime",async c=>{await scope(c,p,site,"read");const r=(await c.query("SELECT * FROM publication WHERE tenant_id=$1 AND site_id=$2 ORDER BY watermark DESC LIMIT 1",[p.tenantId,site])).rows[0];return r?{site_id:site,twin_revision_id:r.twin_revision_id,watermark:Number(r.watermark),cards:r.cards,coverage:r.coverage,missing_sources:r.missing_sources}:emptyUnderstanding(site);}); }
+  async graph(p:Principal,site:string):Promise<unknown> { return transaction(this.pool,"aios_runtime",async c=>{await scope(c,p,site,"read");const r=(await c.query("SELECT graph FROM publication WHERE tenant_id=$1 AND site_id=$2 ORDER BY watermark DESC LIMIT 1",[p.tenantId,site])).rows[0];if(!r)return {site_id:site,watermark:0,known_at:new Date().toISOString(),valid_at:new Date().toISOString(),view:"client",nodes:[],edges:[],truncated:false,next_cursor:null};return r.graph;}); }
+  async cancel(p:Principal,id:string) { const r=await this.run(p,id); return this.jobs.cancel(p,r.site_id,id); }
+}
