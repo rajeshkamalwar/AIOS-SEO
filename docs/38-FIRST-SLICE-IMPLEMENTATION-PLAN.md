@@ -42,3 +42,5 @@ M2 execution evidence: [implementation report](../reports/M2-IMPLEMENTATION.md).
 M3 execution evidence: [implementation report](../reports/M3-IMPLEMENTATION.md). The local synthetic perception core passes its bounded parser/frontier tests; live collection and isolated rendering remain deployment-gated.
 
 M4 execution evidence: [implementation report](../reports/M4-IMPLEMENTATION.md). Deterministic evidence-backed understanding and bounded graph/opportunity projections pass locally; external reasoning remains disabled.
+
+M5 execution evidence: [implementation report](../reports/M5-IMPLEMENTATION.md). The authenticated API/client boundary passes contract tests, but full durable publication/reopen acceptance is blocked pending typed PostgreSQL projections and an approved authentication adapter.
