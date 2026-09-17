@@ -22,4 +22,4 @@ Tests cover URL credential/action rejection, identity preservation, robots prece
 
 M3 does not claim production SSRF resistance, network sandbox safety, browser isolation, live HTTP collection, durable CrawlTarget/PageSnapshot persistence, or JavaScript rendering. Those require the approved deployment profile, pinned isolated worker, egress enforcement and additional fixture-server/security tests. No business inference, strategy, model call or website-write capability is present.
 
-M4 may add deterministic understanding contracts only after re-reading its specified Twin/graph/model/skill/evaluation documents and ADR-005. 
+M4 may add deterministic understanding contracts only after re-reading its specified Twin/graph/model/skill/evaluation documents and ADR-005.

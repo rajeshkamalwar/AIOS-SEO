@@ -40,3 +40,5 @@ M2 governance review: [implementation report](../reports/M2-IMPLEMENTATION.md) a
 M2 execution evidence: [implementation report](../reports/M2-IMPLEMENTATION.md). ADR-007 is accepted and the M2 acceptance suite passes. M3 is the next milestone; no website collection or write capability has been activated.
 
 M3 execution evidence: [implementation report](../reports/M3-IMPLEMENTATION.md). The local synthetic perception core passes its bounded parser/frontier tests; live collection and isolated rendering remain deployment-gated.
+
+M4 execution evidence: [implementation report](../reports/M4-IMPLEMENTATION.md). Deterministic evidence-backed understanding and bounded graph/opportunity projections pass locally; external reasoning remains disabled.
