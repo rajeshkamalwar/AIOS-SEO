@@ -29,7 +29,7 @@ export async function assertPublicDestination(hostname: string): Promise<void> {
   if (!results.length || results.some(({ address }) => !isGlobal(address))) throw new Error("private_destination");
 }
 function isGlobal(address: string): boolean {
-  if (address.includes(":")) return !(/^(::1|fc|fd|fe8|fe9|fea|feb)/i.test(address) || address === "::");
+  if (address.includes(":")) return !/^(::|::1|fc|fd|fe8|fe9|fea|feb)/i.test(address);
   const p = address.split(".").map(Number); if (p.length !== 4 || p.some(n => !Number.isInteger(n))) return false;
   const a = p[0]!, b = p[1]!; return a !== 10 && a !== 127 && !(a === 169 && b === 254) && !(a === 192 && b === 168) && !(a === 172 && b >= 16 && b <= 31) && !(a === 0) && !(a >= 224);
 }

@@ -12,11 +12,13 @@ import { Jobs,type Budget,type Lease } from '../packages/jobs/index.js';
 import { DeletionLedger } from '../packages/policy/deletion.js';
 import { canonical,manifestHash } from '../packages/contracts/index.js';
 import { PostgresReadOnlyStore, ReadOnlyApi } from '../packages/api/index.js';
+import { parseRobots, parseSitemap, loadFixtures } from '../packages/perception/index.js';
+import { literalClaims, graphProjection } from '../packages/understanding/index.js';
 const cfg={host:process.env.AIOS_TEST_SOCKET!,port:55439,database:'aios_jobs_test'};
 const root=process.env.AIOS_TEST_ROOT!;
 let admin:pg.Pool,runtime:pg.Pool,scheduler:pg.Pool,operator:pg.Pool,evaluator:pg.Pool;
 let ledger:Ledger,commands:Jobs,worker:Jobs,registry:Registry,deletions:DeletionLedger;
-let p:Principal,site:string,bundle:string,digest:string;
+let p:Principal,site:string,bundle:string,digest:string,evidenceId:string;
 const keys=generateKeyPairSync('ed25519'),reviewer=randomUUID(),author=randomUUID();
 const budget=():Budget=>({http_requests:10,render_requests:0,render_pages:0,model_calls:2,tokens:100,cost_microusd:1000,deadline:new Date(Date.now()+600000).toISOString()});
 async function fixture(type:string,changes:Record<string,unknown>){
@@ -43,7 +45,7 @@ before(async()=>{
  p={tenantId:randomUUID(),userId:randomUUID()};await fixture('Tenant',{id:p.tenantId});await fixture('User',{id:p.userId,subject:p.userId});await fixture('Membership',{id:randomUUID(),tenant_id:p.tenantId,user_id:p.userId});
  ledger=new Ledger(runtime,await LocalBlobs.create(join(root,'jobs-blobs'),'local-synthetic-v1'),'local-synthetic-v1');
  site=await ledger.registerSite(p,'https://jobs.example/');
- const receipt=await ledger.accept(p,site,{attemptId:randomUUID(),sourceUri:'https://jobs.example/',capturedAt:new Date(Date.now()-1000).toISOString(),mimeType:'text/html',contextHash:manifestHash({fixture:true})},Buffer.from('fixture'));
+ const receipt=await ledger.accept(p,site,{attemptId:randomUUID(),sourceUri:'https://jobs.example/',capturedAt:new Date(Date.now()-1000).toISOString(),mimeType:'text/html',contextHash:manifestHash({fixture:true})},Buffer.from('fixture')); evidenceId=receipt.evidenceId;
  bundle=await ledger.freeze(p,site,await ledger.cutoff(p,site),[receipt.evidenceId],[receipt.observationId]);
  deletions=await DeletionLedger.open(join(root,'independent-deletion-ledger'));
  commands=new Jobs(runtime,deletions);worker=new Jobs(scheduler,deletions);registry=new Registry(operator);
@@ -101,12 +103,17 @@ test('M2 transitive revocation blocks admission, dispatch, and result acceptance
  const revokedRelease=await approve();await run(revokedRelease);await registry.change(revokedRelease,'revoked','before dispatch');assert.equal(await worker.claim(),null);await stopAll();
 });
 test('M5 durable API adapter submits and reopens a persisted run',async()=>{
+ await loadFixtures();
+ const robots=parseRobots('User-agent: *\\nDisallow: /private\\nSitemap: https://jobs.example/sitemap.xml');
+ assert.equal(robots.rules.length,1); const sitemap=parseSitemap('<urlset><url><loc>https://jobs.example/</loc></url><url><loc>https://jobs.example/services</loc></url></urlset>','https://jobs.example/');assert.equal(sitemap.urls.length,2);
  const store=new PostgresReadOnlyStore(runtime,ledger,deletions),api=new ReadOnlyApi(store,'csrf');
  const accepted=await api.handle({method:'POST',path:'/v1/sites/discovery-runs',principal:p,csrf:'csrf',body:{url:'https://jobs.example/',idempotency_key:'m5-durable-0123456'}});
  assert.equal(accepted.status,202);
  const run=await api.handle({method:'GET',path:`/v1/discovery-runs/${(accepted.body as any).run_id}`,principal:p});
  assert.equal(run.status,200);assert.equal((run.body as any).state,'queued');
  const now=new Date().toISOString();
+ const claims=literalClaims('<title>Jobs Plumbing</title><p>Services: pipe repair. Serving Nagpur.</p>',evidenceId);
+ const graph=graphProjection(site,1,now,[],[]);assert.equal(claims.length,3);assert.equal(graph.edges.length,0);
  await admin.query("INSERT INTO aios.publication(tenant_id,site_id,watermark,twin_revision_id,cards,graph,coverage,missing_sources) VALUES($1,$2,1,NULL,'[]',$3,$4,$5)",[p.tenantId,site,JSON.stringify({site_id:site,watermark:1,known_at:now,valid_at:now,view:'client',nodes:[],edges:[],truncated:false,next_cursor:null},),JSON.stringify({status:'unknown',requested:0,observed:0,failed:0,excluded:0,deferred:0,denominator:'unknown_population',reason:'not_connected'}),['gsc','analytics','bing','serp','rankings','ai_answers']]);
  const reopened=await api.handle({method:'GET',path:`/v1/sites/${site}/understanding`,principal:p});assert.equal(reopened.status,200);assert.equal((reopened.body as any).watermark,1);
  await stopAll();

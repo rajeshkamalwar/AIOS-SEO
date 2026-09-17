@@ -23,3 +23,4 @@ test("frontier is bounded, unique and deterministic", () => {
   const f=new Frontier(); f.add("https://orange.example/","submitted",0,0); f.add("https://orange.example/#x","link",1,4); assert.deepEqual(f.admit(),["https://orange.example/"]); assert.equal(f.snapshot().discovered,1);
 });
 test("renderer is fail-closed without an isolated worker", () => { assert.deepEqual(renderLocal(),{state:"disabled",evidence_id:null,reason:"isolated_renderer_required",browser_build:null}); });
+test("egress rejects IPv6 unspecified and private destinations", async () => { const { assertPublicDestination } = await import("../packages/perception/index.js"); await assert.rejects(assertPublicDestination("localhost"), /private_destination|ENOTFOUND/); });

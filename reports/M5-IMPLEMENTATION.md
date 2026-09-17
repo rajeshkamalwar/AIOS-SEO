@@ -9,13 +9,13 @@ M5 adds an authenticated, CSRF-protected read-only API contract for submit, run 
 
 | Check | Result |
 | --- | --- |
-| `npm test` | 160 passed; 0 failed/skipped |
+| `npm test` | 161 passed; 0 failed/skipped |
 | `npm run typecheck` | Passed |
 | `npm run build` | Passed |
 | Specification validator | Passed: 19 schemas, 989 references, 48 catalog records, 106 document links |
 | `npm audit --omit=dev` | 0 vulnerabilities reported |
 
-Tests cover authenticated submit and reopen, durable PostgreSQL run/publication reads, CSRF enforcement, explicit unknown source projections, graph response validation, M1–M4 persistence/governance/perception/understanding suites and audit transitions.
+Tests cover the composed URL/perception/evidence/understanding/graph/publication/API path, authenticated submit and reopen, durable PostgreSQL run/publication reads, CSRF enforcement, explicit unknown source projections, graph response validation, M1–M4 persistence/governance/perception/understanding suites and audit transitions.
 
 ## Limits
 
