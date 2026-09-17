@@ -60,6 +60,7 @@ try {
       "tests/contracts.test.ts",
       "tests/blob.test.ts",
       "tests/foundation.test.ts",
+      "tests/jobs.test.ts",
     ],
     {
       stdio: "inherit",

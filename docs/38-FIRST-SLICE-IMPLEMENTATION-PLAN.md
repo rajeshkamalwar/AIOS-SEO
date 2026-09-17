@@ -35,4 +35,6 @@ M5 is a working persistent read-only Brain, not a mock dashboard. Native mobile,
 
 M1 execution evidence: [implementation report](../reports/M1-IMPLEMENTATION.md). M2–M5 authorization is conditional as stated above.
 
-M2 pre-implementation review: [blocker report](../reports/M2-IMPLEMENTATION.md) and [proposed ADR-007](decisions/007-audit-effect-scope.md). The audit effect/scope conflict must be resolved before M2 can pass its governance gate.
+M2 governance review: [implementation report](../reports/M2-IMPLEMENTATION.md) and [accepted ADR-007](decisions/007-audit-effect-scope.md).
+
+M2 execution evidence: [implementation report](../reports/M2-IMPLEMENTATION.md). ADR-007 is accepted and the M2 acceptance suite passes. M3 is the next milestone; no website collection or write capability has been activated.

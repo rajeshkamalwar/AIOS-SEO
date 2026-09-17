@@ -21,7 +21,7 @@ Distinguish `reject_outputs` from `quarantine_run` explicitly. A02/A07/A08/A11 s
 
 Release revocation continues to deny admissions, dispatch and acceptance for every dependent mission immediately. Rejection never grants permission to continue a revoked mission. Existing independent evaluation and operator-reviewed recovery requirements remain; an agent cannot clear its own restriction.
 
-Reconcile documents 21/35, the versioned quality rule artifact and SelfAuditResult schema/catalog together. Define the exact affected-reference representation and transition fixtures before implementing the evaluator. Do not silently alter a released rule version or treat this proposal as a passing evaluation.
+Documents 21/35, the versioned quality rule artifact and SelfAuditResult schema/catalog are reconciled as rule version 1.1.0 and schema version 2. The affected-reference representation and transition fixtures are part of the accepted contract. Released rule versions remain immutable.
 
 ## Alternative
 
