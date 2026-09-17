@@ -79,4 +79,4 @@ npm test
 
 `npm test` creates a private disposable PostgreSQL cluster using Unix sockets, runs the real storage/isolation/restart suite, then removes it. It never uses an existing database service. On Homebrew, PostgreSQL17 can coexist with other installed versions; set `PG_BIN=/opt/homebrew/opt/postgresql@17/bin` when needed. The blob adapter accepts only the local synthetic profile.
 
-The compiled libraries and their schemas/migrations are in ignored `dist/`. M1 has no server or UI to launch. See [M1 results](reports/M1-IMPLEMENTATION.md) and [M2 results](reports/M2-IMPLEMENTATION.md). Sequential implementation through M5 is authorized under document38; M2 durable governed work is complete and M3 public perception is next. Website collection and write capabilities remain separately gated.
+The compiled libraries and their schemas/migrations are in ignored `dist/`. The local synthetic read-only slice through M5 is implemented and tested; see the milestone reports. Production identity, live collection/rendering, model providers and website writes remain separately gated.
