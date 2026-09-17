@@ -1,0 +1,49 @@
+{
+  "tool_id": "assessment.record",
+  "tool_version": "1.0.0",
+  "invocation_id": "6e80550a-e8c8-59a8-a519-e963c93156c2",
+  "mission_id": "9cc683b5-73d1-5fb8-b4b4-274a9aee6bd0",
+  "tenant_id": "2ba1e8ea-3ea6-5c40-9676-bf7200063cd1",
+  "site_id": "9bfdbbf9-3da6-525e-800d-9def08c4d573",
+  "args": {
+    "record": {
+      "record_type": "TwinAssertion",
+      "id": "25b550f5-ac4f-5aae-ac07-ec981f3dca7d",
+      "schema_version": 1,
+      "version": 1,
+      "created_at": "2026-09-17T00:00:00Z",
+      "recorded_at": "2026-09-17T00:00:00Z",
+      "updated_at": "2026-09-17T00:00:00Z",
+      "deleted_at": null,
+      "state": "supported",
+      "retention_class": "derived",
+      "provenance_ids": [],
+      "tenant_id": "2ba1e8ea-3ea6-5c40-9676-bf7200063cd1",
+      "knowledge_seq": 1,
+      "site_id": "9bfdbbf9-3da6-525e-800d-9def08c4d573",
+      "series_id": "3dfe9c08-d31a-514c-93b9-0f676154c985",
+      "valid_from": "2026-09-17T00:00:00Z",
+      "valid_to": null,
+      "superseded_at": null,
+      "superseded_seq": null,
+      "business_id": "dc75c5f7-c5ca-59c7-aaae-267ba0f90b04",
+      "field": "offering",
+      "value": "Household pipe repair",
+      "basis": "inferred",
+      "observation_ids": [
+        "031180e1-1c9d-57d9-8688-d65a59035daa"
+      ],
+      "support": {
+        "source_applicability": "applicable",
+        "integrity": "verified",
+        "coverage": "complete_in_scope",
+        "identity": "provisional",
+        "inference": "provisional",
+        "reasons": [
+          "Public text is not owner confirmation."
+        ]
+      }
+    },
+    "expected_version": 0
+  }
+}

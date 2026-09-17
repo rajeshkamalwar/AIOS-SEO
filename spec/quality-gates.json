@@ -1,0 +1,225 @@
+{
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "A01",
+      "signal": "sensor_schema_failures",
+      "comparator": "lte",
+      "threshold": 0,
+      "required": true,
+      "failure_effect": "degrade",
+      "unknown_effect": "degrade",
+      "recovery": "new passing independent receipt and operator-reviewed resumption"
+    },
+    {
+      "id": "A02",
+      "signal": "expired_evidence_refs",
+      "comparator": "lte",
+      "threshold": 0,
+      "required": true,
+      "failure_effect": "quarantine",
+      "unknown_effect": "quarantine",
+      "recovery": "new passing independent receipt and operator-reviewed resumption"
+    },
+    {
+      "id": "A03",
+      "signal": "frontier_accounting_errors",
+      "comparator": "lte",
+      "threshold": 0,
+      "required": true,
+      "failure_effect": "quarantine",
+      "unknown_effect": "quarantine",
+      "recovery": "new passing independent receipt and operator-reviewed resumption"
+    },
+    {
+      "id": "A04",
+      "signal": "required_render_failures",
+      "comparator": "lte",
+      "threshold": 0,
+      "required": true,
+      "failure_effect": "degrade",
+      "unknown_effect": "degrade",
+      "recovery": "new passing independent receipt and operator-reviewed resumption"
+    },
+    {
+      "id": "A05",
+      "signal": "connector_scope_errors",
+      "comparator": "lte",
+      "threshold": 0,
+      "required": true,
+      "failure_effect": "degrade",
+      "unknown_effect": "degrade",
+      "recovery": "new passing independent receipt and operator-reviewed resumption"
+    },
+    {
+      "id": "A06",
+      "signal": "invalid_grants",
+      "comparator": "lte",
+      "threshold": 0,
+      "required": true,
+      "failure_effect": "quarantine",
+      "unknown_effect": "quarantine",
+      "recovery": "new passing independent receipt and operator-reviewed resumption"
+    },
+    {
+      "id": "A07",
+      "signal": "stale_skill_dependencies",
+      "comparator": "lte",
+      "threshold": 0,
+      "required": true,
+      "failure_effect": "quarantine",
+      "unknown_effect": "quarantine",
+      "recovery": "new passing independent receipt and operator-reviewed resumption"
+    },
+    {
+      "id": "A08",
+      "signal": "revoked_skill_dependencies",
+      "comparator": "lte",
+      "threshold": 0,
+      "required": true,
+      "failure_effect": "quarantine",
+      "unknown_effect": "quarantine",
+      "recovery": "new passing independent receipt and operator-reviewed resumption"
+    },
+    {
+      "id": "A09",
+      "signal": "insufficient_claims",
+      "comparator": "lte",
+      "threshold": 0,
+      "required": true,
+      "failure_effect": "degrade",
+      "unknown_effect": "degrade",
+      "recovery": "new passing independent receipt and operator-reviewed resumption"
+    },
+    {
+      "id": "A10",
+      "signal": "unresolved_material_conflicts",
+      "comparator": "lte",
+      "threshold": 0,
+      "required": true,
+      "failure_effect": "degrade",
+      "unknown_effect": "degrade",
+      "recovery": "new passing independent receipt and operator-reviewed resumption"
+    },
+    {
+      "id": "A11",
+      "signal": "invalid_agent_outputs",
+      "comparator": "lte",
+      "threshold": 0,
+      "required": true,
+      "failure_effect": "quarantine",
+      "unknown_effect": "quarantine",
+      "recovery": "new passing independent receipt and operator-reviewed resumption"
+    },
+    {
+      "id": "A12",
+      "signal": "same_class_consecutive_failures",
+      "comparator": "lte",
+      "threshold": 2,
+      "required": true,
+      "failure_effect": "quarantine",
+      "unknown_effect": "quarantine",
+      "recovery": "new passing independent receipt and operator-reviewed resumption"
+    },
+    {
+      "id": "A13",
+      "signal": "budget_overshoot",
+      "comparator": "lte",
+      "threshold": 0,
+      "required": true,
+      "failure_effect": "quarantine",
+      "unknown_effect": "quarantine",
+      "recovery": "new passing independent receipt and operator-reviewed resumption"
+    },
+    {
+      "id": "A14",
+      "signal": "stale_executing_strategies",
+      "comparator": "lte",
+      "threshold": 0,
+      "required": false,
+      "failure_effect": "quarantine",
+      "unknown_effect": "quarantine",
+      "recovery": "new passing independent receipt and operator-reviewed resumption"
+    },
+    {
+      "id": "A15",
+      "signal": "overdue_experiments",
+      "comparator": "lte",
+      "threshold": 0,
+      "required": false,
+      "failure_effect": "quarantine",
+      "unknown_effect": "quarantine",
+      "recovery": "new passing independent receipt and operator-reviewed resumption"
+    },
+    {
+      "id": "A16",
+      "signal": "unresolved_deployments",
+      "comparator": "lte",
+      "threshold": 0,
+      "required": false,
+      "failure_effect": "quarantine",
+      "unknown_effect": "quarantine",
+      "recovery": "new passing independent receipt and operator-reviewed resumption"
+    },
+    {
+      "id": "A17",
+      "signal": "unsupported_quality_cohorts",
+      "comparator": "lte",
+      "threshold": 0,
+      "required": true,
+      "failure_effect": "degrade",
+      "unknown_effect": "degrade",
+      "recovery": "new passing independent receipt and operator-reviewed resumption"
+    },
+    {
+      "id": "A18",
+      "signal": "policy_health_failures",
+      "comparator": "lte",
+      "threshold": 0,
+      "required": true,
+      "failure_effect": "quarantine",
+      "unknown_effect": "quarantine",
+      "recovery": "new passing independent receipt and operator-reviewed resumption"
+    },
+    {
+      "id": "A19",
+      "signal": "foreign_scope_references",
+      "comparator": "lte",
+      "threshold": 0,
+      "required": true,
+      "failure_effect": "quarantine",
+      "unknown_effect": "quarantine",
+      "recovery": "new passing independent receipt and operator-reviewed resumption"
+    },
+    {
+      "id": "A20",
+      "signal": "unresolved_projection_lineage",
+      "comparator": "lte",
+      "threshold": 0,
+      "required": true,
+      "failure_effect": "quarantine",
+      "unknown_effect": "quarantine",
+      "recovery": "new passing independent receipt and operator-reviewed resumption"
+    },
+    {
+      "id": "A21",
+      "signal": "overdue_source_reviews",
+      "comparator": "lte",
+      "threshold": 0,
+      "required": true,
+      "failure_effect": "quarantine",
+      "unknown_effect": "quarantine",
+      "recovery": "new passing independent receipt and operator-reviewed resumption"
+    },
+    {
+      "id": "A22",
+      "signal": "unreconciled_restore_deletions",
+      "comparator": "lte",
+      "threshold": 0,
+      "required": true,
+      "failure_effect": "quarantine",
+      "unknown_effect": "quarantine",
+      "recovery": "new passing independent receipt and operator-reviewed resumption"
+    }
+  ]
+}

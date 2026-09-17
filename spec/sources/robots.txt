@@ -1,0 +1,1 @@
+The Robots Exclusion Protocol is not a substitute for valid content security measures. Listing paths in the robots.txt file exposes

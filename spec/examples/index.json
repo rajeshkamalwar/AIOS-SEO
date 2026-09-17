@@ -1,0 +1,180 @@
+{
+  "examples": [
+    {
+      "path": "examples/tenant.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/domain.schema.json#/$defs/Tenant",
+      "valid": true
+    },
+    {
+      "path": "examples/user.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/domain.schema.json#/$defs/User",
+      "valid": true
+    },
+    {
+      "path": "examples/membership.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/domain.schema.json#/$defs/Membership",
+      "valid": true
+    },
+    {
+      "path": "examples/business.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/domain.schema.json#/$defs/Business",
+      "valid": true
+    },
+    {
+      "path": "examples/site.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/domain.schema.json#/$defs/Site",
+      "valid": true
+    },
+    {
+      "path": "examples/evidence.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/domain.schema.json#/$defs/Evidence",
+      "valid": true
+    },
+    {
+      "path": "examples/observation.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/domain.schema.json#/$defs/Observation",
+      "valid": true
+    },
+    {
+      "path": "examples/twinassertion.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/domain.schema.json#/$defs/TwinAssertion",
+      "valid": true
+    },
+    {
+      "path": "examples/businesstwin.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/domain.schema.json#/$defs/BusinessTwin",
+      "valid": true
+    },
+    {
+      "path": "examples/evidencebundle.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/domain.schema.json#/$defs/EvidenceBundle",
+      "valid": true
+    },
+    {
+      "path": "examples/unknown.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/unknown",
+      "valid": true
+    },
+    {
+      "path": "examples/inference.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/inference-output.schema.json",
+      "valid": true
+    },
+    {
+      "path": "examples/tool-http.fetch_public.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/tool.schema.json",
+      "valid": true
+    },
+    {
+      "path": "examples/tool-robots.evaluate.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/tool.schema.json",
+      "valid": true
+    },
+    {
+      "path": "examples/tool-sitemap.parse.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/tool.schema.json",
+      "valid": true
+    },
+    {
+      "path": "examples/tool-html.extract.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/tool.schema.json",
+      "valid": true
+    },
+    {
+      "path": "examples/tool-render.observe.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/tool.schema.json",
+      "valid": true
+    },
+    {
+      "path": "examples/tool-artifact.read_scoped.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/tool.schema.json",
+      "valid": true
+    },
+    {
+      "path": "examples/tool-graph.query_scoped.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/tool.schema.json",
+      "valid": true
+    },
+    {
+      "path": "examples/tool-model.infer_scoped.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/tool.schema.json",
+      "valid": true
+    },
+    {
+      "path": "examples/tool-assessment.record.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/tool.schema.json",
+      "valid": true
+    },
+    {
+      "path": "examples/tool-work.quarantine.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/tool.schema.json",
+      "valid": true
+    },
+    {
+      "path": "examples/skill-public-discovery.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/skill.schema.json",
+      "valid": true
+    },
+    {
+      "path": "examples/skill-directive-baseline.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/skill.schema.json",
+      "valid": true
+    },
+    {
+      "path": "examples/skill-canonical-consistency.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/skill.schema.json",
+      "valid": true
+    },
+    {
+      "path": "examples/skill-sitemap-reconciliation.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/skill.schema.json",
+      "valid": true
+    },
+    {
+      "path": "examples/skill-render-parity.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/skill.schema.json",
+      "valid": true
+    },
+    {
+      "path": "examples/skill-business-twin-inference.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/skill.schema.json",
+      "valid": true
+    },
+    {
+      "path": "examples/skill-site-structure.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/skill.schema.json",
+      "valid": true
+    },
+    {
+      "path": "examples/skill-initial-opportunities.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/skill.schema.json",
+      "valid": true
+    },
+    {
+      "path": "examples/skill-reliability-gate.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/skill.schema.json",
+      "valid": true
+    },
+    {
+      "path": "examples/invalid-unknown-metric.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/unknown",
+      "valid": false
+    },
+    {
+      "path": "examples/invalid-tool-post.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/tool.schema.json",
+      "valid": false
+    },
+    {
+      "path": "examples/invalid-assessment-membership.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/tool.schema.json",
+      "valid": false
+    },
+    {
+      "path": "examples/invalid-inference-fact.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/inference-output.schema.json",
+      "valid": false
+    }
+  ],
+  "note": "Schema fixtures test shape only. Scenario semantics require implementation tests."
+}

@@ -1,0 +1,69 @@
+{
+  "artifacts": [
+    {
+      "path": "home.html",
+      "sha256": "e7cd29d889551b6fad08da5c975f23c357fe1528b7d8573a5f97b27c5fbff23f",
+      "bytes": 289
+    },
+    {
+      "path": "services.html",
+      "sha256": "f32708d8a0b424d20cb64803b9271d622e3cf1cf0180ae0e470dcc2dc79fb6d6",
+      "bytes": 221
+    },
+    {
+      "path": "contact.html",
+      "sha256": "abe5da7c7a7f57033648c20d9b8cd7804a0201e0f90e8057030c0a8ea24345e5",
+      "bytes": 155
+    },
+    {
+      "path": "robots.txt",
+      "sha256": "43b4cbc3b3931f3d92d9bc6931d5f4e939ee922b88ef5445d1852d6de2e9c7ed",
+      "bytes": 77
+    },
+    {
+      "path": "sitemap.xml",
+      "sha256": "5811466918f371496c95edc4bdfdfd2b5e00e2c688e46e08b4bd29e17d08b173",
+      "bytes": 241
+    },
+    {
+      "path": "injection.html",
+      "sha256": "50200d8142f3ae954320baeb436f0ae3c0e6ea864eb47af0b3502108c3c9caf3",
+      "bytes": 115
+    },
+    {
+      "path": "spa-raw.html",
+      "sha256": "e745d17a2644af567c58c99b7ae9034381223f512bc024451b490016bf543ea7",
+      "bytes": 101
+    },
+    {
+      "path": "spa-rendered.html",
+      "sha256": "33561332df171edcabd76cf8e416e86810f69531e242e9afe3bf300b1df1e7f4",
+      "bytes": 79
+    },
+    {
+      "path": "catalog.html",
+      "sha256": "d58719e9a36ff756ffcdcaf2e3ecf153354687c894dc27cebd9953015f20a0c2",
+      "bytes": 97
+    },
+    {
+      "path": "publisher.html",
+      "sha256": "2f3f3aa7d71929edaeba48ebc5313176408529af8f9784c286cb17c5652c5a1b",
+      "bytes": 109
+    },
+    {
+      "path": "hybrid.html",
+      "sha256": "6dda9a283681d74e711d2d005116185322134a96295a74098e90c19fd51a2bd0",
+      "bytes": 98
+    },
+    {
+      "path": "robots-deny.txt",
+      "sha256": "331ea9090db0c9f6f597bd9840fd5b171830f6e0b3ba1cb24dfa91f0c95aedc1",
+      "bytes": 26
+    },
+    {
+      "path": "bad-sitemap.xml",
+      "sha256": "92feaf93838e4b9ea1ebf84a95af6ede6236c906ddaf3bb7cf5d17e84e8b1d13",
+      "bytes": 85
+    }
+  ]
+}

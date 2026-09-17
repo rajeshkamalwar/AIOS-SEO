@@ -1,0 +1,124 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.aios-seo.invalid/v1/model-request.schema.json",
+  "type": "object",
+  "properties": {
+    "request_id": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+    },
+    "tenant_id": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+    },
+    "site_id": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+    },
+    "mission_id": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+    },
+    "task_type": {
+      "enum": [
+        "business_inference",
+        "page_classification",
+        "entity_extraction",
+        "opportunity_explanation"
+      ]
+    },
+    "requirements": {
+      "type": "object",
+      "properties": {
+        "structured_output": {
+          "const": true
+        },
+        "reasoning_tier": {
+          "enum": [
+            "standard",
+            "high"
+          ]
+        },
+        "language": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        }
+      },
+      "required": [
+        "structured_output",
+        "reasoning_tier",
+        "language"
+      ],
+      "additionalProperties": false
+    },
+    "input_bundle_id": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+    },
+    "output_schema": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4096
+    },
+    "skill_digest": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/hash"
+    },
+    "prompt_digest": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/hash"
+    },
+    "provider_policy_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4096
+    },
+    "allowed_tools": {
+      "type": "array",
+      "maxItems": 0
+    },
+    "max_input_tokens": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 12000
+    },
+    "max_output_tokens": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 2000
+    },
+    "cost_microusd": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 2000000
+    },
+    "timeout_seconds": {
+      "const": 90
+    },
+    "max_attempts": {
+      "const": 2
+    },
+    "fallback": {
+      "enum": [
+        "none",
+        "approved_equivalent",
+        "deterministic"
+      ]
+    }
+  },
+  "required": [
+    "request_id",
+    "tenant_id",
+    "site_id",
+    "mission_id",
+    "task_type",
+    "requirements",
+    "input_bundle_id",
+    "output_schema",
+    "skill_digest",
+    "prompt_digest",
+    "provider_policy_id",
+    "allowed_tools",
+    "max_input_tokens",
+    "max_output_tokens",
+    "cost_microusd",
+    "timeout_seconds",
+    "max_attempts",
+    "fallback"
+  ],
+  "additionalProperties": false
+}

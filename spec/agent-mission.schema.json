@@ -1,0 +1,187 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.aios-seo.invalid/v1/agent-mission.schema.json",
+  "type": "object",
+  "properties": {
+    "mission_id": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+    },
+    "tenant_id": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+    },
+    "site_id": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+    },
+    "crawl_id": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+    },
+    "objective": {
+      "enum": [
+        "understand",
+        "grow",
+        "protect"
+      ]
+    },
+    "capability_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 4096
+      },
+      "minItems": 1,
+      "maxItems": 5000,
+      "uniqueItems": true
+    },
+    "input_evidence_bundle_id": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+    },
+    "allowed_skills": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "skill_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          },
+          "version": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/version"
+          },
+          "digest": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/hash"
+          }
+        },
+        "required": [
+          "skill_id",
+          "version",
+          "digest"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1,
+      "maxItems": 5000,
+      "uniqueItems": true
+    },
+    "allowed_tools": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "tool_id": {
+            "enum": [
+              "http.fetch_public",
+              "robots.evaluate",
+              "sitemap.parse",
+              "html.extract",
+              "render.observe",
+              "artifact.read_scoped",
+              "graph.query_scoped",
+              "model.infer_scoped",
+              "assessment.record",
+              "work.quarantine"
+            ]
+          },
+          "version": {
+            "const": "1.0.0"
+          },
+          "max_calls": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 750
+          }
+        },
+        "required": [
+          "tool_id",
+          "version",
+          "max_calls"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0,
+      "maxItems": 5000,
+      "uniqueItems": true
+    },
+    "external_authority": {
+      "const": "read_only"
+    },
+    "internal_authority": {
+      "enum": [
+        "propose_records",
+        "collect_evidence"
+      ]
+    },
+    "budget": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/budget"
+    },
+    "deadline": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+    },
+    "expected_output_schema": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4096
+    },
+    "stop_conditions": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "cancelled",
+          "deadline",
+          "budget_exhausted",
+          "skill_revoked",
+          "policy_unavailable"
+        ]
+      },
+      "minItems": 5,
+      "maxItems": 5000,
+      "uniqueItems": true
+    },
+    "failure_conditions": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "scope_denied",
+          "schema_invalid",
+          "evidence_insufficient",
+          "source_unavailable"
+        ]
+      },
+      "minItems": 1,
+      "maxItems": 5000,
+      "uniqueItems": true
+    },
+    "evaluation_gates": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 4096
+      },
+      "minItems": 1,
+      "maxItems": 5000,
+      "uniqueItems": true
+    }
+  },
+  "required": [
+    "mission_id",
+    "tenant_id",
+    "site_id",
+    "crawl_id",
+    "objective",
+    "capability_ids",
+    "input_evidence_bundle_id",
+    "allowed_skills",
+    "allowed_tools",
+    "external_authority",
+    "internal_authority",
+    "budget",
+    "deadline",
+    "expected_output_schema",
+    "stop_conditions",
+    "failure_conditions",
+    "evaluation_gates"
+  ],
+  "additionalProperties": false
+}

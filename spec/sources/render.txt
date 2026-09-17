@@ -1,0 +1,1 @@
+Google processes JavaScript Google processes JavaScript web apps in three main phases: Crawling Rendering Indexing Googlebot queues pages for both

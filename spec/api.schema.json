@@ -1,0 +1,368 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.aios-seo.invalid/v1/api.schema.json",
+  "$defs": {
+    "Submit": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "idempotency_key": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 128
+        }
+      },
+      "required": [
+        "url",
+        "idempotency_key"
+      ],
+      "additionalProperties": false
+    },
+    "Accepted": {
+      "type": "object",
+      "properties": {
+        "run_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "site_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "status": {
+          "const": "queued"
+        }
+      },
+      "required": [
+        "run_id",
+        "site_id",
+        "status"
+      ],
+      "additionalProperties": false
+    },
+    "Run": {
+      "type": "object",
+      "properties": {
+        "run_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "site_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "state": {
+          "enum": [
+            "queued",
+            "running",
+            "complete_in_scope",
+            "partial",
+            "blocked",
+            "failed",
+            "cancelled"
+          ]
+        },
+        "stage": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "coverage": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "enum": [
+                "complete_in_scope",
+                "partial",
+                "unknown",
+                "not_applicable"
+              ]
+            },
+            "requested": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "observed": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "failed": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "excluded": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "deferred": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "denominator": {
+              "enum": [
+                "requested_scope",
+                "unknown_population"
+              ]
+            },
+            "reason": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 4096
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "status",
+            "requested",
+            "observed",
+            "failed",
+            "excluded",
+            "deferred",
+            "denominator",
+            "reason"
+          ],
+          "additionalProperties": false
+        },
+        "watermark": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/error"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "run_id",
+        "site_id",
+        "state",
+        "stage",
+        "coverage",
+        "watermark",
+        "error"
+      ],
+      "additionalProperties": false
+    },
+    "Understanding": {
+      "type": "object",
+      "properties": {
+        "site_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "twin_revision_id": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "watermark": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "cards": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+              },
+              "assessment_id": {
+                "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+              },
+              "headline": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4096
+              },
+              "meaning": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4096
+              },
+              "claim_kind": {
+                "enum": [
+                  "observation",
+                  "hypothesis",
+                  "recommendation"
+                ]
+              },
+              "action_status": {
+                "enum": [
+                  "observation_only",
+                  "recommendation"
+                ]
+              },
+              "evidence_ids": {
+                "type": "array",
+                "items": {
+                  "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+                },
+                "minItems": 0,
+                "maxItems": 5000,
+                "uniqueItems": true
+              },
+              "uncertainty": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 4096
+                },
+                "minItems": 0,
+                "maxItems": 5000,
+                "uniqueItems": true
+              },
+              "impact": {
+                "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/unknown"
+              },
+              "last_observed_at": {
+                "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+              }
+            },
+            "required": [
+              "id",
+              "assessment_id",
+              "headline",
+              "meaning",
+              "claim_kind",
+              "action_status",
+              "evidence_ids",
+              "uncertainty",
+              "impact",
+              "last_observed_at"
+            ],
+            "additionalProperties": false
+          },
+          "maxItems": 3
+        },
+        "coverage": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "enum": [
+                "complete_in_scope",
+                "partial",
+                "unknown",
+                "not_applicable"
+              ]
+            },
+            "requested": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "observed": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "failed": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "excluded": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "deferred": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "denominator": {
+              "enum": [
+                "requested_scope",
+                "unknown_population"
+              ]
+            },
+            "reason": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 4096
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "status",
+            "requested",
+            "observed",
+            "failed",
+            "excluded",
+            "deferred",
+            "denominator",
+            "reason"
+          ],
+          "additionalProperties": false
+        },
+        "missing_sources": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "gsc",
+              "analytics",
+              "bing",
+              "serp",
+              "rankings",
+              "ai_answers"
+            ]
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "site_id",
+        "twin_revision_id",
+        "watermark",
+        "cards",
+        "coverage",
+        "missing_sources"
+      ],
+      "additionalProperties": false
+    },
+    "Error": {
+      "type": "object",
+      "properties": {
+        "request_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "error": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/error"
+        }
+      },
+      "required": [
+        "request_id",
+        "error"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,521 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.aios-seo.invalid/v1/skill.schema.json",
+  "type": "object",
+  "properties": {
+    "skill_id": {
+      "type": "string",
+      "pattern": "^seo\\.[a-z-]+$"
+    },
+    "version": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/version"
+    },
+    "status": {
+      "enum": [
+        "draft",
+        "evaluated",
+        "approved",
+        "deprecated",
+        "revoked"
+      ]
+    },
+    "source_pins": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "source_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          },
+          "source_class": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/source_class"
+          },
+          "uri": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          },
+          "revision_sha256": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/hash"
+          },
+          "excerpt_sha256": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/hash"
+          },
+          "locator": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          }
+        },
+        "required": [
+          "source_id",
+          "source_class",
+          "uri",
+          "revision_sha256",
+          "excerpt_sha256",
+          "locator"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1,
+      "maxItems": 5000,
+      "uniqueItems": true
+    },
+    "last_verified": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+    },
+    "freshness_deadline": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+    },
+    "applicability": {
+      "type": "object",
+      "properties": {
+        "archetypes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          },
+          "minItems": 1,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "page_types": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          },
+          "minItems": 1,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "languages": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          },
+          "minItems": 1,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "on_unknown": {
+          "const": "provisional"
+        }
+      },
+      "required": [
+        "archetypes",
+        "page_types",
+        "languages",
+        "on_unknown"
+      ],
+      "additionalProperties": false
+    },
+    "capability_dependencies": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 4096
+      },
+      "minItems": 1,
+      "maxItems": 5000,
+      "uniqueItems": true
+    },
+    "evidence_requirements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "enum": [
+              "raw_html",
+              "headers",
+              "robots",
+              "sitemap",
+              "rendered_dom",
+              "internal_links",
+              "business_text",
+              "site_scope"
+            ]
+          },
+          "minimum_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "max_age_seconds": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 2592000
+          },
+          "coverage": {
+            "enum": [
+              "complete_in_scope",
+              "partial_allowed"
+            ]
+          },
+          "on_missing": {
+            "const": "abstain"
+          }
+        },
+        "required": [
+          "kind",
+          "minimum_count",
+          "max_age_seconds",
+          "coverage",
+          "on_missing"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1,
+      "maxItems": 5000,
+      "uniqueItems": true
+    },
+    "procedure": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "step_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          },
+          "operation": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          },
+          "executor": {
+            "enum": [
+              "deterministic",
+              "model"
+            ]
+          },
+          "tool_id": {
+            "anyOf": [
+              {
+                "enum": [
+                  "http.fetch_public",
+                  "robots.evaluate",
+                  "sitemap.parse",
+                  "html.extract",
+                  "render.observe",
+                  "artifact.read_scoped",
+                  "graph.query_scoped",
+                  "model.infer_scoped",
+                  "assessment.record",
+                  "work.quarantine"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "input_kinds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096
+            },
+            "minItems": 0,
+            "maxItems": 5000,
+            "uniqueItems": true
+          },
+          "output_kind": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          },
+          "on_failure": {
+            "enum": [
+              "abstain",
+              "fail",
+              "continue_partial"
+            ]
+          }
+        },
+        "required": [
+          "step_id",
+          "operation",
+          "executor",
+          "tool_id",
+          "input_kinds",
+          "output_kind",
+          "on_failure"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1,
+      "maxItems": 5000,
+      "uniqueItems": true
+    },
+    "output_schema": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4096
+    },
+    "tool_permissions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "tool_id": {
+            "enum": [
+              "http.fetch_public",
+              "robots.evaluate",
+              "sitemap.parse",
+              "html.extract",
+              "render.observe",
+              "artifact.read_scoped",
+              "graph.query_scoped",
+              "model.infer_scoped",
+              "assessment.record",
+              "work.quarantine"
+            ]
+          },
+          "version": {
+            "const": "1.0.0"
+          },
+          "max_calls": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 750
+          }
+        },
+        "required": [
+          "tool_id",
+          "version",
+          "max_calls"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0,
+      "maxItems": 5000,
+      "uniqueItems": true
+    },
+    "external_authority": {
+      "const": "read_only"
+    },
+    "forbidden_behavior": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "website_write",
+          "submission",
+          "credential_access",
+          "cross_tenant",
+          "source_fabrication",
+          "shell_execution"
+        ]
+      },
+      "minItems": 6,
+      "maxItems": 5000,
+      "uniqueItems": true
+    },
+    "policy_constraints": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 4096
+      },
+      "minItems": 1,
+      "maxItems": 5000,
+      "uniqueItems": true
+    },
+    "validation": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 4096
+      },
+      "minItems": 1,
+      "maxItems": 5000,
+      "uniqueItems": true
+    },
+    "fixtures": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 4096
+      },
+      "minItems": 1,
+      "maxItems": 5000,
+      "uniqueItems": true
+    },
+    "negative_fixtures": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 4096
+      },
+      "minItems": 1,
+      "maxItems": 5000,
+      "uniqueItems": true
+    },
+    "evaluation_gates": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 4096
+      },
+      "minItems": 1,
+      "maxItems": 5000,
+      "uniqueItems": true
+    },
+    "deprecation": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "deadline": {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096
+            }
+          },
+          "required": [
+            "deadline",
+            "reason"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "revocation": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "effective_at": {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096
+            }
+          },
+          "required": [
+            "effective_at",
+            "reason"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "replacement": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "skill_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096
+            },
+            "version": {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/version"
+            },
+            "digest": {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/hash"
+            }
+          },
+          "required": [
+            "skill_id",
+            "version",
+            "digest"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "skill_id",
+    "version",
+    "status",
+    "source_pins",
+    "last_verified",
+    "freshness_deadline",
+    "applicability",
+    "capability_dependencies",
+    "evidence_requirements",
+    "procedure",
+    "output_schema",
+    "tool_permissions",
+    "external_authority",
+    "forbidden_behavior",
+    "policy_constraints",
+    "validation",
+    "fixtures",
+    "negative_fixtures",
+    "evaluation_gates",
+    "deprecation",
+    "revocation",
+    "replacement"
+  ],
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "revoked"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "revocation": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "deprecated"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "deprecation": {
+            "type": "object"
+          },
+          "replacement": {
+            "type": "object"
+          }
+        }
+      }
+    }
+  ]
+}

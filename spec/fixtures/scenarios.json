@@ -1,0 +1,203 @@
+{
+  "version": 1,
+  "status": "frozen_contract_expectations_not_runtime_results",
+  "scenarios": [
+    {
+      "id": "static-service",
+      "artifacts": [
+        "home.html",
+        "services.html",
+        "contact.html",
+        "robots.txt",
+        "sitemap.xml"
+      ],
+      "expected": {
+        "admitted": 3,
+        "observed": 3,
+        "failed": 0,
+        "deferred": 0,
+        "offering": "Household pipe repair",
+        "location": "Nagpur",
+        "location_basis": "inferred",
+        "finding": "observed_noindex",
+        "indexed_state": "unknown",
+        "max_opportunities": 3
+      }
+    },
+    {
+      "id": "spa-parity",
+      "artifacts": [
+        "spa-raw.html",
+        "spa-rendered.html"
+      ],
+      "expected": {
+        "critical_text_disappears": true,
+        "google_render": "unknown",
+        "repair_recommendation_requires_repeat": true
+      }
+    },
+    {
+      "id": "private-redirect",
+      "artifacts": [],
+      "expected": {
+        "location": "http://169.254.169.254/",
+        "dispatch_count": 0,
+        "error": "forbidden_destination"
+      }
+    },
+    {
+      "id": "blocked-noindex",
+      "artifacts": [
+        "robots-deny.txt",
+        "services.html"
+      ],
+      "expected": {
+        "page_dispatch_count": 0,
+        "page_directives": "unknown"
+      }
+    },
+    {
+      "id": "variant-identity",
+      "artifacts": [
+        "catalog.html"
+      ],
+      "expected": {
+        "distinct_page_keys": 2,
+        "merge_count": 0
+      }
+    },
+    {
+      "id": "malformed-xml",
+      "artifacts": [
+        "bad-sitemap.xml"
+      ],
+      "expected": {
+        "external_entity_reads": 0,
+        "result": "parse_failed"
+      }
+    },
+    {
+      "id": "policy-post",
+      "artifacts": [],
+      "expected": {
+        "attempted_method": "POST",
+        "dispatch_count": 0,
+        "render_state": "policy_limited",
+        "site_broken": false
+      }
+    },
+    {
+      "id": "prompt-injection",
+      "artifacts": [
+        "injection.html"
+      ],
+      "expected": {
+        "foreign_retrievals": 0,
+        "metadata_fetches": 0,
+        "authority_changed": false
+      }
+    },
+    {
+      "id": "partial-orphan",
+      "artifacts": [
+        "sitemap.xml"
+      ],
+      "expected": {
+        "coverage": "partial",
+        "true_orphan_claims": 0
+      }
+    },
+    {
+      "id": "missing-metrics",
+      "artifacts": [],
+      "expected": {
+        "missing_sources": [
+          "gsc",
+          "analytics",
+          "bing",
+          "serp",
+          "rankings",
+          "ai_answers"
+        ],
+        "numeric_metrics": {}
+      }
+    },
+    {
+      "id": "skill-revoked",
+      "artifacts": [],
+      "expected": {
+        "revoke_between": "admission_and_dispatch",
+        "new_dispatches": 0,
+        "publication": "quarantined"
+      }
+    },
+    {
+      "id": "publisher",
+      "artifacts": [
+        "publisher.html"
+      ],
+      "expected": {
+        "content_quality": "cannot_assess",
+        "thin_content_claims": 0
+      }
+    },
+    {
+      "id": "hybrid",
+      "artifacts": [
+        "hybrid.html"
+      ],
+      "expected": {
+        "archetypes": [
+          "local_service",
+          "ecommerce"
+        ],
+        "confirmed": false
+      }
+    },
+    {
+      "id": "tenant-collision",
+      "artifacts": [],
+      "expected": {
+        "same_url": true,
+        "shared_artifact_ids": false,
+        "foreign_read_result": "not_found"
+      }
+    },
+    {
+      "id": "late-correction",
+      "artifacts": [],
+      "expected": {
+        "first_seq": 10,
+        "correction_seq": 12,
+        "query_seq": 11,
+        "expected_revision": 1
+      }
+    },
+    {
+      "id": "duplicate-delivery",
+      "artifacts": [],
+      "expected": {
+        "deliveries": 2,
+        "accepted_results": 1,
+        "inbox_rows": 1
+      }
+    },
+    {
+      "id": "lease-expiry",
+      "artifacts": [],
+      "expected": {
+        "old_lease_commit": "lease_lost",
+        "new_lease_only": true
+      }
+    },
+    {
+      "id": "deleted-tenant",
+      "artifacts": [],
+      "expected": {
+        "epoch_changed": true,
+        "late_commit": "scope_denied",
+        "restored_reads_before_replay": 0
+      }
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "record_type": "Membership",
+  "id": "58fda484-fc4d-56f3-aa80-b7230c5b96bf",
+  "schema_version": 1,
+  "version": 1,
+  "created_at": "2026-09-17T00:00:00Z",
+  "recorded_at": "2026-09-17T00:00:00Z",
+  "updated_at": "2026-09-17T00:00:00Z",
+  "deleted_at": null,
+  "state": "active",
+  "retention_class": "identity",
+  "provenance_ids": [],
+  "tenant_id": "2ba1e8ea-3ea6-5c40-9676-bf7200063cd1",
+  "knowledge_seq": 1,
+  "user_id": "ff4284ff-78e3-56f6-aae6-10c3871280a6",
+  "role": "owner",
+  "site_scope_ids": [],
+  "all_sites": true
+}

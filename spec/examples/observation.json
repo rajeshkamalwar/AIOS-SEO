@@ -1,0 +1,30 @@
+{
+  "record_type": "Observation",
+  "id": "031180e1-1c9d-57d9-8688-d65a59035daa",
+  "schema_version": 1,
+  "version": 1,
+  "created_at": "2026-09-17T00:00:00Z",
+  "recorded_at": "2026-09-17T00:00:00Z",
+  "updated_at": "2026-09-17T00:00:00Z",
+  "deleted_at": null,
+  "state": "observed",
+  "retention_class": "raw",
+  "provenance_ids": [],
+  "tenant_id": "2ba1e8ea-3ea6-5c40-9676-bf7200063cd1",
+  "knowledge_seq": 1,
+  "site_id": "9bfdbbf9-3da6-525e-800d-9def08c4d573",
+  "sensor_id": "http",
+  "sensor_version": "1.0.0",
+  "subject_id": "9bfdbbf9-3da6-525e-800d-9def08c4d573",
+  "evidence_ids": [
+    "5c3290bb-1f22-5ef3-9129-a91ae46ec01a"
+  ],
+  "observed_at": "2026-09-17T00:00:00Z",
+  "window_start": null,
+  "window_end": null,
+  "source_timezone": "UTC",
+  "context_hash": "61a0b90ee38f171b60d261bbbe3c07460eae6975b13a0cd13265622814881782",
+  "fresh_until": "2026-09-18T00:00:00Z",
+  "attempt_id": "ddb3886e-c4ec-5850-8e23-0699ed9baa4e",
+  "error": null
+}

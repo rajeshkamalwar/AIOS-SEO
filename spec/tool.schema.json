@@ -1,0 +1,522 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.aios-seo.invalid/v1/tool.schema.json",
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "tool_id": {
+          "const": "http.fetch_public"
+        },
+        "tool_version": {
+          "const": "1.0.0"
+        },
+        "invocation_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "mission_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "tenant_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "site_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "args": {
+          "type": "object",
+          "properties": {
+            "url": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096
+            },
+            "method": {
+              "enum": [
+                "GET",
+                "HEAD"
+              ]
+            },
+            "policy_id": {
+              "const": "discovery-v1"
+            }
+          },
+          "required": [
+            "url",
+            "method",
+            "policy_id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "tool_id",
+        "tool_version",
+        "invocation_id",
+        "mission_id",
+        "tenant_id",
+        "site_id",
+        "args"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "tool_id": {
+          "const": "robots.evaluate"
+        },
+        "tool_version": {
+          "const": "1.0.0"
+        },
+        "invocation_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "mission_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "tenant_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "site_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "args": {
+          "type": "object",
+          "properties": {
+            "evidence_id": {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+            },
+            "url": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096
+            },
+            "agent": {
+              "const": "AIOSSEOResearchBot"
+            }
+          },
+          "required": [
+            "evidence_id",
+            "url",
+            "agent"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "tool_id",
+        "tool_version",
+        "invocation_id",
+        "mission_id",
+        "tenant_id",
+        "site_id",
+        "args"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "tool_id": {
+          "const": "sitemap.parse"
+        },
+        "tool_version": {
+          "const": "1.0.0"
+        },
+        "invocation_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "mission_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "tenant_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "site_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "args": {
+          "type": "object",
+          "properties": {
+            "evidence_id": {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+            }
+          },
+          "required": [
+            "evidence_id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "tool_id",
+        "tool_version",
+        "invocation_id",
+        "mission_id",
+        "tenant_id",
+        "site_id",
+        "args"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "tool_id": {
+          "const": "html.extract"
+        },
+        "tool_version": {
+          "const": "1.0.0"
+        },
+        "invocation_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "mission_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "tenant_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "site_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "args": {
+          "type": "object",
+          "properties": {
+            "evidence_id": {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+            }
+          },
+          "required": [
+            "evidence_id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "tool_id",
+        "tool_version",
+        "invocation_id",
+        "mission_id",
+        "tenant_id",
+        "site_id",
+        "args"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "tool_id": {
+          "const": "render.observe"
+        },
+        "tool_version": {
+          "const": "1.0.0"
+        },
+        "invocation_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "mission_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "tenant_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "site_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "args": {
+          "type": "object",
+          "properties": {
+            "page_snapshot_id": {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+            },
+            "url": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096
+            },
+            "policy_id": {
+              "const": "discovery-v1"
+            }
+          },
+          "required": [
+            "page_snapshot_id",
+            "url",
+            "policy_id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "tool_id",
+        "tool_version",
+        "invocation_id",
+        "mission_id",
+        "tenant_id",
+        "site_id",
+        "args"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "tool_id": {
+          "const": "artifact.read_scoped"
+        },
+        "tool_version": {
+          "const": "1.0.0"
+        },
+        "invocation_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "mission_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "tenant_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "site_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "args": {
+          "type": "object",
+          "properties": {
+            "evidence_id": {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+            }
+          },
+          "required": [
+            "evidence_id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "tool_id",
+        "tool_version",
+        "invocation_id",
+        "mission_id",
+        "tenant_id",
+        "site_id",
+        "args"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "tool_id": {
+          "const": "graph.query_scoped"
+        },
+        "tool_version": {
+          "const": "1.0.0"
+        },
+        "invocation_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "mission_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "tenant_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "site_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "args": {
+          "type": "object",
+          "properties": {
+            "root_id": {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+            },
+            "radius": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 2
+            }
+          },
+          "required": [
+            "root_id",
+            "radius"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "tool_id",
+        "tool_version",
+        "invocation_id",
+        "mission_id",
+        "tenant_id",
+        "site_id",
+        "args"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "tool_id": {
+          "const": "model.infer_scoped"
+        },
+        "tool_version": {
+          "const": "1.0.0"
+        },
+        "invocation_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "mission_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "tenant_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "site_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "args": {
+          "type": "object",
+          "properties": {
+            "request_id": {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+            }
+          },
+          "required": [
+            "request_id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "tool_id",
+        "tool_version",
+        "invocation_id",
+        "mission_id",
+        "tenant_id",
+        "site_id",
+        "args"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "tool_id": {
+          "const": "assessment.record"
+        },
+        "tool_version": {
+          "const": "1.0.0"
+        },
+        "invocation_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "mission_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "tenant_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "site_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "args": {
+          "type": "object",
+          "properties": {
+            "record": {
+              "oneOf": [
+                {
+                  "$ref": "https://schemas.aios-seo.invalid/v1/domain.schema.json#/$defs/TwinAssertion"
+                },
+                {
+                  "$ref": "https://schemas.aios-seo.invalid/v1/domain.schema.json#/$defs/EntityAssertion"
+                },
+                {
+                  "$ref": "https://schemas.aios-seo.invalid/v1/domain.schema.json#/$defs/Belief"
+                },
+                {
+                  "$ref": "https://schemas.aios-seo.invalid/v1/domain.schema.json#/$defs/Hypothesis"
+                },
+                {
+                  "$ref": "https://schemas.aios-seo.invalid/v1/domain.schema.json#/$defs/Opportunity"
+                }
+              ]
+            },
+            "expected_version": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "record",
+            "expected_version"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "tool_id",
+        "tool_version",
+        "invocation_id",
+        "mission_id",
+        "tenant_id",
+        "site_id",
+        "args"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "tool_id": {
+          "const": "work.quarantine"
+        },
+        "tool_version": {
+          "const": "1.0.0"
+        },
+        "invocation_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "mission_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "tenant_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "site_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "args": {
+          "type": "object",
+          "properties": {
+            "mission_id": {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096
+            }
+          },
+          "required": [
+            "mission_id",
+            "reason"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "tool_id",
+        "tool_version",
+        "invocation_id",
+        "mission_id",
+        "tenant_id",
+        "site_id",
+        "args"
+      ],
+      "additionalProperties": false
+    }
+  ]
+}

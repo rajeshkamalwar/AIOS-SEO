@@ -1,0 +1,11 @@
+{
+  "tool_id": "model.infer_scoped",
+  "tool_version": "1.0.0",
+  "invocation_id": "f70c12a7-3187-5013-9fff-015a0fc9dd96",
+  "mission_id": "9cc683b5-73d1-5fb8-b4b4-274a9aee6bd0",
+  "tenant_id": "2ba1e8ea-3ea6-5c40-9676-bf7200063cd1",
+  "site_id": "9bfdbbf9-3da6-525e-800d-9def08c4d573",
+  "args": {
+    "request_id": "6434045a-c371-5745-a614-618298ac3ee9"
+  }
+}
