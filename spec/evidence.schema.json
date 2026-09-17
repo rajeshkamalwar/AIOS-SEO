@@ -1,0 +1,5 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.aios-seo.invalid/v1/evidence.schema.json",
+  "$ref": "https://schemas.aios-seo.invalid/v1/domain.schema.json#/$defs/Evidence"
+}

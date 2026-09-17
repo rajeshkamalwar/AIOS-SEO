@@ -1,0 +1,2526 @@
+{
+  "version": 1,
+  "records": {
+    "Tenant": {
+      "scope": "global",
+      "table": "tenant",
+      "temporal": false,
+      "mutable": true,
+      "retention_class": "identity",
+      "unique": [],
+      "indexes": [
+        [
+          "id"
+        ]
+      ],
+      "deletion": "explicit_global_policy",
+      "primary_key": [
+        "id"
+      ],
+      "required_fields": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "name",
+        "policy_profile_id",
+        "deletion_epoch"
+      ],
+      "optional_fields": []
+    },
+    "User": {
+      "scope": "global",
+      "table": "user",
+      "temporal": false,
+      "mutable": true,
+      "retention_class": "identity",
+      "unique": [
+        [
+          "issuer",
+          "subject"
+        ]
+      ],
+      "indexes": [
+        [
+          "id"
+        ]
+      ],
+      "deletion": "explicit_global_policy",
+      "primary_key": [
+        "id"
+      ],
+      "required_fields": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "issuer",
+        "subject"
+      ],
+      "optional_fields": [
+        "display_name"
+      ]
+    },
+    "Membership": {
+      "scope": "tenant",
+      "table": "membership",
+      "temporal": false,
+      "mutable": true,
+      "retention_class": "identity",
+      "unique": [
+        [
+          "tenant_id",
+          "user_id"
+        ]
+      ],
+      "indexes": [
+        [
+          "tenant_id",
+          "id"
+        ]
+      ],
+      "deletion": "tenant_cascade",
+      "primary_key": [
+        "tenant_id",
+        "id"
+      ],
+      "required_fields": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "user_id",
+        "role",
+        "site_scope_ids",
+        "all_sites",
+        "knowledge_seq"
+      ],
+      "optional_fields": []
+    },
+    "Business": {
+      "scope": "tenant",
+      "table": "business",
+      "temporal": false,
+      "mutable": true,
+      "retention_class": "identity",
+      "unique": [],
+      "indexes": [
+        [
+          "tenant_id",
+          "id"
+        ]
+      ],
+      "deletion": "tenant_cascade",
+      "primary_key": [
+        "tenant_id",
+        "id"
+      ],
+      "required_fields": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "name",
+        "knowledge_seq"
+      ],
+      "optional_fields": [
+        "confirmed_by_user_id"
+      ]
+    },
+    "Site": {
+      "scope": "site",
+      "table": "site",
+      "temporal": false,
+      "mutable": true,
+      "retention_class": "identity",
+      "unique": [
+        [
+          "tenant_id",
+          "normalized_origin"
+        ]
+      ],
+      "indexes": [
+        [
+          "tenant_id",
+          "id"
+        ],
+        [
+          "tenant_id",
+          "site_id",
+          "recorded_at"
+        ]
+      ],
+      "deletion": "tenant_cascade",
+      "primary_key": [
+        "tenant_id",
+        "id"
+      ],
+      "required_fields": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "business_id",
+        "submitted_url",
+        "normalized_origin",
+        "normalization_version",
+        "origins",
+        "knowledge_seq"
+      ],
+      "optional_fields": []
+    },
+    "SiteOwnership": {
+      "scope": "site",
+      "table": "site_ownership",
+      "temporal": false,
+      "mutable": true,
+      "retention_class": "identity",
+      "unique": [],
+      "indexes": [
+        [
+          "tenant_id",
+          "id"
+        ],
+        [
+          "tenant_id",
+          "site_id",
+          "recorded_at"
+        ]
+      ],
+      "deletion": "tenant_cascade",
+      "primary_key": [
+        "tenant_id",
+        "id"
+      ],
+      "required_fields": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "method",
+        "verified_at",
+        "expires_at",
+        "proof_evidence_id",
+        "authority",
+        "knowledge_seq"
+      ],
+      "optional_fields": []
+    },
+    "Crawl": {
+      "scope": "site",
+      "table": "crawl",
+      "temporal": false,
+      "mutable": true,
+      "retention_class": "operations",
+      "unique": [
+        [
+          "tenant_id",
+          "idempotency_key"
+        ]
+      ],
+      "indexes": [
+        [
+          "tenant_id",
+          "id"
+        ],
+        [
+          "tenant_id",
+          "site_id",
+          "recorded_at"
+        ]
+      ],
+      "deletion": "tenant_cascade",
+      "primary_key": [
+        "tenant_id",
+        "id"
+      ],
+      "required_fields": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "submitted_by",
+        "policy_version",
+        "input_hash",
+        "idempotency_key",
+        "stage",
+        "budget",
+        "started_at",
+        "completed_at",
+        "completion_reason",
+        "knowledge_seq"
+      ],
+      "optional_fields": []
+    },
+    "CrawlTarget": {
+      "scope": "site",
+      "table": "crawl_target",
+      "temporal": false,
+      "mutable": true,
+      "retention_class": "operations",
+      "unique": [
+        [
+          "tenant_id",
+          "crawl_id",
+          "url_key"
+        ]
+      ],
+      "indexes": [
+        [
+          "tenant_id",
+          "id"
+        ],
+        [
+          "tenant_id",
+          "crawl_id",
+          "state",
+          "priority"
+        ],
+        [
+          "tenant_id",
+          "site_id",
+          "recorded_at"
+        ]
+      ],
+      "deletion": "tenant_cascade",
+      "primary_key": [
+        "tenant_id",
+        "id"
+      ],
+      "required_fields": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "crawl_id",
+        "url",
+        "url_key",
+        "depth",
+        "seed_kind",
+        "discovered_from_id",
+        "admitted",
+        "priority",
+        "attempts",
+        "reason",
+        "knowledge_seq"
+      ],
+      "optional_fields": []
+    },
+    "Page": {
+      "scope": "site",
+      "table": "page",
+      "temporal": false,
+      "mutable": true,
+      "retention_class": "derived",
+      "unique": [
+        [
+          "tenant_id",
+          "site_id",
+          "url_key"
+        ]
+      ],
+      "indexes": [
+        [
+          "tenant_id",
+          "id"
+        ],
+        [
+          "tenant_id",
+          "site_id",
+          "recorded_at"
+        ]
+      ],
+      "deletion": "tenant_cascade",
+      "primary_key": [
+        "tenant_id",
+        "id"
+      ],
+      "required_fields": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "url",
+        "url_key",
+        "page_type",
+        "type_support",
+        "knowledge_seq"
+      ],
+      "optional_fields": []
+    },
+    "PageSnapshot": {
+      "scope": "site",
+      "table": "page_snapshot",
+      "temporal": true,
+      "mutable": false,
+      "retention_class": "raw",
+      "unique": [
+        [
+          "tenant_id",
+          "observation_id"
+        ],
+        [
+          "tenant_id",
+          "series_id",
+          "version"
+        ]
+      ],
+      "indexes": [
+        [
+          "tenant_id",
+          "id"
+        ],
+        [
+          "tenant_id",
+          "site_id",
+          "recorded_at"
+        ],
+        [
+          "tenant_id",
+          "series_id",
+          "recorded_at",
+          "superseded_at"
+        ]
+      ],
+      "deletion": "tenant_cascade",
+      "primary_key": [
+        "tenant_id",
+        "id"
+      ],
+      "required_fields": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "series_id",
+        "valid_from",
+        "valid_to",
+        "superseded_at",
+        "page_id",
+        "crawl_id",
+        "observation_id",
+        "evidence_id",
+        "observed_at",
+        "status_code",
+        "content_hash",
+        "main_text_hash",
+        "truncated",
+        "knowledge_seq",
+        "superseded_seq"
+      ],
+      "optional_fields": []
+    },
+    "RenderSnapshot": {
+      "scope": "site",
+      "table": "render_snapshot",
+      "temporal": true,
+      "mutable": false,
+      "retention_class": "raw",
+      "unique": [
+        [
+          "tenant_id",
+          "series_id",
+          "version"
+        ]
+      ],
+      "indexes": [
+        [
+          "tenant_id",
+          "id"
+        ],
+        [
+          "tenant_id",
+          "site_id",
+          "recorded_at"
+        ],
+        [
+          "tenant_id",
+          "series_id",
+          "recorded_at",
+          "superseded_at"
+        ]
+      ],
+      "deletion": "tenant_cascade",
+      "primary_key": [
+        "tenant_id",
+        "id"
+      ],
+      "required_fields": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "series_id",
+        "valid_from",
+        "valid_to",
+        "superseded_at",
+        "page_snapshot_id",
+        "observation_id",
+        "evidence_id",
+        "observed_at",
+        "browser_build",
+        "context_hash",
+        "sample_offset_ms",
+        "critical_text_hash",
+        "pending_requests",
+        "knowledge_seq",
+        "superseded_seq"
+      ],
+      "optional_fields": []
+    },
+    "ResourceObservation": {
+      "scope": "site",
+      "table": "resource_observation",
+      "temporal": false,
+      "mutable": false,
+      "retention_class": "raw",
+      "unique": [],
+      "indexes": [
+        [
+          "tenant_id",
+          "id"
+        ],
+        [
+          "tenant_id",
+          "site_id",
+          "recorded_at"
+        ]
+      ],
+      "deletion": "tenant_cascade",
+      "primary_key": [
+        "tenant_id",
+        "id"
+      ],
+      "required_fields": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "render_snapshot_id",
+        "crawl_id",
+        "url",
+        "method",
+        "resource_type",
+        "status_code",
+        "error_code",
+        "observed_at",
+        "bytes",
+        "knowledge_seq"
+      ],
+      "optional_fields": []
+    },
+    "BusinessTwin": {
+      "scope": "site",
+      "table": "business_twin",
+      "temporal": true,
+      "mutable": false,
+      "retention_class": "derived",
+      "unique": [
+        [
+          "tenant_id",
+          "series_id",
+          "version"
+        ]
+      ],
+      "indexes": [
+        [
+          "tenant_id",
+          "id"
+        ],
+        [
+          "tenant_id",
+          "site_id",
+          "recorded_at"
+        ],
+        [
+          "tenant_id",
+          "series_id",
+          "recorded_at",
+          "superseded_at"
+        ]
+      ],
+      "deletion": "tenant_cascade",
+      "primary_key": [
+        "tenant_id",
+        "id"
+      ],
+      "required_fields": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "series_id",
+        "valid_from",
+        "valid_to",
+        "superseded_at",
+        "business_id",
+        "assertion_ids",
+        "prior_revision_id",
+        "question_ids",
+        "knowledge_seq",
+        "superseded_seq"
+      ],
+      "optional_fields": []
+    },
+    "TwinAssertion": {
+      "scope": "site",
+      "table": "twin_assertion",
+      "temporal": true,
+      "mutable": false,
+      "retention_class": "derived",
+      "unique": [
+        [
+          "tenant_id",
+          "series_id",
+          "version"
+        ]
+      ],
+      "indexes": [
+        [
+          "tenant_id",
+          "id"
+        ],
+        [
+          "tenant_id",
+          "site_id",
+          "recorded_at"
+        ],
+        [
+          "tenant_id",
+          "series_id",
+          "recorded_at",
+          "superseded_at"
+        ]
+      ],
+      "deletion": "tenant_cascade",
+      "primary_key": [
+        "tenant_id",
+        "id"
+      ],
+      "required_fields": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "series_id",
+        "valid_from",
+        "valid_to",
+        "superseded_at",
+        "business_id",
+        "field",
+        "value",
+        "basis",
+        "observation_ids",
+        "support",
+        "knowledge_seq",
+        "superseded_seq"
+      ],
+      "optional_fields": []
+    },
+    "Entity": {
+      "scope": "site",
+      "table": "entity",
+      "temporal": false,
+      "mutable": true,
+      "retention_class": "derived",
+      "unique": [],
+      "indexes": [
+        [
+          "tenant_id",
+          "id"
+        ],
+        [
+          "tenant_id",
+          "site_id",
+          "recorded_at"
+        ]
+      ],
+      "deletion": "tenant_cascade",
+      "primary_key": [
+        "tenant_id",
+        "id"
+      ],
+      "required_fields": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "entity_type",
+        "label",
+        "knowledge_seq"
+      ],
+      "optional_fields": [
+        "external_key"
+      ]
+    },
+    "EntityAssertion": {
+      "scope": "site",
+      "table": "entity_assertion",
+      "temporal": true,
+      "mutable": false,
+      "retention_class": "derived",
+      "unique": [
+        [
+          "tenant_id",
+          "series_id",
+          "version"
+        ]
+      ],
+      "indexes": [
+        [
+          "tenant_id",
+          "id"
+        ],
+        [
+          "tenant_id",
+          "site_id",
+          "recorded_at"
+        ],
+        [
+          "tenant_id",
+          "series_id",
+          "recorded_at",
+          "superseded_at"
+        ]
+      ],
+      "deletion": "tenant_cascade",
+      "primary_key": [
+        "tenant_id",
+        "id"
+      ],
+      "required_fields": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "series_id",
+        "valid_from",
+        "valid_to",
+        "superseded_at",
+        "subject_id",
+        "predicate",
+        "object_id",
+        "literal",
+        "basis",
+        "evidence_bundle_id",
+        "support",
+        "knowledge_seq",
+        "superseded_seq"
+      ],
+      "optional_fields": []
+    },
+    "Relationship": {
+      "scope": "site",
+      "table": "relationship",
+      "temporal": true,
+      "mutable": false,
+      "retention_class": "derived",
+      "unique": [
+        [
+          "tenant_id",
+          "series_id",
+          "version"
+        ]
+      ],
+      "indexes": [
+        [
+          "tenant_id",
+          "id"
+        ],
+        [
+          "tenant_id",
+          "site_id",
+          "subject_id",
+          "predicate"
+        ],
+        [
+          "tenant_id",
+          "site_id",
+          "object_id",
+          "predicate"
+        ],
+        [
+          "tenant_id",
+          "site_id",
+          "recorded_at"
+        ],
+        [
+          "tenant_id",
+          "series_id",
+          "recorded_at",
+          "superseded_at"
+        ]
+      ],
+      "deletion": "tenant_cascade",
+      "primary_key": [
+        "tenant_id",
+        "id"
+      ],
+      "required_fields": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "series_id",
+        "valid_from",
+        "valid_to",
+        "superseded_at",
+        "subject_id",
+        "predicate",
+        "object_id",
+        "assertion_id",
+        "knowledge_seq",
+        "superseded_seq"
+      ],
+      "optional_fields": []
+    },
+    "Query": {
+      "scope": "site",
+      "table": "query",
+      "temporal": false,
+      "mutable": true,
+      "retention_class": "derived",
+      "unique": [
+        [
+          "tenant_id",
+          "entity_id"
+        ]
+      ],
+      "indexes": [
+        [
+          "tenant_id",
+          "id"
+        ],
+        [
+          "tenant_id",
+          "site_id",
+          "recorded_at"
+        ]
+      ],
+      "deletion": "tenant_cascade",
+      "primary_key": [
+        "tenant_id",
+        "id"
+      ],
+      "required_fields": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "entity_id",
+        "text",
+        "language",
+        "origin",
+        "knowledge_seq"
+      ],
+      "optional_fields": []
+    },
+    "Topic": {
+      "scope": "site",
+      "table": "topic",
+      "temporal": false,
+      "mutable": true,
+      "retention_class": "derived",
+      "unique": [
+        [
+          "tenant_id",
+          "entity_id"
+        ]
+      ],
+      "indexes": [
+        [
+          "tenant_id",
+          "id"
+        ],
+        [
+          "tenant_id",
+          "site_id",
+          "recorded_at"
+        ]
+      ],
+      "deletion": "tenant_cascade",
+      "primary_key": [
+        "tenant_id",
+        "id"
+      ],
+      "required_fields": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "entity_id",
+        "label",
+        "language",
+        "ontology_version",
+        "knowledge_seq"
+      ],
+      "optional_fields": []
+    },
+    "Intent": {
+      "scope": "site",
+      "table": "intent",
+      "temporal": false,
+      "mutable": true,
+      "retention_class": "derived",
+      "unique": [
+        [
+          "tenant_id",
+          "entity_id"
+        ]
+      ],
+      "indexes": [
+        [
+          "tenant_id",
+          "id"
+        ],
+        [
+          "tenant_id",
+          "site_id",
+          "recorded_at"
+        ]
+      ],
+      "deletion": "tenant_cascade",
+      "primary_key": [
+        "tenant_id",
+        "id"
+      ],
+      "required_fields": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "entity_id",
+        "intent_type",
+        "knowledge_seq"
+      ],
+      "optional_fields": []
+    },
+    "Location": {
+      "scope": "site",
+      "table": "location",
+      "temporal": false,
+      "mutable": true,
+      "retention_class": "derived",
+      "unique": [
+        [
+          "tenant_id",
+          "entity_id"
+        ]
+      ],
+      "indexes": [
+        [
+          "tenant_id",
+          "id"
+        ],
+        [
+          "tenant_id",
+          "site_id",
+          "recorded_at"
+        ]
+      ],
+      "deletion": "tenant_cascade",
+      "primary_key": [
+        "tenant_id",
+        "id"
+      ],
+      "required_fields": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "entity_id",
+        "label",
+        "role",
+        "confirmed",
+        "knowledge_seq"
+      ],
+      "optional_fields": []
+    },
+    "Competitor": {
+      "scope": "site",
+      "table": "competitor",
+      "temporal": false,
+      "mutable": true,
+      "retention_class": "derived",
+      "unique": [
+        [
+          "tenant_id",
+          "entity_id"
+        ]
+      ],
+      "indexes": [
+        [
+          "tenant_id",
+          "id"
+        ],
+        [
+          "tenant_id",
+          "site_id",
+          "recorded_at"
+        ]
+      ],
+      "deletion": "tenant_cascade",
+      "primary_key": [
+        "tenant_id",
+        "id"
+      ],
+      "required_fields": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "entity_id",
+        "origin",
+        "competition_type",
+        "context",
+        "knowledge_seq"
+      ],
+      "optional_fields": []
+    },
+    "Observation": {
+      "scope": "site",
+      "table": "observation",
+      "temporal": false,
+      "mutable": false,
+      "retention_class": "raw",
+      "unique": [
+        [
+          "tenant_id",
+          "attempt_id",
+          "subject_id"
+        ]
+      ],
+      "indexes": [
+        [
+          "tenant_id",
+          "id"
+        ],
+        [
+          "tenant_id",
+          "site_id",
+          "recorded_at"
+        ]
+      ],
+      "deletion": "tenant_cascade",
+      "primary_key": [
+        "tenant_id",
+        "id"
+      ],
+      "required_fields": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "sensor_id",
+        "sensor_version",
+        "subject_id",
+        "evidence_ids",
+        "observed_at",
+        "window_start",
+        "window_end",
+        "source_timezone",
+        "context_hash",
+        "fresh_until",
+        "attempt_id",
+        "error",
+        "knowledge_seq"
+      ],
+      "optional_fields": []
+    },
+    "Evidence": {
+      "scope": "site",
+      "table": "evidence",
+      "temporal": false,
+      "mutable": false,
+      "retention_class": "raw",
+      "unique": [],
+      "indexes": [
+        [
+          "tenant_id",
+          "id"
+        ],
+        [
+          "tenant_id",
+          "site_id",
+          "recorded_at"
+        ]
+      ],
+      "deletion": "tenant_cascade",
+      "primary_key": [
+        "tenant_id",
+        "id"
+      ],
+      "required_fields": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "artifact_key",
+        "sha256",
+        "mime_type",
+        "bytes",
+        "captured_at",
+        "source_uri",
+        "source_class",
+        "locator",
+        "redaction_version",
+        "expires_at",
+        "knowledge_seq"
+      ],
+      "optional_fields": []
+    },
+    "EvidenceBundle": {
+      "scope": "site",
+      "table": "evidence_bundle",
+      "temporal": false,
+      "mutable": false,
+      "retention_class": "derived",
+      "unique": [],
+      "indexes": [
+        [
+          "tenant_id",
+          "id"
+        ],
+        [
+          "tenant_id",
+          "site_id",
+          "recorded_at"
+        ]
+      ],
+      "deletion": "tenant_cascade",
+      "primary_key": [
+        "tenant_id",
+        "id"
+      ],
+      "required_fields": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "evidence_ids",
+        "observation_ids",
+        "assertion_ids",
+        "known_at",
+        "manifest_hash",
+        "knowledge_seq",
+        "known_seq"
+      ],
+      "optional_fields": []
+    },
+    "Belief": {
+      "scope": "site",
+      "table": "belief",
+      "temporal": true,
+      "mutable": false,
+      "retention_class": "derived",
+      "unique": [
+        [
+          "tenant_id",
+          "series_id",
+          "version"
+        ]
+      ],
+      "indexes": [
+        [
+          "tenant_id",
+          "id"
+        ],
+        [
+          "tenant_id",
+          "site_id",
+          "recorded_at"
+        ],
+        [
+          "tenant_id",
+          "series_id",
+          "recorded_at",
+          "superseded_at"
+        ]
+      ],
+      "deletion": "tenant_cascade",
+      "primary_key": [
+        "tenant_id",
+        "id"
+      ],
+      "required_fields": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "series_id",
+        "valid_from",
+        "valid_to",
+        "superseded_at",
+        "assertion_id",
+        "evidence_bundle_id",
+        "support",
+        "fresh_until",
+        "assessment_method",
+        "knowledge_seq",
+        "superseded_seq"
+      ],
+      "optional_fields": []
+    },
+    "Hypothesis": {
+      "scope": "site",
+      "table": "hypothesis",
+      "temporal": true,
+      "mutable": false,
+      "retention_class": "derived",
+      "unique": [
+        [
+          "tenant_id",
+          "series_id",
+          "version"
+        ]
+      ],
+      "indexes": [
+        [
+          "tenant_id",
+          "id"
+        ],
+        [
+          "tenant_id",
+          "site_id",
+          "recorded_at"
+        ],
+        [
+          "tenant_id",
+          "series_id",
+          "recorded_at",
+          "superseded_at"
+        ]
+      ],
+      "deletion": "tenant_cascade",
+      "primary_key": [
+        "tenant_id",
+        "id"
+      ],
+      "required_fields": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "series_id",
+        "valid_from",
+        "valid_to",
+        "superseded_at",
+        "statement",
+        "alternative_ids",
+        "evidence_bundle_id",
+        "discriminating_test",
+        "knowledge_seq",
+        "superseded_seq"
+      ],
+      "optional_fields": []
+    },
+    "Capability": {
+      "scope": "global",
+      "table": "capability",
+      "temporal": false,
+      "mutable": true,
+      "retention_class": "registry",
+      "unique": [
+        [
+          "capability_id",
+          "contract_version"
+        ]
+      ],
+      "indexes": [
+        [
+          "id"
+        ]
+      ],
+      "deletion": "explicit_global_policy",
+      "primary_key": [
+        "id"
+      ],
+      "required_fields": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "capability_id",
+        "contract_version",
+        "definition_hash"
+      ],
+      "optional_fields": []
+    },
+    "Skill": {
+      "scope": "global",
+      "table": "skill",
+      "temporal": false,
+      "mutable": true,
+      "retention_class": "registry",
+      "unique": [
+        [
+          "skill_id"
+        ]
+      ],
+      "indexes": [
+        [
+          "id"
+        ]
+      ],
+      "deletion": "explicit_global_policy",
+      "primary_key": [
+        "id"
+      ],
+      "required_fields": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "skill_id",
+        "owner_role"
+      ],
+      "optional_fields": []
+    },
+    "SkillRelease": {
+      "scope": "global",
+      "table": "skill_release",
+      "temporal": false,
+      "mutable": false,
+      "retention_class": "registry",
+      "unique": [
+        [
+          "skill_id",
+          "semver"
+        ]
+      ],
+      "indexes": [
+        [
+          "id"
+        ]
+      ],
+      "deletion": "explicit_global_policy",
+      "primary_key": [
+        "id"
+      ],
+      "required_fields": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "skill_id",
+        "semver",
+        "manifest_hash",
+        "manifest_path",
+        "last_verified",
+        "fresh_until"
+      ],
+      "optional_fields": []
+    },
+    "Sensor": {
+      "scope": "global",
+      "table": "sensor",
+      "temporal": false,
+      "mutable": true,
+      "retention_class": "registry",
+      "unique": [
+        [
+          "sensor_id",
+          "sensor_version"
+        ]
+      ],
+      "indexes": [
+        [
+          "id"
+        ]
+      ],
+      "deletion": "explicit_global_policy",
+      "primary_key": [
+        "id"
+      ],
+      "required_fields": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "sensor_id",
+        "sensor_version",
+        "class",
+        "contract_hash"
+      ],
+      "optional_fields": []
+    },
+    "Connector": {
+      "scope": "site",
+      "table": "connector",
+      "temporal": false,
+      "mutable": true,
+      "retention_class": "identity",
+      "unique": [
+        [
+          "tenant_id",
+          "site_id",
+          "provider"
+        ]
+      ],
+      "indexes": [
+        [
+          "tenant_id",
+          "id"
+        ],
+        [
+          "tenant_id",
+          "site_id",
+          "recorded_at"
+        ]
+      ],
+      "deletion": "tenant_cascade",
+      "primary_key": [
+        "tenant_id",
+        "id"
+      ],
+      "required_fields": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "provider",
+        "credential_ref",
+        "granted_scopes",
+        "property_ids",
+        "knowledge_seq"
+      ],
+      "optional_fields": []
+    },
+    "ConnectorCoverage": {
+      "scope": "site",
+      "table": "connector_coverage",
+      "temporal": true,
+      "mutable": false,
+      "retention_class": "derived",
+      "unique": [
+        [
+          "tenant_id",
+          "series_id",
+          "version"
+        ]
+      ],
+      "indexes": [
+        [
+          "tenant_id",
+          "id"
+        ],
+        [
+          "tenant_id",
+          "site_id",
+          "recorded_at"
+        ],
+        [
+          "tenant_id",
+          "series_id",
+          "recorded_at",
+          "superseded_at"
+        ]
+      ],
+      "deletion": "tenant_cascade",
+      "primary_key": [
+        "tenant_id",
+        "id"
+      ],
+      "required_fields": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "series_id",
+        "valid_from",
+        "valid_to",
+        "superseded_at",
+        "connector_id",
+        "sensor_id",
+        "requested_scope",
+        "window_start",
+        "window_end",
+        "available_metrics",
+        "missingness",
+        "knowledge_seq",
+        "superseded_seq"
+      ],
+      "optional_fields": []
+    },
+    "AgentMission": {
+      "scope": "site",
+      "table": "agent_mission",
+      "temporal": false,
+      "mutable": true,
+      "retention_class": "operations",
+      "unique": [],
+      "indexes": [
+        [
+          "tenant_id",
+          "id"
+        ],
+        [
+          "tenant_id",
+          "site_id",
+          "recorded_at"
+        ]
+      ],
+      "deletion": "tenant_cascade",
+      "primary_key": [
+        "tenant_id",
+        "id"
+      ],
+      "required_fields": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "crawl_id",
+        "manifest_hash",
+        "input_bundle_id",
+        "output_schema_id",
+        "budget",
+        "authority",
+        "deadline",
+        "knowledge_seq"
+      ],
+      "optional_fields": []
+    },
+    "Strategy": {
+      "scope": "site",
+      "table": "strategy",
+      "temporal": false,
+      "mutable": true,
+      "retention_class": "derived",
+      "unique": [
+        [
+          "tenant_id",
+          "site_id",
+          "business_id"
+        ]
+      ],
+      "indexes": [
+        [
+          "tenant_id",
+          "id"
+        ],
+        [
+          "tenant_id",
+          "site_id",
+          "recorded_at"
+        ]
+      ],
+      "deletion": "tenant_cascade",
+      "primary_key": [
+        "tenant_id",
+        "id"
+      ],
+      "required_fields": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "business_id",
+        "current_revision_id",
+        "knowledge_seq"
+      ],
+      "optional_fields": []
+    },
+    "StrategyRevision": {
+      "scope": "site",
+      "table": "strategy_revision",
+      "temporal": true,
+      "mutable": false,
+      "retention_class": "derived",
+      "unique": [
+        [
+          "tenant_id",
+          "series_id",
+          "version"
+        ]
+      ],
+      "indexes": [
+        [
+          "tenant_id",
+          "id"
+        ],
+        [
+          "tenant_id",
+          "site_id",
+          "recorded_at"
+        ],
+        [
+          "tenant_id",
+          "series_id",
+          "recorded_at",
+          "superseded_at"
+        ]
+      ],
+      "deletion": "tenant_cascade",
+      "primary_key": [
+        "tenant_id",
+        "id"
+      ],
+      "required_fields": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "series_id",
+        "valid_from",
+        "valid_to",
+        "superseded_at",
+        "strategy_id",
+        "evidence_bundle_id",
+        "objective",
+        "selected_opportunity_ids",
+        "deferred_opportunity_ids",
+        "next_wake_reason",
+        "expires_at",
+        "knowledge_seq",
+        "superseded_seq"
+      ],
+      "optional_fields": []
+    },
+    "Opportunity": {
+      "scope": "site",
+      "table": "opportunity",
+      "temporal": true,
+      "mutable": false,
+      "retention_class": "derived",
+      "unique": [
+        [
+          "tenant_id",
+          "series_id",
+          "version"
+        ]
+      ],
+      "indexes": [
+        [
+          "tenant_id",
+          "id"
+        ],
+        [
+          "tenant_id",
+          "site_id",
+          "recorded_at"
+        ],
+        [
+          "tenant_id",
+          "series_id",
+          "recorded_at",
+          "superseded_at"
+        ]
+      ],
+      "deletion": "tenant_cascade",
+      "primary_key": [
+        "tenant_id",
+        "id"
+      ],
+      "required_fields": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "series_id",
+        "valid_from",
+        "valid_to",
+        "superseded_at",
+        "capability_id",
+        "objective",
+        "target_ids",
+        "business_assertion_ids",
+        "evidence_bundle_id",
+        "recommendation",
+        "benefit",
+        "priority",
+        "knowledge_seq",
+        "superseded_seq"
+      ],
+      "optional_fields": []
+    },
+    "Territory": {
+      "scope": "site",
+      "table": "territory",
+      "temporal": true,
+      "mutable": false,
+      "retention_class": "derived",
+      "unique": [
+        [
+          "tenant_id",
+          "series_id",
+          "version"
+        ]
+      ],
+      "indexes": [
+        [
+          "tenant_id",
+          "id"
+        ],
+        [
+          "tenant_id",
+          "site_id",
+          "recorded_at"
+        ],
+        [
+          "tenant_id",
+          "series_id",
+          "recorded_at",
+          "superseded_at"
+        ]
+      ],
+      "deletion": "tenant_cascade",
+      "primary_key": [
+        "tenant_id",
+        "id"
+      ],
+      "required_fields": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "series_id",
+        "valid_from",
+        "valid_to",
+        "superseded_at",
+        "context",
+        "offering_id",
+        "evidence_bundle_id",
+        "knowledge_seq",
+        "superseded_seq"
+      ],
+      "optional_fields": []
+    },
+    "ActionProposal": {
+      "scope": "site",
+      "table": "action_proposal",
+      "temporal": false,
+      "mutable": true,
+      "retention_class": "future",
+      "unique": [],
+      "indexes": [
+        [
+          "tenant_id",
+          "id"
+        ],
+        [
+          "tenant_id",
+          "site_id",
+          "recorded_at"
+        ]
+      ],
+      "deletion": "tenant_cascade",
+      "primary_key": [
+        "tenant_id",
+        "id"
+      ],
+      "required_fields": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "opportunity_id",
+        "intent",
+        "authority",
+        "knowledge_seq"
+      ],
+      "optional_fields": []
+    },
+    "Approval": {
+      "scope": "site",
+      "table": "approval",
+      "temporal": false,
+      "mutable": true,
+      "retention_class": "future",
+      "unique": [],
+      "indexes": [
+        [
+          "tenant_id",
+          "id"
+        ],
+        [
+          "tenant_id",
+          "site_id",
+          "recorded_at"
+        ]
+      ],
+      "deletion": "tenant_cascade",
+      "primary_key": [
+        "tenant_id",
+        "id"
+      ],
+      "required_fields": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "proposal_id",
+        "authority",
+        "knowledge_seq"
+      ],
+      "optional_fields": []
+    },
+    "Experiment": {
+      "scope": "site",
+      "table": "experiment",
+      "temporal": false,
+      "mutable": true,
+      "retention_class": "future",
+      "unique": [],
+      "indexes": [
+        [
+          "tenant_id",
+          "id"
+        ],
+        [
+          "tenant_id",
+          "site_id",
+          "recorded_at"
+        ]
+      ],
+      "deletion": "tenant_cascade",
+      "primary_key": [
+        "tenant_id",
+        "id"
+      ],
+      "required_fields": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "hypothesis_id",
+        "design_hash",
+        "exposure_ids",
+        "knowledge_seq"
+      ],
+      "optional_fields": []
+    },
+    "Evaluation": {
+      "scope": "site",
+      "table": "evaluation",
+      "temporal": false,
+      "mutable": false,
+      "retention_class": "derived",
+      "unique": [],
+      "indexes": [
+        [
+          "tenant_id",
+          "id"
+        ],
+        [
+          "tenant_id",
+          "site_id",
+          "recorded_at"
+        ]
+      ],
+      "deletion": "tenant_cascade",
+      "primary_key": [
+        "tenant_id",
+        "id"
+      ],
+      "required_fields": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "target_id",
+        "method_version",
+        "input_bundle_id",
+        "result",
+        "gate_ids",
+        "knowledge_seq"
+      ],
+      "optional_fields": []
+    },
+    "Measurement": {
+      "scope": "site",
+      "table": "measurement",
+      "temporal": true,
+      "mutable": false,
+      "retention_class": "derived",
+      "unique": [
+        [
+          "tenant_id",
+          "series_id",
+          "version"
+        ]
+      ],
+      "indexes": [
+        [
+          "tenant_id",
+          "id"
+        ],
+        [
+          "tenant_id",
+          "site_id",
+          "recorded_at"
+        ],
+        [
+          "tenant_id",
+          "series_id",
+          "recorded_at",
+          "superseded_at"
+        ]
+      ],
+      "deletion": "tenant_cascade",
+      "primary_key": [
+        "tenant_id",
+        "id"
+      ],
+      "required_fields": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "series_id",
+        "valid_from",
+        "valid_to",
+        "superseded_at",
+        "metric",
+        "value",
+        "unit",
+        "numerator",
+        "denominator",
+        "window_start",
+        "window_end",
+        "method_version",
+        "knowledge_seq",
+        "superseded_seq"
+      ],
+      "optional_fields": []
+    },
+    "Outcome": {
+      "scope": "site",
+      "table": "outcome",
+      "temporal": true,
+      "mutable": false,
+      "retention_class": "derived",
+      "unique": [
+        [
+          "tenant_id",
+          "series_id",
+          "version"
+        ]
+      ],
+      "indexes": [
+        [
+          "tenant_id",
+          "id"
+        ],
+        [
+          "tenant_id",
+          "site_id",
+          "recorded_at"
+        ],
+        [
+          "tenant_id",
+          "series_id",
+          "recorded_at",
+          "superseded_at"
+        ]
+      ],
+      "deletion": "tenant_cascade",
+      "primary_key": [
+        "tenant_id",
+        "id"
+      ],
+      "required_fields": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "series_id",
+        "valid_from",
+        "valid_to",
+        "superseded_at",
+        "evaluation_id",
+        "measurement_ids",
+        "causal_status",
+        "knowledge_seq",
+        "superseded_seq"
+      ],
+      "optional_fields": []
+    },
+    "AuditEvent": {
+      "scope": "site",
+      "table": "audit_event",
+      "temporal": false,
+      "mutable": false,
+      "retention_class": "audit",
+      "unique": [],
+      "indexes": [
+        [
+          "tenant_id",
+          "id"
+        ],
+        [
+          "tenant_id",
+          "recorded_at"
+        ],
+        [
+          "tenant_id",
+          "target_id",
+          "recorded_at"
+        ],
+        [
+          "tenant_id",
+          "site_id",
+          "recorded_at"
+        ]
+      ],
+      "deletion": "tenant_cascade",
+      "primary_key": [
+        "tenant_id",
+        "id"
+      ],
+      "required_fields": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "actor_id",
+        "operation",
+        "target_id",
+        "correlation_id",
+        "outcome",
+        "detail_code",
+        "knowledge_seq"
+      ],
+      "optional_fields": []
+    },
+    "SelfAuditResult": {
+      "scope": "site",
+      "table": "self_audit_result",
+      "temporal": false,
+      "mutable": false,
+      "retention_class": "audit",
+      "unique": [],
+      "indexes": [
+        [
+          "tenant_id",
+          "id"
+        ],
+        [
+          "tenant_id",
+          "site_id",
+          "recorded_at"
+        ]
+      ],
+      "deletion": "tenant_cascade",
+      "primary_key": [
+        "tenant_id",
+        "id"
+      ],
+      "required_fields": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "crawl_id",
+        "check_id",
+        "check_version",
+        "result",
+        "effect",
+        "evidence_ids",
+        "reason",
+        "knowledge_seq"
+      ],
+      "optional_fields": []
+    },
+    "CapabilityAssessment": {
+      "scope": "site",
+      "table": "capability_assessment",
+      "temporal": false,
+      "mutable": false,
+      "retention_class": "derived",
+      "unique": [],
+      "indexes": [
+        [
+          "tenant_id",
+          "id"
+        ],
+        [
+          "tenant_id",
+          "site_id",
+          "recorded_at"
+        ]
+      ],
+      "deletion": "tenant_cascade",
+      "primary_key": [
+        "tenant_id",
+        "id"
+      ],
+      "required_fields": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "knowledge_seq",
+        "capability_id",
+        "skill_digest",
+        "input_bundle_id",
+        "result",
+        "assertion_ids",
+        "missingness",
+        "support",
+        "fresh_until"
+      ],
+      "optional_fields": []
+    },
+    "DecisionRecord": {
+      "scope": "site",
+      "table": "decision_record",
+      "temporal": false,
+      "mutable": false,
+      "retention_class": "derived",
+      "unique": [],
+      "indexes": [
+        [
+          "tenant_id",
+          "id"
+        ],
+        [
+          "tenant_id",
+          "site_id",
+          "recorded_at"
+        ]
+      ],
+      "deletion": "tenant_cascade",
+      "primary_key": [
+        "tenant_id",
+        "id"
+      ],
+      "required_fields": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "knowledge_seq",
+        "input_bundle_id",
+        "twin_revision_id",
+        "strategy_revision_id",
+        "skill_digests",
+        "model_result_ids",
+        "selected_ids",
+        "deferred_ids",
+        "rationale",
+        "policy_version",
+        "next_wake_reason"
+      ],
+      "optional_fields": []
+    }
+  }
+}
