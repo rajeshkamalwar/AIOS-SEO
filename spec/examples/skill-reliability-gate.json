@@ -1,0 +1,104 @@
+{
+  "skill_id": "seo.reliability-gate",
+  "version": "1.0.0-draft",
+  "status": "draft",
+  "source_pins": [
+    {
+      "source_id": "internal",
+      "source_class": "internal_policy",
+      "uri": "repo:AGENTS.md",
+      "revision_sha256": "a249a90474130e6a496de0b88a243ea992372fa6287c07d86d192fd958a60cf0",
+      "excerpt_sha256": "aabbe6a8f62ff0c7273ee1748a31f363c9807c2c836a4fe1b0902e12ca349408",
+      "locator": "AGENTS 5, 6, 7, 12, 16; note is an AIOS paraphrase"
+    }
+  ],
+  "last_verified": "2026-09-15T02:46:37Z",
+  "freshness_deadline": "2026-09-16T02:46:37Z",
+  "applicability": {
+    "archetypes": [
+      "local_service",
+      "hybrid"
+    ],
+    "page_types": [
+      "home",
+      "service",
+      "about",
+      "contact"
+    ],
+    "languages": [
+      "en"
+    ],
+    "on_unknown": "provisional"
+  },
+  "capability_dependencies": [
+    "CAP-AUDIT-02"
+  ],
+  "evidence_requirements": [
+    {
+      "kind": "site_scope",
+      "minimum_count": 1,
+      "max_age_seconds": 86400,
+      "coverage": "partial_allowed",
+      "on_missing": "abstain"
+    }
+  ],
+  "procedure": [
+    {
+      "step_id": "evaluate",
+      "operation": "reliability_v1",
+      "executor": "deterministic",
+      "tool_id": null,
+      "input_kinds": [
+        "site_scope"
+      ],
+      "output_kind": "records",
+      "on_failure": "abstain"
+    }
+  ],
+  "output_schema": "https://schemas.aios-seo.invalid/v1/skill-output.schema.json",
+  "tool_permissions": [
+    {
+      "tool_id": "artifact.read_scoped",
+      "version": "1.0.0",
+      "max_calls": 750
+    },
+    {
+      "tool_id": "work.quarantine",
+      "version": "1.0.0",
+      "max_calls": 750
+    }
+  ],
+  "external_authority": "read_only",
+  "forbidden_behavior": [
+    "website_write",
+    "submission",
+    "credential_access",
+    "cross_tenant",
+    "source_fabrication",
+    "shell_execution"
+  ],
+  "policy_constraints": [
+    "discovery-v1",
+    "local-synthetic-v1"
+  ],
+  "validation": [
+    "schema",
+    "scope",
+    "evidence",
+    "freshness"
+  ],
+  "fixtures": [
+    "static-service"
+  ],
+  "negative_fixtures": [
+    "skill-revoked"
+  ],
+  "evaluation_gates": [
+    "Q01",
+    "Q02",
+    "Q03"
+  ],
+  "deprecation": null,
+  "revocation": null,
+  "replacement": null
+}

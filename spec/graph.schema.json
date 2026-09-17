@@ -1,0 +1,198 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.aios-seo.invalid/v1/graph.schema.json",
+  "type": "object",
+  "properties": {
+    "site_id": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+    },
+    "watermark": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "known_at": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+    },
+    "valid_at": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+    },
+    "view": {
+      "enum": [
+        "client",
+        "expert"
+      ]
+    },
+    "nodes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "type": {
+            "enum": [
+              "business",
+              "page",
+              "offering",
+              "audience",
+              "topic",
+              "intent",
+              "query",
+              "location",
+              "competitor"
+            ]
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          },
+          "basis": {
+            "enum": [
+              "observed",
+              "inferred",
+              "confirmed"
+            ]
+          },
+          "evidence_ids": {
+            "type": "array",
+            "items": {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+            },
+            "minItems": 0,
+            "maxItems": 5000,
+            "uniqueItems": true
+          },
+          "support": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/support"
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "label",
+          "basis",
+          "evidence_ids",
+          "support"
+        ],
+        "additionalProperties": false
+      },
+      "maxItems": 200
+    },
+    "edges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "subject_id": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "predicate": {
+            "enum": [
+              "business_offers",
+              "serves_location",
+              "page_describes_offering",
+              "page_mentions_entity",
+              "page_links_to",
+              "declares_canonical"
+            ]
+          },
+          "object_id": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "assertion_id": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "basis": {
+            "enum": [
+              "observed",
+              "inferred",
+              "confirmed"
+            ]
+          },
+          "evidence_ids": {
+            "type": "array",
+            "items": {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+            },
+            "minItems": 1,
+            "maxItems": 5000,
+            "uniqueItems": true
+          },
+          "support": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/support"
+          },
+          "valid_from": {
+            "anyOf": [
+              {
+                "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "valid_to": {
+            "anyOf": [
+              {
+                "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "recorded_at": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+          }
+        },
+        "required": [
+          "id",
+          "subject_id",
+          "predicate",
+          "object_id",
+          "assertion_id",
+          "basis",
+          "evidence_ids",
+          "support",
+          "valid_from",
+          "valid_to",
+          "recorded_at"
+        ],
+        "additionalProperties": false
+      },
+      "maxItems": 400
+    },
+    "truncated": {
+      "type": "boolean"
+    },
+    "next_cursor": {
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "site_id",
+    "watermark",
+    "known_at",
+    "valid_at",
+    "view",
+    "nodes",
+    "edges",
+    "truncated",
+    "next_cursor"
+  ],
+  "additionalProperties": false
+}

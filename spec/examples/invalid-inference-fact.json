@@ -1,0 +1,32 @@
+{
+  "claims": [
+    {
+      "field": "offering",
+      "value": "Household pipe repair",
+      "basis": "confirmed",
+      "evidence_ids": [
+        "5c3290bb-1f22-5ef3-9129-a91ae46ec01a"
+      ],
+      "locator": "bytes:169:210",
+      "support": {
+        "source_applicability": "applicable",
+        "integrity": "verified",
+        "coverage": "complete_in_scope",
+        "identity": "provisional",
+        "inference": "provisional",
+        "reasons": [
+          "Public text is not owner confirmation."
+        ]
+      }
+    }
+  ],
+  "unknown_fields": [
+    "rankings",
+    "revenue",
+    "service_radius"
+  ],
+  "questions": [
+    "Which areas do you serve?"
+  ],
+  "outcome": "completed"
+}

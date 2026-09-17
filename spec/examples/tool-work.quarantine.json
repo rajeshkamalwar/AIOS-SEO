@@ -1,0 +1,12 @@
+{
+  "tool_id": "work.quarantine",
+  "tool_version": "1.0.0",
+  "invocation_id": "4f7b1779-c702-5fcf-bca4-96bf730c2e3d",
+  "mission_id": "9cc683b5-73d1-5fb8-b4b4-274a9aee6bd0",
+  "tenant_id": "2ba1e8ea-3ea6-5c40-9676-bf7200063cd1",
+  "site_id": "9bfdbbf9-3da6-525e-800d-9def08c4d573",
+  "args": {
+    "mission_id": "9cc683b5-73d1-5fb8-b4b4-274a9aee6bd0",
+    "reason": "scope_denied"
+  }
+}

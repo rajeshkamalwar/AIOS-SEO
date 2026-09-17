@@ -1,0 +1,120 @@
+{
+  "skill_id": "seo.directive-baseline",
+  "version": "1.0.0-draft",
+  "status": "draft",
+  "source_pins": [
+    {
+      "source_id": "directives",
+      "source_class": "normative_official",
+      "uri": "https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag",
+      "revision_sha256": "fc624b6db34b567332de4b451c91a9e989cc18ae3122844f31aa388a034297fe",
+      "excerpt_sha256": "b9c0ca7785f14bab88e8649ddc4f61550339ccb0a2129100579efb40515894b2",
+      "locator": "The robots meta tag"
+    },
+    {
+      "source_id": "robots",
+      "source_class": "normative_official",
+      "uri": "https://www.rfc-editor.org/rfc/rfc9309.txt",
+      "revision_sha256": "f633915daaa15b943cae56545d333bcf3ba4d156599e4555499686d6699fb207",
+      "excerpt_sha256": "a80cb50ce30f5ccb1578beeaa48db6efafe30516191051e7a77beb493b50f9aa",
+      "locator": "The Robots Exclusion Protocol"
+    }
+  ],
+  "last_verified": "2026-09-15T02:46:37Z",
+  "freshness_deadline": "2026-09-16T02:46:37Z",
+  "applicability": {
+    "archetypes": [
+      "local_service",
+      "hybrid"
+    ],
+    "page_types": [
+      "home",
+      "service",
+      "about",
+      "contact"
+    ],
+    "languages": [
+      "en"
+    ],
+    "on_unknown": "provisional"
+  },
+  "capability_dependencies": [
+    "CAP-IDX-01"
+  ],
+  "evidence_requirements": [
+    {
+      "kind": "headers",
+      "minimum_count": 1,
+      "max_age_seconds": 86400,
+      "coverage": "partial_allowed",
+      "on_missing": "abstain"
+    },
+    {
+      "kind": "raw_html",
+      "minimum_count": 1,
+      "max_age_seconds": 86400,
+      "coverage": "partial_allowed",
+      "on_missing": "abstain"
+    }
+  ],
+  "procedure": [
+    {
+      "step_id": "evaluate",
+      "operation": "directives_v1",
+      "executor": "deterministic",
+      "tool_id": null,
+      "input_kinds": [
+        "headers",
+        "raw_html"
+      ],
+      "output_kind": "records",
+      "on_failure": "abstain"
+    }
+  ],
+  "output_schema": "https://schemas.aios-seo.invalid/v1/skill-output.schema.json",
+  "tool_permissions": [
+    {
+      "tool_id": "artifact.read_scoped",
+      "version": "1.0.0",
+      "max_calls": 750
+    },
+    {
+      "tool_id": "robots.evaluate",
+      "version": "1.0.0",
+      "max_calls": 750
+    }
+  ],
+  "external_authority": "read_only",
+  "forbidden_behavior": [
+    "website_write",
+    "submission",
+    "credential_access",
+    "cross_tenant",
+    "source_fabrication",
+    "shell_execution"
+  ],
+  "policy_constraints": [
+    "discovery-v1",
+    "local-synthetic-v1"
+  ],
+  "validation": [
+    "schema",
+    "scope",
+    "evidence",
+    "freshness"
+  ],
+  "fixtures": [
+    "static-service"
+  ],
+  "negative_fixtures": [
+    "blocked-noindex"
+  ],
+  "evaluation_gates": [
+    "Q01",
+    "Q02",
+    "Q03"
+  ],
+  "deprecation": null,
+  "revocation": null,
+  "replacement": null
+}

@@ -1,0 +1,29 @@
+{
+  "record_type": "BusinessTwin",
+  "id": "f9212201-a5a4-59d8-8411-163671312eeb",
+  "schema_version": 1,
+  "version": 1,
+  "created_at": "2026-09-17T00:00:00Z",
+  "recorded_at": "2026-09-17T00:00:00Z",
+  "updated_at": "2026-09-17T00:00:00Z",
+  "deleted_at": null,
+  "state": "provisional",
+  "retention_class": "derived",
+  "provenance_ids": [],
+  "tenant_id": "2ba1e8ea-3ea6-5c40-9676-bf7200063cd1",
+  "knowledge_seq": 1,
+  "site_id": "9bfdbbf9-3da6-525e-800d-9def08c4d573",
+  "series_id": "a5893e18-6914-5d98-931f-50e638578e40",
+  "valid_from": "2026-09-17T00:00:00Z",
+  "valid_to": null,
+  "superseded_at": null,
+  "superseded_seq": null,
+  "business_id": "dc75c5f7-c5ca-59c7-aaae-267ba0f90b04",
+  "assertion_ids": [
+    "25b550f5-ac4f-5aae-ac07-ec981f3dca7d"
+  ],
+  "prior_revision_id": null,
+  "question_ids": [
+    "confirm-service-area"
+  ]
+}

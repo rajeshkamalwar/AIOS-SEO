@@ -1,0 +1,12 @@
+{
+  "tool_id": "graph.query_scoped",
+  "tool_version": "1.0.0",
+  "invocation_id": "ba408350-34f6-5f59-ac95-9afd79f58370",
+  "mission_id": "9cc683b5-73d1-5fb8-b4b4-274a9aee6bd0",
+  "tenant_id": "2ba1e8ea-3ea6-5c40-9676-bf7200063cd1",
+  "site_id": "9bfdbbf9-3da6-525e-800d-9def08c4d573",
+  "args": {
+    "root_id": "aae5f069-b45d-5f5f-8d0f-d0271e742216",
+    "radius": 2
+  }
+}

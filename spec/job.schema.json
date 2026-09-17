@@ -1,0 +1,150 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.aios-seo.invalid/v1/job.schema.json",
+  "type": "object",
+  "properties": {
+    "job_id": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+    },
+    "tenant_id": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+    },
+    "site_id": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+    },
+    "crawl_id": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+    },
+    "kind": {
+      "enum": [
+        "crawl",
+        "fetch",
+        "render",
+        "infer",
+        "evaluate",
+        "project",
+        "audit",
+        "delete"
+      ]
+    },
+    "state": {
+      "enum": [
+        "queued",
+        "leased",
+        "retry_wait",
+        "completed",
+        "failed",
+        "dead_letter",
+        "cancelled"
+      ]
+    },
+    "input_ref": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+    },
+    "idempotency_key": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4096
+    },
+    "expected_input_hash": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/hash"
+    },
+    "attempt": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 3
+    },
+    "max_attempts": {
+      "const": 3
+    },
+    "available_at": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+    },
+    "deadline": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+    },
+    "lease_until": {
+      "anyOf": [
+        {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "lease_token": {
+      "anyOf": [
+        {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "error": {
+      "anyOf": [
+        {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/error"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "job_id",
+    "tenant_id",
+    "site_id",
+    "crawl_id",
+    "kind",
+    "state",
+    "input_ref",
+    "idempotency_key",
+    "expected_input_hash",
+    "attempt",
+    "max_attempts",
+    "available_at",
+    "deadline",
+    "lease_until",
+    "lease_token",
+    "error"
+  ],
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "state": {
+            "const": "leased"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "lease_until": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+          },
+          "lease_token": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "attempt": {
+            "minimum": 1
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "lease_until": {
+            "type": "null"
+          },
+          "lease_token": {
+            "type": "null"
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,1 @@
+Google supports the sitemap formats defined by the sitemaps protocol . Each format has its own benefits and shortcomings; choose

@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.aios-seo.invalid/v1/skill-output.schema.json",
+  "type": "object",
+  "properties": {
+    "records": {
+      "type": "array",
+      "items": {
+        "$ref": "https://schemas.aios-seo.invalid/v1/domain.schema.json"
+      },
+      "minItems": 0,
+      "maxItems": 5000,
+      "uniqueItems": true
+    },
+    "outcome": {
+      "enum": [
+        "completed",
+        "partial",
+        "abstained",
+        "failed"
+      ]
+    },
+    "missing_inputs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 4096
+      },
+      "minItems": 0,
+      "maxItems": 5000,
+      "uniqueItems": true
+    }
+  },
+  "required": [
+    "records",
+    "outcome",
+    "missing_inputs"
+  ],
+  "additionalProperties": false
+}

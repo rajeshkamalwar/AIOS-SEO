@@ -1,0 +1,252 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.aios-seo.invalid/v1/common.schema.json",
+  "$defs": {
+    "id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "time": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+(?:-[a-z0-9.-]+)?$"
+    },
+    "source_class": {
+      "enum": [
+        "normative_official",
+        "first_party_observation",
+        "experiment",
+        "external_research",
+        "model_inference",
+        "internal_policy"
+      ]
+    },
+    "unknown": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "enum": [
+            "unknown"
+          ]
+        },
+        "reason": {
+          "enum": [
+            "not_connected",
+            "not_observed",
+            "not_applicable",
+            "partial",
+            "failed",
+            "redacted",
+            "quota_limited",
+            "stale",
+            "contradicted",
+            "policy_blocked"
+          ]
+        },
+        "evidence_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "status",
+        "reason",
+        "evidence_ids"
+      ],
+      "additionalProperties": false
+    },
+    "support": {
+      "type": "object",
+      "properties": {
+        "source_applicability": {
+          "enum": [
+            "applicable",
+            "uncertain",
+            "inapplicable"
+          ]
+        },
+        "integrity": {
+          "enum": [
+            "verified",
+            "unverified",
+            "failed"
+          ]
+        },
+        "coverage": {
+          "enum": [
+            "complete_in_scope",
+            "partial",
+            "unknown"
+          ]
+        },
+        "identity": {
+          "enum": [
+            "resolved",
+            "provisional",
+            "disputed"
+          ]
+        },
+        "inference": {
+          "enum": [
+            "deterministic",
+            "supported",
+            "provisional",
+            "contradicted",
+            "unknown"
+          ]
+        },
+        "reasons": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "source_applicability",
+        "integrity",
+        "coverage",
+        "identity",
+        "inference",
+        "reasons"
+      ],
+      "additionalProperties": false
+    },
+    "scope": {
+      "type": "object",
+      "properties": {
+        "tenant_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "site_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        }
+      },
+      "required": [
+        "tenant_id",
+        "site_id"
+      ],
+      "additionalProperties": false
+    },
+    "budget": {
+      "type": "object",
+      "properties": {
+        "http_requests": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 750
+        },
+        "render_requests": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2000
+        },
+        "render_pages": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 20
+        },
+        "model_calls": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8
+        },
+        "tokens": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 40000
+        },
+        "cost_microusd": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2000000
+        },
+        "deadline": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        }
+      },
+      "required": [
+        "http_requests",
+        "render_requests",
+        "render_pages",
+        "model_calls",
+        "tokens",
+        "cost_microusd",
+        "deadline"
+      ],
+      "additionalProperties": false
+    },
+    "error": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "enum": [
+            "invalid_input",
+            "scope_denied",
+            "forbidden_destination",
+            "robots_unavailable",
+            "robots_denied",
+            "source_unavailable",
+            "timeout",
+            "response_too_large",
+            "parse_failed",
+            "policy_blocked",
+            "budget_exhausted",
+            "cancelled",
+            "skill_revoked",
+            "skill_stale",
+            "evidence_insufficient",
+            "schema_invalid",
+            "model_unavailable",
+            "lease_lost",
+            "conflict",
+            "projection_pending",
+            "internal_error"
+          ]
+        },
+        "retryable": {
+          "type": "boolean"
+        },
+        "detail": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "evidence_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "code",
+        "retryable",
+        "detail",
+        "evidence_ids"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

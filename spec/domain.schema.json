@@ -1,0 +1,6525 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.aios-seo.invalid/v1/domain.schema.json",
+  "$defs": {
+    "Tenant": {
+      "type": "object",
+      "properties": {
+        "record_type": {
+          "const": "Tenant"
+        },
+        "id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "recorded_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "updated_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "deleted_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": [
+            "active",
+            "suspended",
+            "deleting"
+          ]
+        },
+        "retention_class": {
+          "const": "identity"
+        },
+        "provenance_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "policy_profile_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "deletion_epoch": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "name",
+        "policy_profile_id",
+        "deletion_epoch"
+      ],
+      "additionalProperties": false
+    },
+    "User": {
+      "type": "object",
+      "properties": {
+        "record_type": {
+          "const": "User"
+        },
+        "id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "recorded_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "updated_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "deleted_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": [
+            "active",
+            "disabled"
+          ]
+        },
+        "retention_class": {
+          "const": "identity"
+        },
+        "provenance_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "issuer": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "subject": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "display_name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        }
+      },
+      "required": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "issuer",
+        "subject"
+      ],
+      "additionalProperties": false
+    },
+    "Membership": {
+      "type": "object",
+      "properties": {
+        "record_type": {
+          "const": "Membership"
+        },
+        "id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "recorded_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "updated_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "deleted_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": [
+            "active",
+            "revoked"
+          ]
+        },
+        "retention_class": {
+          "const": "identity"
+        },
+        "provenance_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "tenant_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "user_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "role": {
+          "enum": [
+            "owner",
+            "editor",
+            "viewer",
+            "expert"
+          ]
+        },
+        "site_scope_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "all_sites": {
+          "type": "boolean"
+        },
+        "knowledge_seq": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "user_id",
+        "role",
+        "site_scope_ids",
+        "all_sites",
+        "knowledge_seq"
+      ],
+      "additionalProperties": false
+    },
+    "Business": {
+      "type": "object",
+      "properties": {
+        "record_type": {
+          "const": "Business"
+        },
+        "id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "recorded_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "updated_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "deleted_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": [
+            "active"
+          ]
+        },
+        "retention_class": {
+          "const": "identity"
+        },
+        "provenance_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "tenant_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "confirmed_by_user_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "knowledge_seq": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "name",
+        "knowledge_seq"
+      ],
+      "additionalProperties": false
+    },
+    "Site": {
+      "type": "object",
+      "properties": {
+        "record_type": {
+          "const": "Site"
+        },
+        "id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "recorded_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "updated_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "deleted_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": [
+            "provisional",
+            "observed",
+            "archived"
+          ]
+        },
+        "retention_class": {
+          "const": "identity"
+        },
+        "provenance_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "tenant_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "site_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "business_id": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "submitted_url": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "normalized_origin": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "normalization_version": {
+          "const": "url-v1"
+        },
+        "origins": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          },
+          "minItems": 1,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "knowledge_seq": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "business_id",
+        "submitted_url",
+        "normalized_origin",
+        "normalization_version",
+        "origins",
+        "knowledge_seq"
+      ],
+      "additionalProperties": false
+    },
+    "SiteOwnership": {
+      "type": "object",
+      "properties": {
+        "record_type": {
+          "const": "SiteOwnership"
+        },
+        "id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "recorded_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "updated_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "deleted_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": [
+            "unverified",
+            "pending",
+            "verified",
+            "expired",
+            "revoked"
+          ]
+        },
+        "retention_class": {
+          "const": "identity"
+        },
+        "provenance_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "tenant_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "site_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "method": {
+          "enum": [
+            "none",
+            "dns_txt",
+            "http_file"
+          ]
+        },
+        "verified_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "proof_evidence_id": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "authority": {
+          "const": "no_external_write"
+        },
+        "knowledge_seq": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "method",
+        "verified_at",
+        "expires_at",
+        "proof_evidence_id",
+        "authority",
+        "knowledge_seq"
+      ],
+      "additionalProperties": false
+    },
+    "Crawl": {
+      "type": "object",
+      "properties": {
+        "record_type": {
+          "const": "Crawl"
+        },
+        "id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "recorded_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "updated_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "deleted_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": [
+            "queued",
+            "running",
+            "complete_in_scope",
+            "partial",
+            "blocked",
+            "failed",
+            "cancelled"
+          ]
+        },
+        "retention_class": {
+          "const": "operations"
+        },
+        "provenance_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "tenant_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "site_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "submitted_by": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "policy_version": {
+          "const": "discovery-v1"
+        },
+        "input_hash": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/hash"
+        },
+        "idempotency_key": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "stage": {
+          "enum": [
+            "validating",
+            "discovering",
+            "collecting",
+            "analyzing",
+            "auditing",
+            "published"
+          ]
+        },
+        "budget": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/budget"
+        },
+        "started_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "completed_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "completion_reason": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "knowledge_seq": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "submitted_by",
+        "policy_version",
+        "input_hash",
+        "idempotency_key",
+        "stage",
+        "budget",
+        "started_at",
+        "completed_at",
+        "completion_reason",
+        "knowledge_seq"
+      ],
+      "additionalProperties": false
+    },
+    "CrawlTarget": {
+      "type": "object",
+      "properties": {
+        "record_type": {
+          "const": "CrawlTarget"
+        },
+        "id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "recorded_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "updated_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "deleted_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": [
+            "discovered",
+            "queued",
+            "fetching",
+            "visited",
+            "failed",
+            "excluded",
+            "deferred"
+          ]
+        },
+        "retention_class": {
+          "const": "operations"
+        },
+        "provenance_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "tenant_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "site_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "crawl_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "url": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "url_key": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "depth": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "seed_kind": {
+          "enum": [
+            "submitted",
+            "sitemap",
+            "link",
+            "redirect"
+          ]
+        },
+        "discovered_from_id": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "admitted": {
+          "type": "boolean"
+        },
+        "priority": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "attempts": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "knowledge_seq": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "crawl_id",
+        "url",
+        "url_key",
+        "depth",
+        "seed_kind",
+        "discovered_from_id",
+        "admitted",
+        "priority",
+        "attempts",
+        "reason",
+        "knowledge_seq"
+      ],
+      "additionalProperties": false
+    },
+    "Page": {
+      "type": "object",
+      "properties": {
+        "record_type": {
+          "const": "Page"
+        },
+        "id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "recorded_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "updated_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "deleted_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": [
+            "active"
+          ]
+        },
+        "retention_class": {
+          "const": "derived"
+        },
+        "provenance_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "tenant_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "site_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "url": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "url_key": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "page_type": {
+          "enum": [
+            "home",
+            "service",
+            "product",
+            "category",
+            "article",
+            "about",
+            "contact",
+            "other",
+            "unknown"
+          ]
+        },
+        "type_support": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/support"
+        },
+        "knowledge_seq": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "url",
+        "url_key",
+        "page_type",
+        "type_support",
+        "knowledge_seq"
+      ],
+      "additionalProperties": false
+    },
+    "PageSnapshot": {
+      "type": "object",
+      "properties": {
+        "record_type": {
+          "const": "PageSnapshot"
+        },
+        "id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "recorded_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "updated_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "deleted_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": [
+            "captured",
+            "partial"
+          ]
+        },
+        "retention_class": {
+          "const": "raw"
+        },
+        "provenance_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "tenant_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "site_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "series_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "valid_from": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "valid_to": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "superseded_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "page_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "crawl_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "observation_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "evidence_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "observed_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "status_code": {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 599
+        },
+        "content_hash": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/hash"
+        },
+        "main_text_hash": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/hash"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "truncated": {
+          "type": "boolean"
+        },
+        "knowledge_seq": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "superseded_seq": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "series_id",
+        "valid_from",
+        "valid_to",
+        "superseded_at",
+        "page_id",
+        "crawl_id",
+        "observation_id",
+        "evidence_id",
+        "observed_at",
+        "status_code",
+        "content_hash",
+        "main_text_hash",
+        "truncated",
+        "knowledge_seq",
+        "superseded_seq"
+      ],
+      "additionalProperties": false
+    },
+    "RenderSnapshot": {
+      "type": "object",
+      "properties": {
+        "record_type": {
+          "const": "RenderSnapshot"
+        },
+        "id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "recorded_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "updated_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "deleted_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": [
+            "captured",
+            "timeout",
+            "policy_limited",
+            "failed"
+          ]
+        },
+        "retention_class": {
+          "const": "raw"
+        },
+        "provenance_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "tenant_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "site_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "series_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "valid_from": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "valid_to": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "superseded_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "page_snapshot_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "observation_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "evidence_id": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "observed_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "browser_build": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "context_hash": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/hash"
+        },
+        "sample_offset_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "critical_text_hash": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/hash"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "pending_requests": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "knowledge_seq": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "superseded_seq": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "series_id",
+        "valid_from",
+        "valid_to",
+        "superseded_at",
+        "page_snapshot_id",
+        "observation_id",
+        "evidence_id",
+        "observed_at",
+        "browser_build",
+        "context_hash",
+        "sample_offset_ms",
+        "critical_text_hash",
+        "pending_requests",
+        "knowledge_seq",
+        "superseded_seq"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "state": {
+                "const": "captured"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "evidence_id": {
+                "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "ResourceObservation": {
+      "type": "object",
+      "properties": {
+        "record_type": {
+          "const": "ResourceObservation"
+        },
+        "id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "recorded_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "updated_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "deleted_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": [
+            "received",
+            "blocked",
+            "failed"
+          ]
+        },
+        "retention_class": {
+          "const": "raw"
+        },
+        "provenance_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "tenant_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "site_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "render_snapshot_id": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "crawl_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "url": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "method": {
+          "enum": [
+            "GET",
+            "HEAD",
+            "POST",
+            "PUT",
+            "PATCH",
+            "DELETE",
+            "OPTIONS",
+            "OTHER"
+          ]
+        },
+        "resource_type": {
+          "enum": [
+            "document",
+            "script",
+            "stylesheet",
+            "image",
+            "font",
+            "xhr",
+            "other"
+          ]
+        },
+        "status_code": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 100,
+              "maximum": 599
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error_code": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "observed_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "knowledge_seq": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "render_snapshot_id",
+        "crawl_id",
+        "url",
+        "method",
+        "resource_type",
+        "status_code",
+        "error_code",
+        "observed_at",
+        "bytes",
+        "knowledge_seq"
+      ],
+      "additionalProperties": false
+    },
+    "BusinessTwin": {
+      "type": "object",
+      "properties": {
+        "record_type": {
+          "const": "BusinessTwin"
+        },
+        "id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "recorded_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "updated_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "deleted_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": [
+            "provisional",
+            "reviewed"
+          ]
+        },
+        "retention_class": {
+          "const": "derived"
+        },
+        "provenance_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "tenant_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "site_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "series_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "valid_from": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "valid_to": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "superseded_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "business_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "assertion_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "prior_revision_id": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "question_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "knowledge_seq": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "superseded_seq": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "series_id",
+        "valid_from",
+        "valid_to",
+        "superseded_at",
+        "business_id",
+        "assertion_ids",
+        "prior_revision_id",
+        "question_ids",
+        "knowledge_seq",
+        "superseded_seq"
+      ],
+      "additionalProperties": false
+    },
+    "TwinAssertion": {
+      "type": "object",
+      "properties": {
+        "record_type": {
+          "const": "TwinAssertion"
+        },
+        "id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "recorded_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "updated_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "deleted_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": [
+            "supported",
+            "provisional",
+            "disputed",
+            "refuted"
+          ]
+        },
+        "retention_class": {
+          "const": "derived"
+        },
+        "provenance_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "tenant_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "site_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "series_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "valid_from": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "valid_to": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "superseded_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "business_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "field": {
+          "enum": [
+            "name",
+            "archetype",
+            "offering",
+            "location",
+            "audience",
+            "conversion_goal",
+            "constraint"
+          ]
+        },
+        "value": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "basis": {
+          "enum": [
+            "observed",
+            "inferred",
+            "confirmed"
+          ]
+        },
+        "observation_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "support": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/support"
+        },
+        "knowledge_seq": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "superseded_seq": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "series_id",
+        "valid_from",
+        "valid_to",
+        "superseded_at",
+        "business_id",
+        "field",
+        "value",
+        "basis",
+        "observation_ids",
+        "support",
+        "knowledge_seq",
+        "superseded_seq"
+      ],
+      "additionalProperties": false
+    },
+    "Entity": {
+      "type": "object",
+      "properties": {
+        "record_type": {
+          "const": "Entity"
+        },
+        "id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "recorded_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "updated_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "deleted_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": [
+            "active",
+            "merged",
+            "retired"
+          ]
+        },
+        "retention_class": {
+          "const": "derived"
+        },
+        "provenance_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "tenant_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "site_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "entity_type": {
+          "enum": [
+            "business",
+            "page",
+            "offering",
+            "audience",
+            "query",
+            "topic",
+            "intent",
+            "location",
+            "competitor"
+          ]
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "external_key": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "knowledge_seq": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "entity_type",
+        "label",
+        "knowledge_seq"
+      ],
+      "additionalProperties": false
+    },
+    "EntityAssertion": {
+      "type": "object",
+      "properties": {
+        "record_type": {
+          "const": "EntityAssertion"
+        },
+        "id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "recorded_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "updated_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "deleted_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": [
+            "supported",
+            "provisional",
+            "disputed",
+            "refuted"
+          ]
+        },
+        "retention_class": {
+          "const": "derived"
+        },
+        "provenance_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "tenant_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "site_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "series_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "valid_from": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "valid_to": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "superseded_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "subject_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "predicate": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "object_id": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "literal": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "basis": {
+          "enum": [
+            "observed",
+            "inferred",
+            "confirmed"
+          ]
+        },
+        "evidence_bundle_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "support": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/support"
+        },
+        "knowledge_seq": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "superseded_seq": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "series_id",
+        "valid_from",
+        "valid_to",
+        "superseded_at",
+        "subject_id",
+        "predicate",
+        "object_id",
+        "literal",
+        "basis",
+        "evidence_bundle_id",
+        "support",
+        "knowledge_seq",
+        "superseded_seq"
+      ],
+      "additionalProperties": false,
+      "oneOf": [
+        {
+          "properties": {
+            "object_id": {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+            },
+            "literal": {
+              "type": "null"
+            }
+          }
+        },
+        {
+          "properties": {
+            "object_id": {
+              "type": "null"
+            },
+            "literal": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096
+            }
+          }
+        }
+      ]
+    },
+    "Relationship": {
+      "type": "object",
+      "properties": {
+        "record_type": {
+          "const": "Relationship"
+        },
+        "id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "recorded_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "updated_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "deleted_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": [
+            "active",
+            "withdrawn"
+          ]
+        },
+        "retention_class": {
+          "const": "derived"
+        },
+        "provenance_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "tenant_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "site_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "series_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "valid_from": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "valid_to": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "superseded_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "subject_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "predicate": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "object_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "assertion_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "knowledge_seq": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "superseded_seq": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "series_id",
+        "valid_from",
+        "valid_to",
+        "superseded_at",
+        "subject_id",
+        "predicate",
+        "object_id",
+        "assertion_id",
+        "knowledge_seq",
+        "superseded_seq"
+      ],
+      "additionalProperties": false
+    },
+    "Query": {
+      "type": "object",
+      "properties": {
+        "record_type": {
+          "const": "Query"
+        },
+        "id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "recorded_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "updated_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "deleted_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": [
+            "active"
+          ]
+        },
+        "retention_class": {
+          "const": "derived"
+        },
+        "provenance_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "tenant_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "site_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "entity_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "language": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "origin": {
+          "enum": [
+            "observed",
+            "inferred"
+          ]
+        },
+        "knowledge_seq": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "entity_id",
+        "text",
+        "language",
+        "origin",
+        "knowledge_seq"
+      ],
+      "additionalProperties": false
+    },
+    "Topic": {
+      "type": "object",
+      "properties": {
+        "record_type": {
+          "const": "Topic"
+        },
+        "id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "recorded_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "updated_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "deleted_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": [
+            "active"
+          ]
+        },
+        "retention_class": {
+          "const": "derived"
+        },
+        "provenance_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "tenant_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "site_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "entity_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "language": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "ontology_version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "knowledge_seq": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "entity_id",
+        "label",
+        "language",
+        "ontology_version",
+        "knowledge_seq"
+      ],
+      "additionalProperties": false
+    },
+    "Intent": {
+      "type": "object",
+      "properties": {
+        "record_type": {
+          "const": "Intent"
+        },
+        "id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "recorded_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "updated_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "deleted_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": [
+            "active"
+          ]
+        },
+        "retention_class": {
+          "const": "derived"
+        },
+        "provenance_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "tenant_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "site_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "entity_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "intent_type": {
+          "enum": [
+            "informational",
+            "commercial",
+            "transactional",
+            "navigational",
+            "support",
+            "mixed",
+            "unknown"
+          ]
+        },
+        "knowledge_seq": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "entity_id",
+        "intent_type",
+        "knowledge_seq"
+      ],
+      "additionalProperties": false
+    },
+    "Location": {
+      "type": "object",
+      "properties": {
+        "record_type": {
+          "const": "Location"
+        },
+        "id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "recorded_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "updated_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "deleted_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": [
+            "active"
+          ]
+        },
+        "retention_class": {
+          "const": "derived"
+        },
+        "provenance_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "tenant_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "site_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "entity_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "role": {
+          "enum": [
+            "premises",
+            "service_area",
+            "mentioned",
+            "unknown"
+          ]
+        },
+        "confirmed": {
+          "type": "boolean"
+        },
+        "knowledge_seq": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "entity_id",
+        "label",
+        "role",
+        "confirmed",
+        "knowledge_seq"
+      ],
+      "additionalProperties": false
+    },
+    "Competitor": {
+      "type": "object",
+      "properties": {
+        "record_type": {
+          "const": "Competitor"
+        },
+        "id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "recorded_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "updated_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "deleted_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": [
+            "active"
+          ]
+        },
+        "retention_class": {
+          "const": "derived"
+        },
+        "provenance_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "tenant_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "site_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "entity_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "origin": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "competition_type": {
+          "enum": [
+            "search",
+            "commercial",
+            "unknown"
+          ]
+        },
+        "context": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "knowledge_seq": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "entity_id",
+        "origin",
+        "competition_type",
+        "context",
+        "knowledge_seq"
+      ],
+      "additionalProperties": false
+    },
+    "Observation": {
+      "type": "object",
+      "properties": {
+        "record_type": {
+          "const": "Observation"
+        },
+        "id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "recorded_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "updated_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "deleted_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": [
+            "observed",
+            "partial",
+            "failed",
+            "not_observed"
+          ]
+        },
+        "retention_class": {
+          "const": "raw"
+        },
+        "provenance_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "tenant_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "site_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "sensor_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "sensor_version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "subject_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "evidence_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "observed_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "window_start": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "window_end": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "source_timezone": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "context_hash": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/hash"
+        },
+        "fresh_until": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "attempt_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "error": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/error"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "knowledge_seq": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "sensor_id",
+        "sensor_version",
+        "subject_id",
+        "evidence_ids",
+        "observed_at",
+        "window_start",
+        "window_end",
+        "source_timezone",
+        "context_hash",
+        "fresh_until",
+        "attempt_id",
+        "error",
+        "knowledge_seq"
+      ],
+      "additionalProperties": false
+    },
+    "Evidence": {
+      "type": "object",
+      "properties": {
+        "record_type": {
+          "const": "Evidence"
+        },
+        "id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "recorded_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "updated_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "deleted_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": [
+            "available",
+            "redacted",
+            "expired"
+          ]
+        },
+        "retention_class": {
+          "const": "raw"
+        },
+        "provenance_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "tenant_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "site_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "artifact_key": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "sha256": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/hash"
+        },
+        "mime_type": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "captured_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "source_uri": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "source_class": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/source_class"
+        },
+        "locator": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "redaction_version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "expires_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "knowledge_seq": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "artifact_key",
+        "sha256",
+        "mime_type",
+        "bytes",
+        "captured_at",
+        "source_uri",
+        "source_class",
+        "locator",
+        "redaction_version",
+        "expires_at",
+        "knowledge_seq"
+      ],
+      "additionalProperties": false
+    },
+    "EvidenceBundle": {
+      "type": "object",
+      "properties": {
+        "record_type": {
+          "const": "EvidenceBundle"
+        },
+        "id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "recorded_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "updated_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "deleted_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": [
+            "frozen"
+          ]
+        },
+        "retention_class": {
+          "const": "derived"
+        },
+        "provenance_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "tenant_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "site_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "evidence_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "observation_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "assertion_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "known_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "manifest_hash": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/hash"
+        },
+        "knowledge_seq": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "known_seq": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "evidence_ids",
+        "observation_ids",
+        "assertion_ids",
+        "known_at",
+        "manifest_hash",
+        "knowledge_seq",
+        "known_seq"
+      ],
+      "additionalProperties": false
+    },
+    "Belief": {
+      "type": "object",
+      "properties": {
+        "record_type": {
+          "const": "Belief"
+        },
+        "id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "recorded_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "updated_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "deleted_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": [
+            "supported",
+            "provisional",
+            "unknown",
+            "contradicted",
+            "stale"
+          ]
+        },
+        "retention_class": {
+          "const": "derived"
+        },
+        "provenance_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "tenant_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "site_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "series_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "valid_from": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "valid_to": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "superseded_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "assertion_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "evidence_bundle_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "support": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/support"
+        },
+        "fresh_until": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "assessment_method": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "knowledge_seq": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "superseded_seq": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "series_id",
+        "valid_from",
+        "valid_to",
+        "superseded_at",
+        "assertion_id",
+        "evidence_bundle_id",
+        "support",
+        "fresh_until",
+        "assessment_method",
+        "knowledge_seq",
+        "superseded_seq"
+      ],
+      "additionalProperties": false
+    },
+    "Hypothesis": {
+      "type": "object",
+      "properties": {
+        "record_type": {
+          "const": "Hypothesis"
+        },
+        "id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "recorded_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "updated_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "deleted_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": [
+            "proposed",
+            "supported",
+            "refuted",
+            "inconclusive"
+          ]
+        },
+        "retention_class": {
+          "const": "derived"
+        },
+        "provenance_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "tenant_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "site_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "series_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "valid_from": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "valid_to": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "superseded_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "statement": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "alternative_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "evidence_bundle_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "discriminating_test": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "knowledge_seq": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "superseded_seq": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "series_id",
+        "valid_from",
+        "valid_to",
+        "superseded_at",
+        "statement",
+        "alternative_ids",
+        "evidence_bundle_id",
+        "discriminating_test",
+        "knowledge_seq",
+        "superseded_seq"
+      ],
+      "additionalProperties": false
+    },
+    "Capability": {
+      "type": "object",
+      "properties": {
+        "record_type": {
+          "const": "Capability"
+        },
+        "id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "recorded_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "updated_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "deleted_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": [
+            "domain_specified",
+            "executable",
+            "deprecated",
+            "revoked"
+          ]
+        },
+        "retention_class": {
+          "const": "registry"
+        },
+        "provenance_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "capability_id": {
+          "type": "string",
+          "pattern": "^CAP-[A-Z]+-[0-9]{2}$"
+        },
+        "contract_version": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/version"
+        },
+        "definition_hash": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/hash"
+        }
+      },
+      "required": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "capability_id",
+        "contract_version",
+        "definition_hash"
+      ],
+      "additionalProperties": false
+    },
+    "Skill": {
+      "type": "object",
+      "properties": {
+        "record_type": {
+          "const": "Skill"
+        },
+        "id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "recorded_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "updated_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "deleted_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": [
+            "active",
+            "deprecated"
+          ]
+        },
+        "retention_class": {
+          "const": "registry"
+        },
+        "provenance_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "skill_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "owner_role": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        }
+      },
+      "required": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "skill_id",
+        "owner_role"
+      ],
+      "additionalProperties": false
+    },
+    "SkillRelease": {
+      "type": "object",
+      "properties": {
+        "record_type": {
+          "const": "SkillRelease"
+        },
+        "id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "recorded_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "updated_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "deleted_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": [
+            "draft",
+            "evaluated",
+            "approved",
+            "deprecated",
+            "revoked"
+          ]
+        },
+        "retention_class": {
+          "const": "registry"
+        },
+        "provenance_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "skill_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "semver": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/version"
+        },
+        "manifest_hash": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/hash"
+        },
+        "manifest_path": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "last_verified": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "fresh_until": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        }
+      },
+      "required": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "skill_id",
+        "semver",
+        "manifest_hash",
+        "manifest_path",
+        "last_verified",
+        "fresh_until"
+      ],
+      "additionalProperties": false
+    },
+    "Sensor": {
+      "type": "object",
+      "properties": {
+        "record_type": {
+          "const": "Sensor"
+        },
+        "id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "recorded_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "updated_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "deleted_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": [
+            "available",
+            "disabled"
+          ]
+        },
+        "retention_class": {
+          "const": "registry"
+        },
+        "provenance_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "sensor_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "sensor_version": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/version"
+        },
+        "class": {
+          "enum": [
+            "public",
+            "connected"
+          ]
+        },
+        "contract_hash": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/hash"
+        }
+      },
+      "required": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "sensor_id",
+        "sensor_version",
+        "class",
+        "contract_hash"
+      ],
+      "additionalProperties": false
+    },
+    "Connector": {
+      "type": "object",
+      "properties": {
+        "record_type": {
+          "const": "Connector"
+        },
+        "id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "recorded_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "updated_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "deleted_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": [
+            "not_connected",
+            "active",
+            "degraded",
+            "expired",
+            "revoked"
+          ]
+        },
+        "retention_class": {
+          "const": "identity"
+        },
+        "provenance_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "tenant_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "site_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "provider": {
+          "enum": [
+            "gsc",
+            "analytics",
+            "bing",
+            "other"
+          ]
+        },
+        "credential_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "granted_scopes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "property_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "knowledge_seq": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "provider",
+        "credential_ref",
+        "granted_scopes",
+        "property_ids",
+        "knowledge_seq"
+      ],
+      "additionalProperties": false
+    },
+    "ConnectorCoverage": {
+      "type": "object",
+      "properties": {
+        "record_type": {
+          "const": "ConnectorCoverage"
+        },
+        "id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "recorded_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "updated_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "deleted_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": [
+            "unknown",
+            "partial",
+            "complete_in_scope",
+            "not_applicable"
+          ]
+        },
+        "retention_class": {
+          "const": "derived"
+        },
+        "provenance_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "tenant_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "site_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "series_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "valid_from": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "valid_to": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "superseded_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "connector_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "sensor_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "requested_scope": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "window_start": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "window_end": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "available_metrics": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "missingness": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/unknown"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "knowledge_seq": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "superseded_seq": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "series_id",
+        "valid_from",
+        "valid_to",
+        "superseded_at",
+        "connector_id",
+        "sensor_id",
+        "requested_scope",
+        "window_start",
+        "window_end",
+        "available_metrics",
+        "missingness",
+        "knowledge_seq",
+        "superseded_seq"
+      ],
+      "additionalProperties": false
+    },
+    "AgentMission": {
+      "type": "object",
+      "properties": {
+        "record_type": {
+          "const": "AgentMission"
+        },
+        "id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "recorded_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "updated_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "deleted_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": [
+            "queued",
+            "running",
+            "completed",
+            "abstained",
+            "failed",
+            "cancelled"
+          ]
+        },
+        "retention_class": {
+          "const": "operations"
+        },
+        "provenance_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "tenant_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "site_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "crawl_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "manifest_hash": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/hash"
+        },
+        "input_bundle_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "output_schema_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "budget": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/budget"
+        },
+        "authority": {
+          "const": "read_only"
+        },
+        "deadline": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "knowledge_seq": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "crawl_id",
+        "manifest_hash",
+        "input_bundle_id",
+        "output_schema_id",
+        "budget",
+        "authority",
+        "deadline",
+        "knowledge_seq"
+      ],
+      "additionalProperties": false
+    },
+    "Strategy": {
+      "type": "object",
+      "properties": {
+        "record_type": {
+          "const": "Strategy"
+        },
+        "id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "recorded_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "updated_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "deleted_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": [
+            "active"
+          ]
+        },
+        "retention_class": {
+          "const": "derived"
+        },
+        "provenance_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "tenant_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "site_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "business_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "current_revision_id": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "knowledge_seq": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "business_id",
+        "current_revision_id",
+        "knowledge_seq"
+      ],
+      "additionalProperties": false
+    },
+    "StrategyRevision": {
+      "type": "object",
+      "properties": {
+        "record_type": {
+          "const": "StrategyRevision"
+        },
+        "id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "recorded_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "updated_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "deleted_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": [
+            "proposed",
+            "accepted",
+            "superseded"
+          ]
+        },
+        "retention_class": {
+          "const": "derived"
+        },
+        "provenance_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "tenant_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "site_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "series_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "valid_from": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "valid_to": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "superseded_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "strategy_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "evidence_bundle_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "objective": {
+          "enum": [
+            "understand",
+            "grow",
+            "protect"
+          ]
+        },
+        "selected_opportunity_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "deferred_opportunity_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "next_wake_reason": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "expires_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "knowledge_seq": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "superseded_seq": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "series_id",
+        "valid_from",
+        "valid_to",
+        "superseded_at",
+        "strategy_id",
+        "evidence_bundle_id",
+        "objective",
+        "selected_opportunity_ids",
+        "deferred_opportunity_ids",
+        "next_wake_reason",
+        "expires_at",
+        "knowledge_seq",
+        "superseded_seq"
+      ],
+      "additionalProperties": false
+    },
+    "Opportunity": {
+      "type": "object",
+      "properties": {
+        "record_type": {
+          "const": "Opportunity"
+        },
+        "id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "recorded_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "updated_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "deleted_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": [
+            "proposed",
+            "deferred",
+            "withdrawn"
+          ]
+        },
+        "retention_class": {
+          "const": "derived"
+        },
+        "provenance_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "tenant_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "site_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "series_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "valid_from": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "valid_to": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "superseded_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "capability_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "objective": {
+          "enum": [
+            "understand",
+            "grow",
+            "protect"
+          ]
+        },
+        "target_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 1,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "business_assertion_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "evidence_bundle_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "recommendation": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "benefit": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/unknown"
+        },
+        "priority": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3
+        },
+        "knowledge_seq": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "superseded_seq": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "series_id",
+        "valid_from",
+        "valid_to",
+        "superseded_at",
+        "capability_id",
+        "objective",
+        "target_ids",
+        "business_assertion_ids",
+        "evidence_bundle_id",
+        "recommendation",
+        "benefit",
+        "priority",
+        "knowledge_seq",
+        "superseded_seq"
+      ],
+      "additionalProperties": false
+    },
+    "Territory": {
+      "type": "object",
+      "properties": {
+        "record_type": {
+          "const": "Territory"
+        },
+        "id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "recorded_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "updated_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "deleted_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "const": "unknown"
+        },
+        "retention_class": {
+          "const": "derived"
+        },
+        "provenance_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "tenant_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "site_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "series_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "valid_from": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "valid_to": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "superseded_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "context": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "offering_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "evidence_bundle_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "knowledge_seq": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "superseded_seq": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "series_id",
+        "valid_from",
+        "valid_to",
+        "superseded_at",
+        "context",
+        "offering_id",
+        "evidence_bundle_id",
+        "knowledge_seq",
+        "superseded_seq"
+      ],
+      "additionalProperties": false
+    },
+    "ActionProposal": {
+      "type": "object",
+      "properties": {
+        "record_type": {
+          "const": "ActionProposal"
+        },
+        "id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "recorded_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "updated_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "deleted_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": [
+            "non_executable"
+          ]
+        },
+        "retention_class": {
+          "const": "future"
+        },
+        "provenance_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "tenant_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "site_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "opportunity_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "intent": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "authority": {
+          "const": "none"
+        },
+        "knowledge_seq": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "opportunity_id",
+        "intent",
+        "authority",
+        "knowledge_seq"
+      ],
+      "additionalProperties": false
+    },
+    "Approval": {
+      "type": "object",
+      "properties": {
+        "record_type": {
+          "const": "Approval"
+        },
+        "id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "recorded_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "updated_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "deleted_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": [
+            "disabled"
+          ]
+        },
+        "retention_class": {
+          "const": "future"
+        },
+        "provenance_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "tenant_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "site_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "proposal_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "authority": {
+          "const": "none"
+        },
+        "knowledge_seq": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "proposal_id",
+        "authority",
+        "knowledge_seq"
+      ],
+      "additionalProperties": false
+    },
+    "Experiment": {
+      "type": "object",
+      "properties": {
+        "record_type": {
+          "const": "Experiment"
+        },
+        "id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "recorded_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "updated_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "deleted_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": [
+            "design_only"
+          ]
+        },
+        "retention_class": {
+          "const": "future"
+        },
+        "provenance_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "tenant_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "site_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "hypothesis_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "design_hash": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/hash"
+        },
+        "exposure_ids": {
+          "type": "array",
+          "maxItems": 0
+        },
+        "knowledge_seq": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "hypothesis_id",
+        "design_hash",
+        "exposure_ids",
+        "knowledge_seq"
+      ],
+      "additionalProperties": false
+    },
+    "Evaluation": {
+      "type": "object",
+      "properties": {
+        "record_type": {
+          "const": "Evaluation"
+        },
+        "id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "recorded_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "updated_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "deleted_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": [
+            "completed"
+          ]
+        },
+        "retention_class": {
+          "const": "derived"
+        },
+        "provenance_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "tenant_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "site_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "target_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "method_version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "input_bundle_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "result": {
+          "enum": [
+            "passed",
+            "failed",
+            "inconclusive",
+            "invalid"
+          ]
+        },
+        "gate_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "knowledge_seq": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "target_id",
+        "method_version",
+        "input_bundle_id",
+        "result",
+        "gate_ids",
+        "knowledge_seq"
+      ],
+      "additionalProperties": false
+    },
+    "Measurement": {
+      "type": "object",
+      "properties": {
+        "record_type": {
+          "const": "Measurement"
+        },
+        "id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "recorded_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "updated_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "deleted_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": [
+            "observed"
+          ]
+        },
+        "retention_class": {
+          "const": "derived"
+        },
+        "provenance_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "tenant_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "site_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "series_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "valid_from": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "valid_to": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "superseded_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "metric": {
+          "enum": [
+            "crawl_coverage",
+            "schema_validity",
+            "evidence_resolution",
+            "precision",
+            "recall",
+            "latency_ms",
+            "cost_microusd"
+          ]
+        },
+        "value": {
+          "type": "number"
+        },
+        "unit": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "numerator": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "denominator": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "window_start": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "window_end": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "method_version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "knowledge_seq": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "superseded_seq": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "series_id",
+        "valid_from",
+        "valid_to",
+        "superseded_at",
+        "metric",
+        "value",
+        "unit",
+        "numerator",
+        "denominator",
+        "window_start",
+        "window_end",
+        "method_version",
+        "knowledge_seq",
+        "superseded_seq"
+      ],
+      "additionalProperties": false
+    },
+    "Outcome": {
+      "type": "object",
+      "properties": {
+        "record_type": {
+          "const": "Outcome"
+        },
+        "id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "recorded_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "updated_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "deleted_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": [
+            "observational"
+          ]
+        },
+        "retention_class": {
+          "const": "derived"
+        },
+        "provenance_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "tenant_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "site_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "series_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "valid_from": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "valid_to": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "superseded_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "evaluation_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "measurement_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "causal_status": {
+          "const": "not_established"
+        },
+        "knowledge_seq": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "superseded_seq": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "series_id",
+        "valid_from",
+        "valid_to",
+        "superseded_at",
+        "evaluation_id",
+        "measurement_ids",
+        "causal_status",
+        "knowledge_seq",
+        "superseded_seq"
+      ],
+      "additionalProperties": false
+    },
+    "AuditEvent": {
+      "type": "object",
+      "properties": {
+        "record_type": {
+          "const": "AuditEvent"
+        },
+        "id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "recorded_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "updated_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "deleted_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": [
+            "recorded"
+          ]
+        },
+        "retention_class": {
+          "const": "audit"
+        },
+        "provenance_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "tenant_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "site_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "actor_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "operation": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "target_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "correlation_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "outcome": {
+          "enum": [
+            "allowed",
+            "denied",
+            "failed"
+          ]
+        },
+        "detail_code": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "knowledge_seq": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "actor_id",
+        "operation",
+        "target_id",
+        "correlation_id",
+        "outcome",
+        "detail_code",
+        "knowledge_seq"
+      ],
+      "additionalProperties": false
+    },
+    "SelfAuditResult": {
+      "type": "object",
+      "properties": {
+        "record_type": {
+          "const": "SelfAuditResult"
+        },
+        "id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "recorded_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "updated_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "deleted_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": [
+            "recorded"
+          ]
+        },
+        "retention_class": {
+          "const": "audit"
+        },
+        "provenance_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "tenant_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "site_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "crawl_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "check_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "check_version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "result": {
+          "enum": [
+            "pass",
+            "fail",
+            "unknown",
+            "not_applicable"
+          ]
+        },
+        "effect": {
+          "enum": [
+            "allow",
+            "degrade",
+            "quarantine"
+          ]
+        },
+        "evidence_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "knowledge_seq": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "crawl_id",
+        "check_id",
+        "check_version",
+        "result",
+        "effect",
+        "evidence_ids",
+        "reason",
+        "knowledge_seq"
+      ],
+      "additionalProperties": false
+    },
+    "CapabilityAssessment": {
+      "type": "object",
+      "properties": {
+        "record_type": {
+          "const": "CapabilityAssessment"
+        },
+        "id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "recorded_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "updated_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "deleted_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": [
+            "completed"
+          ]
+        },
+        "retention_class": {
+          "const": "derived"
+        },
+        "provenance_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "tenant_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "site_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "knowledge_seq": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "capability_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "skill_digest": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/hash"
+        },
+        "input_bundle_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "result": {
+          "enum": [
+            "finding",
+            "no_finding_in_scope",
+            "cannot_assess",
+            "not_applicable",
+            "failed"
+          ]
+        },
+        "assertion_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "missingness": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/unknown"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "support": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/support"
+        },
+        "fresh_until": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        }
+      },
+      "required": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "knowledge_seq",
+        "capability_id",
+        "skill_digest",
+        "input_bundle_id",
+        "result",
+        "assertion_ids",
+        "missingness",
+        "support",
+        "fresh_until"
+      ],
+      "additionalProperties": false
+    },
+    "DecisionRecord": {
+      "type": "object",
+      "properties": {
+        "record_type": {
+          "const": "DecisionRecord"
+        },
+        "id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "recorded_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "updated_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "deleted_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": [
+            "completed"
+          ]
+        },
+        "retention_class": {
+          "const": "derived"
+        },
+        "provenance_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "tenant_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "site_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "knowledge_seq": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "input_bundle_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "twin_revision_id": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "strategy_revision_id": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "skill_digests": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/hash"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "model_result_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "selected_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "deferred_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "rationale": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "policy_version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "next_wake_reason": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        }
+      },
+      "required": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "knowledge_seq",
+        "input_bundle_id",
+        "twin_revision_id",
+        "strategy_revision_id",
+        "skill_digests",
+        "model_result_ids",
+        "selected_ids",
+        "deferred_ids",
+        "rationale",
+        "policy_version",
+        "next_wake_reason"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "oneOf": [
+    {
+      "$ref": "#/$defs/Tenant"
+    },
+    {
+      "$ref": "#/$defs/User"
+    },
+    {
+      "$ref": "#/$defs/Membership"
+    },
+    {
+      "$ref": "#/$defs/Business"
+    },
+    {
+      "$ref": "#/$defs/Site"
+    },
+    {
+      "$ref": "#/$defs/SiteOwnership"
+    },
+    {
+      "$ref": "#/$defs/Crawl"
+    },
+    {
+      "$ref": "#/$defs/CrawlTarget"
+    },
+    {
+      "$ref": "#/$defs/Page"
+    },
+    {
+      "$ref": "#/$defs/PageSnapshot"
+    },
+    {
+      "$ref": "#/$defs/RenderSnapshot"
+    },
+    {
+      "$ref": "#/$defs/ResourceObservation"
+    },
+    {
+      "$ref": "#/$defs/BusinessTwin"
+    },
+    {
+      "$ref": "#/$defs/TwinAssertion"
+    },
+    {
+      "$ref": "#/$defs/Entity"
+    },
+    {
+      "$ref": "#/$defs/EntityAssertion"
+    },
+    {
+      "$ref": "#/$defs/Relationship"
+    },
+    {
+      "$ref": "#/$defs/Query"
+    },
+    {
+      "$ref": "#/$defs/Topic"
+    },
+    {
+      "$ref": "#/$defs/Intent"
+    },
+    {
+      "$ref": "#/$defs/Location"
+    },
+    {
+      "$ref": "#/$defs/Competitor"
+    },
+    {
+      "$ref": "#/$defs/Observation"
+    },
+    {
+      "$ref": "#/$defs/Evidence"
+    },
+    {
+      "$ref": "#/$defs/EvidenceBundle"
+    },
+    {
+      "$ref": "#/$defs/Belief"
+    },
+    {
+      "$ref": "#/$defs/Hypothesis"
+    },
+    {
+      "$ref": "#/$defs/Capability"
+    },
+    {
+      "$ref": "#/$defs/Skill"
+    },
+    {
+      "$ref": "#/$defs/SkillRelease"
+    },
+    {
+      "$ref": "#/$defs/Sensor"
+    },
+    {
+      "$ref": "#/$defs/Connector"
+    },
+    {
+      "$ref": "#/$defs/ConnectorCoverage"
+    },
+    {
+      "$ref": "#/$defs/AgentMission"
+    },
+    {
+      "$ref": "#/$defs/Strategy"
+    },
+    {
+      "$ref": "#/$defs/StrategyRevision"
+    },
+    {
+      "$ref": "#/$defs/Opportunity"
+    },
+    {
+      "$ref": "#/$defs/Territory"
+    },
+    {
+      "$ref": "#/$defs/ActionProposal"
+    },
+    {
+      "$ref": "#/$defs/Approval"
+    },
+    {
+      "$ref": "#/$defs/Experiment"
+    },
+    {
+      "$ref": "#/$defs/Evaluation"
+    },
+    {
+      "$ref": "#/$defs/Measurement"
+    },
+    {
+      "$ref": "#/$defs/Outcome"
+    },
+    {
+      "$ref": "#/$defs/AuditEvent"
+    },
+    {
+      "$ref": "#/$defs/SelfAuditResult"
+    },
+    {
+      "$ref": "#/$defs/CapabilityAssessment"
+    },
+    {
+      "$ref": "#/$defs/DecisionRecord"
+    }
+  ]
+}

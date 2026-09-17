@@ -1,0 +1,54 @@
+{
+  "captured_at": "2026-09-15T02:46:37Z",
+  "pins": [
+    {
+      "source_id": "canonical",
+      "source_class": "normative_official",
+      "uri": "https://developers.google.com/search/docs/crawling-indexing/consolidate-duplicate-urls",
+      "revision_sha256": "662d3c529e84c455c11dac2388d52217d69165bf58c2635f826d83542995bb18",
+      "excerpt_sha256": "b171fa76c0fb0f2327d47d976f2e4c20cf03f9e181b764694bdbaa236b1b0fad",
+      "locator": "To specify a canonical URL for duplicate"
+    },
+    {
+      "source_id": "robots",
+      "source_class": "normative_official",
+      "uri": "https://www.rfc-editor.org/rfc/rfc9309.txt",
+      "revision_sha256": "f633915daaa15b943cae56545d333bcf3ba4d156599e4555499686d6699fb207",
+      "excerpt_sha256": "a80cb50ce30f5ccb1578beeaa48db6efafe30516191051e7a77beb493b50f9aa",
+      "locator": "The Robots Exclusion Protocol"
+    },
+    {
+      "source_id": "directives",
+      "source_class": "normative_official",
+      "uri": "https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag",
+      "revision_sha256": "fc624b6db34b567332de4b451c91a9e989cc18ae3122844f31aa388a034297fe",
+      "excerpt_sha256": "b9c0ca7785f14bab88e8649ddc4f61550339ccb0a2129100579efb40515894b2",
+      "locator": "The robots meta tag"
+    },
+    {
+      "source_id": "render",
+      "source_class": "normative_official",
+      "uri": "https://developers.google.com/search/docs/crawling-indexing/javascript/javascript-seo-basics",
+      "revision_sha256": "73563fdf67c337ccf44714f1663f7d5aded698d1b996c10f2f1335c7eae707b5",
+      "excerpt_sha256": "dd2c756bc85ca3d3f49e4631b539688152fcc9eb54a39e455b462da184effb5d",
+      "locator": "Google processes JavaScript"
+    },
+    {
+      "source_id": "sitemap",
+      "source_class": "normative_official",
+      "uri": "https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap",
+      "revision_sha256": "e63eaf4eddad9e17772c834c0ffea8f206b45971b25e49fec7c9e5fe63efe315",
+      "excerpt_sha256": "50d3e226ae519f4359cde1701baae2f77b9f651f5f827bb9c33c280297efd8cb",
+      "locator": "Google supports the sitemap formats"
+    },
+    {
+      "source_id": "internal",
+      "source_class": "internal_policy",
+      "uri": "repo:AGENTS.md",
+      "revision_sha256": "a249a90474130e6a496de0b88a243ea992372fa6287c07d86d192fd958a60cf0",
+      "excerpt_sha256": "aabbe6a8f62ff0c7273ee1748a31f363c9807c2c836a4fe1b0902e12ca349408",
+      "locator": "AGENTS 5, 6, 7, 12, 16; note is an AIOS paraphrase"
+    }
+  ],
+  "note": "Full source byte digests identify retrieval revisions; only bounded excerpts retained. Verification here is source capture, not skill approval."
+}

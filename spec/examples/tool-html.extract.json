@@ -1,0 +1,11 @@
+{
+  "tool_id": "html.extract",
+  "tool_version": "1.0.0",
+  "invocation_id": "d5d11299-7223-5081-ab6b-f452f747c467",
+  "mission_id": "9cc683b5-73d1-5fb8-b4b4-274a9aee6bd0",
+  "tenant_id": "2ba1e8ea-3ea6-5c40-9676-bf7200063cd1",
+  "site_id": "9bfdbbf9-3da6-525e-800d-9def08c4d573",
+  "args": {
+    "evidence_id": "5c3290bb-1f22-5ef3-9129-a91ae46ec01a"
+  }
+}

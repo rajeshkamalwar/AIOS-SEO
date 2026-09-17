@@ -1,0 +1,112 @@
+{
+  "skill_id": "seo.render-parity",
+  "version": "1.0.0-draft",
+  "status": "draft",
+  "source_pins": [
+    {
+      "source_id": "render",
+      "source_class": "normative_official",
+      "uri": "https://developers.google.com/search/docs/crawling-indexing/javascript/javascript-seo-basics",
+      "revision_sha256": "73563fdf67c337ccf44714f1663f7d5aded698d1b996c10f2f1335c7eae707b5",
+      "excerpt_sha256": "dd2c756bc85ca3d3f49e4631b539688152fcc9eb54a39e455b462da184effb5d",
+      "locator": "Google processes JavaScript"
+    }
+  ],
+  "last_verified": "2026-09-15T02:46:37Z",
+  "freshness_deadline": "2026-09-16T02:46:37Z",
+  "applicability": {
+    "archetypes": [
+      "local_service",
+      "hybrid"
+    ],
+    "page_types": [
+      "home",
+      "service",
+      "about",
+      "contact"
+    ],
+    "languages": [
+      "en"
+    ],
+    "on_unknown": "provisional"
+  },
+  "capability_dependencies": [
+    "CAP-JS-02"
+  ],
+  "evidence_requirements": [
+    {
+      "kind": "raw_html",
+      "minimum_count": 1,
+      "max_age_seconds": 86400,
+      "coverage": "partial_allowed",
+      "on_missing": "abstain"
+    },
+    {
+      "kind": "rendered_dom",
+      "minimum_count": 1,
+      "max_age_seconds": 86400,
+      "coverage": "partial_allowed",
+      "on_missing": "abstain"
+    }
+  ],
+  "procedure": [
+    {
+      "step_id": "evaluate",
+      "operation": "parity_v1",
+      "executor": "deterministic",
+      "tool_id": null,
+      "input_kinds": [
+        "raw_html",
+        "rendered_dom"
+      ],
+      "output_kind": "records",
+      "on_failure": "abstain"
+    }
+  ],
+  "output_schema": "https://schemas.aios-seo.invalid/v1/skill-output.schema.json",
+  "tool_permissions": [
+    {
+      "tool_id": "render.observe",
+      "version": "1.0.0",
+      "max_calls": 20
+    },
+    {
+      "tool_id": "artifact.read_scoped",
+      "version": "1.0.0",
+      "max_calls": 750
+    }
+  ],
+  "external_authority": "read_only",
+  "forbidden_behavior": [
+    "website_write",
+    "submission",
+    "credential_access",
+    "cross_tenant",
+    "source_fabrication",
+    "shell_execution"
+  ],
+  "policy_constraints": [
+    "discovery-v1",
+    "local-synthetic-v1"
+  ],
+  "validation": [
+    "schema",
+    "scope",
+    "evidence",
+    "freshness"
+  ],
+  "fixtures": [
+    "spa-parity"
+  ],
+  "negative_fixtures": [
+    "policy-post"
+  ],
+  "evaluation_gates": [
+    "Q01",
+    "Q02",
+    "Q03"
+  ],
+  "deprecation": null,
+  "revocation": null,
+  "replacement": null
+}

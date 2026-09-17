@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.aios-seo.invalid/v1/inference-output.schema.json",
+  "type": "object",
+  "properties": {
+    "claims": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "field": {
+            "enum": [
+              "business_name",
+              "archetype",
+              "offering",
+              "location",
+              "audience",
+              "page_type",
+              "topic"
+            ]
+          },
+          "value": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          },
+          "basis": {
+            "enum": [
+              "observed",
+              "inferred"
+            ]
+          },
+          "evidence_ids": {
+            "type": "array",
+            "items": {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+            },
+            "minItems": 1,
+            "maxItems": 5000,
+            "uniqueItems": true
+          },
+          "locator": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          },
+          "support": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/support"
+          }
+        },
+        "required": [
+          "field",
+          "value",
+          "basis",
+          "evidence_ids",
+          "locator",
+          "support"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0,
+      "maxItems": 5000,
+      "uniqueItems": true
+    },
+    "unknown_fields": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 4096
+      },
+      "minItems": 0,
+      "maxItems": 5000,
+      "uniqueItems": true
+    },
+    "questions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 4096
+      },
+      "minItems": 0,
+      "maxItems": 5000,
+      "uniqueItems": true
+    },
+    "outcome": {
+      "enum": [
+        "completed",
+        "abstained"
+      ]
+    }
+  },
+  "required": [
+    "claims",
+    "unknown_fields",
+    "questions",
+    "outcome"
+  ],
+  "additionalProperties": false
+}

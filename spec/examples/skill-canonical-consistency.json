@@ -1,0 +1,104 @@
+{
+  "skill_id": "seo.canonical-consistency",
+  "version": "1.0.0-draft",
+  "status": "draft",
+  "source_pins": [
+    {
+      "source_id": "canonical",
+      "source_class": "normative_official",
+      "uri": "https://developers.google.com/search/docs/crawling-indexing/consolidate-duplicate-urls",
+      "revision_sha256": "662d3c529e84c455c11dac2388d52217d69165bf58c2635f826d83542995bb18",
+      "excerpt_sha256": "b171fa76c0fb0f2327d47d976f2e4c20cf03f9e181b764694bdbaa236b1b0fad",
+      "locator": "To specify a canonical URL for duplicate"
+    }
+  ],
+  "last_verified": "2026-09-15T02:46:37Z",
+  "freshness_deadline": "2026-09-16T02:46:37Z",
+  "applicability": {
+    "archetypes": [
+      "local_service",
+      "hybrid"
+    ],
+    "page_types": [
+      "home",
+      "service",
+      "about",
+      "contact"
+    ],
+    "languages": [
+      "en"
+    ],
+    "on_unknown": "provisional"
+  },
+  "capability_dependencies": [
+    "CAP-URL-02"
+  ],
+  "evidence_requirements": [
+    {
+      "kind": "raw_html",
+      "minimum_count": 1,
+      "max_age_seconds": 86400,
+      "coverage": "partial_allowed",
+      "on_missing": "abstain"
+    }
+  ],
+  "procedure": [
+    {
+      "step_id": "evaluate",
+      "operation": "canonical_v1",
+      "executor": "deterministic",
+      "tool_id": null,
+      "input_kinds": [
+        "raw_html"
+      ],
+      "output_kind": "records",
+      "on_failure": "abstain"
+    }
+  ],
+  "output_schema": "https://schemas.aios-seo.invalid/v1/skill-output.schema.json",
+  "tool_permissions": [
+    {
+      "tool_id": "artifact.read_scoped",
+      "version": "1.0.0",
+      "max_calls": 750
+    },
+    {
+      "tool_id": "graph.query_scoped",
+      "version": "1.0.0",
+      "max_calls": 750
+    }
+  ],
+  "external_authority": "read_only",
+  "forbidden_behavior": [
+    "website_write",
+    "submission",
+    "credential_access",
+    "cross_tenant",
+    "source_fabrication",
+    "shell_execution"
+  ],
+  "policy_constraints": [
+    "discovery-v1",
+    "local-synthetic-v1"
+  ],
+  "validation": [
+    "schema",
+    "scope",
+    "evidence",
+    "freshness"
+  ],
+  "fixtures": [
+    "static-service"
+  ],
+  "negative_fixtures": [
+    "variant-identity"
+  ],
+  "evaluation_gates": [
+    "Q01",
+    "Q02",
+    "Q03"
+  ],
+  "deprecation": null,
+  "revocation": null,
+  "replacement": null
+}
