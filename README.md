@@ -10,7 +10,7 @@ Primary law: **Backend speaks SEO. Frontend speaks business.**
 
 ## Status
 
-This repository contains specifications, not an implemented application. Documents 00–06 establish canonical product intent. Documents 07–13 contain the architecture readiness review and proposed implementation contracts, boundaries and decision gates. Documents 14–23 define the Phase 2 capability universe, skill/source governance, archetype activation and the first read-only Brain slice. Their recommendations are not implicitly accepted technology decisions or permission to scaffold.
+This repository contains specifications, not an implemented application. Documents 00–06 establish canonical product intent. Documents 07–13 contain the architecture readiness review and proposed implementation contracts, boundaries and decision gates. Documents 14–23 define the Phase 2 capability universe, skill/source governance, archetype activation and the first read-only Brain slice. Documents24–39 close Phase3 contracts and record accepted engineering defaults. Document39 declares readiness for the narrowly scoped M1 in38; production and later milestones remain gated.
 
 ## Required reading order
 
@@ -41,8 +41,27 @@ Read [AGENTS.md](AGENTS.md) completely first, then this README, then every docum
 23. [22 — Reference Architectures](docs/22-REFERENCE-ARCHITECTURES.md)
 24. [23 — Phase 2 Gap Review](docs/23-PHASE-2-GAP-REVIEW.md)
 
+25. [24 — Decision Register](docs/24-DECISION-REGISTER.md)
+26. [25 — Physical Domain Schemas](docs/25-PHYSICAL-DOMAIN-SCHEMAS.md)
+27. [26 — Temporal Evidence Contract](docs/26-TEMPORAL-EVIDENCE-CONTRACT.md)
+28. [27 — Knowledge Graph Contract](docs/27-KNOWLEDGE-GRAPH-CONTRACT.md)
+29. [28 — Skill Manifest Spec](docs/28-SKILL-MANIFEST-SPEC.md)
+30. [29 — Sensor Connector Contract](docs/29-SENSOR-CONNECTOR-CONTRACT.md)
+31. [30 — Crawl Render Contract](docs/30-CRAWL-RENDER-CONTRACT.md)
+32. [31 — Model Gateway](docs/31-MODEL-GATEWAY.md)
+33. [32 — Agent Mission Contract](docs/32-AGENT-MISSION-CONTRACT.md)
+34. [33 — Event Job Contract](docs/33-EVENT-JOB-CONTRACT.md)
+35. [34 — Security Tenancy Data](docs/34-SECURITY-TENANCY-DATA.md)
+36. [35 — Quality Self Audit Gates](docs/35-QUALITY-SELF-AUDIT-GATES.md)
+37. [36 — Read Only Acceptance Test](docs/36-READ-ONLY-ACCEPTANCE-TEST.md)
+38. [37 — Implementation Architecture](docs/37-IMPLEMENTATION-ARCHITECTURE.md)
+39. [38 — First Slice Implementation Plan](docs/38-FIRST-SLICE-IMPLEMENTATION-PLAN.md)
+40. [39 — Phase 3 Readiness Review](docs/39-PHASE-3-READINESS-REVIEW.md)
+
+Then read [ADRs001–006](docs/decisions/001-transactional-domain-core.md) in filename order and [spec/README.md](spec/README.md), all schemas, examples and fixtures.
+
 ## Engineering boundary
 
 Preserve the persistent, domain-native Brain. Do not reinterpret it as a conventional SEO dashboard, a SEMrush/Ahrefs clone, disconnected tools, a generic chatbot or a website builder.
 
-Surface conflicts with the constitution and record accepted changes explicitly. Start with the findings in 07 and decision gates in 13 before requesting application implementation. Neither specification phase scaffolds the application. Read document 23 for the remaining read-only implementation gates and recommended Phase 3; all website mutations remain out of scope for the first slice.
+Surface conflicts with the constitution and record accepted changes explicitly. Start with the findings in 07 and decision gates in 13 before requesting application implementation. Neither specification phase scaffolds the application. Read documents38–39 for the current implementation boundary; all website mutations remain out of scope for the first slice.
