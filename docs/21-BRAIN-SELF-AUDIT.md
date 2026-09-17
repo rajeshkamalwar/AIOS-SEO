@@ -23,10 +23,10 @@ Initial thresholds are replaceable AIOS operating proposals. Source-specific dea
 | A05 Connector coverage | Response finality/row coverage/scope differs from requested context; each import | Mark partial/unknown, prevent zero-fill; validated provider response with correct context |
 | A06 Missing permissions | Token/grant expired, revoked or insufficient for property; at dispatch | Stop matching connection calls, one reconnect notice; current grant and verified property mapping |
 | A07 Skill freshness | Source/rule review deadline expired; admission and publication | Suspend affected current conclusions; approved source/skill revalidation |
-| A08 Skill revocation | Release/transitive dependency revoked; event + dispatch lookup | Quarantine queue and active derived outputs; independent replacement/re-evaluation, no silent pin substitution |
+| A08 Skill revocation | Release/transitive dependency revoked; event + dispatch lookup | Immediately stop dependent admission/dispatch/acceptance; reject affected outputs and their transitive dependents; independent replacement/re-evaluation, no silent pin substitution |
 | A09 Evidence insufficiency | Required fields/coverage/locators fail capability predicate; each assessment | Abstain or investigate; sufficient new manifest and validator receipt |
 | A10 Contradictory evidence | Material mutually inconsistent claims in same applicable context; belief update | Preserve dispute; block dependent high-consequence recommendation; distinguishing evidence or explicit narrower conclusion |
-| A11 Agent output failure | Invalid schema, unsupported claim or budget violation; every agent output | Reject publication; one bounded repair within budget, then failed/unknown; independently valid output |
+| A11 Agent output failure | Invalid schema, unsupported claim or budget violation; every agent output | Reject affected outputs and transitive dependents; one bounded repair within budget, then failed/unknown; independently valid output |
 | A12 Repeated task failure | Three consecutive same-class failures for same scoped work in one run; attempts ledger | Open circuit, quarantine and operator incident; classified root cause plus safe probe, no reset by renaming task |
 | A13 Runaway cost | Reservation would exceed call/token/currency/request limit; before each work dispatch | Deny new discretionary work, complete accounting and publish partial state; explicit new budget policy/grant, not model override |
 | A14 Stale strategy | Input invalidation, expired horizon or changed material Twin constraints; every plan dispatch + daily scan | Stop dependent steps and replan; expected-version accepted strategy, old plan retained |
@@ -67,3 +67,7 @@ Keep tenant business findings separate from operator infrastructure incidents. C
 ## 5. Acceptance and independent failure injection
 
 Before implementation release, exercise all 22 checks using synthetic fixtures. Include a failing audit sensor, stale revocation cache, false healthy connector response, adversarial page text, stuck retry loop, concurrent spend reservations, deliberately unresolvable graph edge and restore after deletion. Verify both mitigation and recovery, including attempted self-promotion denial. Runtime tests must be performed outside the agent under test; production incident reviews periodically challenge detector coverage. No tests or monitoring infrastructure are implemented by this document.
+
+## Accepted effect scope
+
+[ADR-007](decisions/007-audit-effect-scope.md) governs A02/A07/A08/A11: reject explicitly identified outputs and their complete transitive dependent set. Independent outputs still need every required gate. Unknown or incomplete affected scope quarantines the entire run/publication. Run integrity failures also quarantine the run. Agents cannot clear either restriction; independently passing recovery evidence and operator-reviewed resumption are required. Rule version 1.1.0 and SelfAuditResult schema version 2 encode this scope. Historical version-1 receipts never substitute for current gate results.

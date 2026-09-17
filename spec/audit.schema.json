@@ -1,0 +1,137 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.aios-seo.invalid/v1/audit.schema.json",
+  "$defs": {
+    "SelfAuditResultV1": {
+      "type": "object",
+      "properties": {
+        "record_type": {
+          "const": "SelfAuditResult"
+        },
+        "id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "recorded_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "updated_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "deleted_at": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": [
+            "recorded"
+          ]
+        },
+        "retention_class": {
+          "const": "audit"
+        },
+        "provenance_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "tenant_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "site_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "crawl_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "check_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "check_version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "result": {
+          "enum": [
+            "pass",
+            "fail",
+            "unknown",
+            "not_applicable"
+          ]
+        },
+        "effect": {
+          "enum": [
+            "allow",
+            "degrade",
+            "quarantine"
+          ]
+        },
+        "evidence_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "knowledge_seq": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "record_type",
+        "id",
+        "schema_version",
+        "version",
+        "created_at",
+        "recorded_at",
+        "updated_at",
+        "deleted_at",
+        "state",
+        "retention_class",
+        "provenance_ids",
+        "tenant_id",
+        "site_id",
+        "crawl_id",
+        "check_id",
+        "check_version",
+        "result",
+        "effect",
+        "evidence_ids",
+        "reason",
+        "knowledge_seq"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

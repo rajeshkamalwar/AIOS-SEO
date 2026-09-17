@@ -1,0 +1,559 @@
+{
+  "version": "1.1.0",
+  "cases": [
+    {
+      "check_id": "A01",
+      "result": "fail",
+      "scope_complete": true,
+      "expected_effect": "degrade"
+    },
+    {
+      "check_id": "A01",
+      "result": "unknown",
+      "scope_complete": true,
+      "expected_effect": "degrade"
+    },
+    {
+      "check_id": "A01",
+      "result": "pass",
+      "scope_complete": true,
+      "expected_effect": "allow"
+    },
+    {
+      "check_id": "A01",
+      "result": "fail",
+      "scope_complete": false,
+      "expected_effect": "quarantine_run"
+    },
+    {
+      "check_id": "A02",
+      "result": "fail",
+      "scope_complete": true,
+      "expected_effect": "reject_outputs"
+    },
+    {
+      "check_id": "A02",
+      "result": "unknown",
+      "scope_complete": true,
+      "expected_effect": "reject_outputs"
+    },
+    {
+      "check_id": "A02",
+      "result": "pass",
+      "scope_complete": true,
+      "expected_effect": "allow"
+    },
+    {
+      "check_id": "A02",
+      "result": "fail",
+      "scope_complete": false,
+      "expected_effect": "quarantine_run"
+    },
+    {
+      "check_id": "A03",
+      "result": "fail",
+      "scope_complete": true,
+      "expected_effect": "quarantine_run"
+    },
+    {
+      "check_id": "A03",
+      "result": "unknown",
+      "scope_complete": true,
+      "expected_effect": "quarantine_run"
+    },
+    {
+      "check_id": "A03",
+      "result": "pass",
+      "scope_complete": true,
+      "expected_effect": "allow"
+    },
+    {
+      "check_id": "A03",
+      "result": "fail",
+      "scope_complete": false,
+      "expected_effect": "quarantine_run"
+    },
+    {
+      "check_id": "A04",
+      "result": "fail",
+      "scope_complete": true,
+      "expected_effect": "degrade"
+    },
+    {
+      "check_id": "A04",
+      "result": "unknown",
+      "scope_complete": true,
+      "expected_effect": "degrade"
+    },
+    {
+      "check_id": "A04",
+      "result": "pass",
+      "scope_complete": true,
+      "expected_effect": "allow"
+    },
+    {
+      "check_id": "A04",
+      "result": "fail",
+      "scope_complete": false,
+      "expected_effect": "quarantine_run"
+    },
+    {
+      "check_id": "A05",
+      "result": "fail",
+      "scope_complete": true,
+      "expected_effect": "degrade"
+    },
+    {
+      "check_id": "A05",
+      "result": "unknown",
+      "scope_complete": true,
+      "expected_effect": "degrade"
+    },
+    {
+      "check_id": "A05",
+      "result": "pass",
+      "scope_complete": true,
+      "expected_effect": "allow"
+    },
+    {
+      "check_id": "A05",
+      "result": "fail",
+      "scope_complete": false,
+      "expected_effect": "quarantine_run"
+    },
+    {
+      "check_id": "A06",
+      "result": "fail",
+      "scope_complete": true,
+      "expected_effect": "quarantine_run"
+    },
+    {
+      "check_id": "A06",
+      "result": "unknown",
+      "scope_complete": true,
+      "expected_effect": "quarantine_run"
+    },
+    {
+      "check_id": "A06",
+      "result": "pass",
+      "scope_complete": true,
+      "expected_effect": "allow"
+    },
+    {
+      "check_id": "A06",
+      "result": "fail",
+      "scope_complete": false,
+      "expected_effect": "quarantine_run"
+    },
+    {
+      "check_id": "A07",
+      "result": "fail",
+      "scope_complete": true,
+      "expected_effect": "reject_outputs"
+    },
+    {
+      "check_id": "A07",
+      "result": "unknown",
+      "scope_complete": true,
+      "expected_effect": "reject_outputs"
+    },
+    {
+      "check_id": "A07",
+      "result": "pass",
+      "scope_complete": true,
+      "expected_effect": "allow"
+    },
+    {
+      "check_id": "A07",
+      "result": "fail",
+      "scope_complete": false,
+      "expected_effect": "quarantine_run"
+    },
+    {
+      "check_id": "A08",
+      "result": "fail",
+      "scope_complete": true,
+      "expected_effect": "reject_outputs"
+    },
+    {
+      "check_id": "A08",
+      "result": "unknown",
+      "scope_complete": true,
+      "expected_effect": "reject_outputs"
+    },
+    {
+      "check_id": "A08",
+      "result": "pass",
+      "scope_complete": true,
+      "expected_effect": "allow"
+    },
+    {
+      "check_id": "A08",
+      "result": "fail",
+      "scope_complete": false,
+      "expected_effect": "quarantine_run"
+    },
+    {
+      "check_id": "A09",
+      "result": "fail",
+      "scope_complete": true,
+      "expected_effect": "degrade"
+    },
+    {
+      "check_id": "A09",
+      "result": "unknown",
+      "scope_complete": true,
+      "expected_effect": "degrade"
+    },
+    {
+      "check_id": "A09",
+      "result": "pass",
+      "scope_complete": true,
+      "expected_effect": "allow"
+    },
+    {
+      "check_id": "A09",
+      "result": "fail",
+      "scope_complete": false,
+      "expected_effect": "quarantine_run"
+    },
+    {
+      "check_id": "A10",
+      "result": "fail",
+      "scope_complete": true,
+      "expected_effect": "degrade"
+    },
+    {
+      "check_id": "A10",
+      "result": "unknown",
+      "scope_complete": true,
+      "expected_effect": "degrade"
+    },
+    {
+      "check_id": "A10",
+      "result": "pass",
+      "scope_complete": true,
+      "expected_effect": "allow"
+    },
+    {
+      "check_id": "A10",
+      "result": "fail",
+      "scope_complete": false,
+      "expected_effect": "quarantine_run"
+    },
+    {
+      "check_id": "A11",
+      "result": "fail",
+      "scope_complete": true,
+      "expected_effect": "reject_outputs"
+    },
+    {
+      "check_id": "A11",
+      "result": "unknown",
+      "scope_complete": true,
+      "expected_effect": "reject_outputs"
+    },
+    {
+      "check_id": "A11",
+      "result": "pass",
+      "scope_complete": true,
+      "expected_effect": "allow"
+    },
+    {
+      "check_id": "A11",
+      "result": "fail",
+      "scope_complete": false,
+      "expected_effect": "quarantine_run"
+    },
+    {
+      "check_id": "A12",
+      "result": "fail",
+      "scope_complete": true,
+      "expected_effect": "quarantine_run"
+    },
+    {
+      "check_id": "A12",
+      "result": "unknown",
+      "scope_complete": true,
+      "expected_effect": "quarantine_run"
+    },
+    {
+      "check_id": "A12",
+      "result": "pass",
+      "scope_complete": true,
+      "expected_effect": "allow"
+    },
+    {
+      "check_id": "A12",
+      "result": "fail",
+      "scope_complete": false,
+      "expected_effect": "quarantine_run"
+    },
+    {
+      "check_id": "A13",
+      "result": "fail",
+      "scope_complete": true,
+      "expected_effect": "quarantine_run"
+    },
+    {
+      "check_id": "A13",
+      "result": "unknown",
+      "scope_complete": true,
+      "expected_effect": "quarantine_run"
+    },
+    {
+      "check_id": "A13",
+      "result": "pass",
+      "scope_complete": true,
+      "expected_effect": "allow"
+    },
+    {
+      "check_id": "A13",
+      "result": "fail",
+      "scope_complete": false,
+      "expected_effect": "quarantine_run"
+    },
+    {
+      "check_id": "A14",
+      "result": "fail",
+      "scope_complete": true,
+      "expected_effect": "quarantine_run"
+    },
+    {
+      "check_id": "A14",
+      "result": "unknown",
+      "scope_complete": true,
+      "expected_effect": "allow"
+    },
+    {
+      "check_id": "A14",
+      "result": "pass",
+      "scope_complete": true,
+      "expected_effect": "allow"
+    },
+    {
+      "check_id": "A14",
+      "result": "fail",
+      "scope_complete": false,
+      "expected_effect": "quarantine_run"
+    },
+    {
+      "check_id": "A15",
+      "result": "fail",
+      "scope_complete": true,
+      "expected_effect": "quarantine_run"
+    },
+    {
+      "check_id": "A15",
+      "result": "unknown",
+      "scope_complete": true,
+      "expected_effect": "allow"
+    },
+    {
+      "check_id": "A15",
+      "result": "pass",
+      "scope_complete": true,
+      "expected_effect": "allow"
+    },
+    {
+      "check_id": "A15",
+      "result": "fail",
+      "scope_complete": false,
+      "expected_effect": "quarantine_run"
+    },
+    {
+      "check_id": "A16",
+      "result": "fail",
+      "scope_complete": true,
+      "expected_effect": "quarantine_run"
+    },
+    {
+      "check_id": "A16",
+      "result": "unknown",
+      "scope_complete": true,
+      "expected_effect": "allow"
+    },
+    {
+      "check_id": "A16",
+      "result": "pass",
+      "scope_complete": true,
+      "expected_effect": "allow"
+    },
+    {
+      "check_id": "A16",
+      "result": "fail",
+      "scope_complete": false,
+      "expected_effect": "quarantine_run"
+    },
+    {
+      "check_id": "A17",
+      "result": "fail",
+      "scope_complete": true,
+      "expected_effect": "degrade"
+    },
+    {
+      "check_id": "A17",
+      "result": "unknown",
+      "scope_complete": true,
+      "expected_effect": "degrade"
+    },
+    {
+      "check_id": "A17",
+      "result": "pass",
+      "scope_complete": true,
+      "expected_effect": "allow"
+    },
+    {
+      "check_id": "A17",
+      "result": "fail",
+      "scope_complete": false,
+      "expected_effect": "quarantine_run"
+    },
+    {
+      "check_id": "A18",
+      "result": "fail",
+      "scope_complete": true,
+      "expected_effect": "quarantine_run"
+    },
+    {
+      "check_id": "A18",
+      "result": "unknown",
+      "scope_complete": true,
+      "expected_effect": "quarantine_run"
+    },
+    {
+      "check_id": "A18",
+      "result": "pass",
+      "scope_complete": true,
+      "expected_effect": "allow"
+    },
+    {
+      "check_id": "A18",
+      "result": "fail",
+      "scope_complete": false,
+      "expected_effect": "quarantine_run"
+    },
+    {
+      "check_id": "A19",
+      "result": "fail",
+      "scope_complete": true,
+      "expected_effect": "quarantine_run"
+    },
+    {
+      "check_id": "A19",
+      "result": "unknown",
+      "scope_complete": true,
+      "expected_effect": "quarantine_run"
+    },
+    {
+      "check_id": "A19",
+      "result": "pass",
+      "scope_complete": true,
+      "expected_effect": "allow"
+    },
+    {
+      "check_id": "A19",
+      "result": "fail",
+      "scope_complete": false,
+      "expected_effect": "quarantine_run"
+    },
+    {
+      "check_id": "A20",
+      "result": "fail",
+      "scope_complete": true,
+      "expected_effect": "quarantine_run"
+    },
+    {
+      "check_id": "A20",
+      "result": "unknown",
+      "scope_complete": true,
+      "expected_effect": "quarantine_run"
+    },
+    {
+      "check_id": "A20",
+      "result": "pass",
+      "scope_complete": true,
+      "expected_effect": "allow"
+    },
+    {
+      "check_id": "A20",
+      "result": "fail",
+      "scope_complete": false,
+      "expected_effect": "quarantine_run"
+    },
+    {
+      "check_id": "A21",
+      "result": "fail",
+      "scope_complete": true,
+      "expected_effect": "quarantine_run"
+    },
+    {
+      "check_id": "A21",
+      "result": "unknown",
+      "scope_complete": true,
+      "expected_effect": "quarantine_run"
+    },
+    {
+      "check_id": "A21",
+      "result": "pass",
+      "scope_complete": true,
+      "expected_effect": "allow"
+    },
+    {
+      "check_id": "A21",
+      "result": "fail",
+      "scope_complete": false,
+      "expected_effect": "quarantine_run"
+    },
+    {
+      "check_id": "A22",
+      "result": "fail",
+      "scope_complete": true,
+      "expected_effect": "quarantine_run"
+    },
+    {
+      "check_id": "A22",
+      "result": "unknown",
+      "scope_complete": true,
+      "expected_effect": "quarantine_run"
+    },
+    {
+      "check_id": "A22",
+      "result": "pass",
+      "scope_complete": true,
+      "expected_effect": "allow"
+    },
+    {
+      "check_id": "A22",
+      "result": "fail",
+      "scope_complete": false,
+      "expected_effect": "quarantine_run"
+    }
+  ],
+  "transitions": [
+    {
+      "from": "reject_outputs",
+      "actor": "agent",
+      "passing_receipt": true,
+      "expected": "denied"
+    },
+    {
+      "from": "quarantine_run",
+      "actor": "operator",
+      "passing_receipt": false,
+      "expected": "denied"
+    },
+    {
+      "from": "reject_outputs",
+      "actor": "operator",
+      "passing_receipt": true,
+      "expected": "recovered"
+    },
+    {
+      "from": "quarantine_run",
+      "actor": "operator",
+      "passing_receipt": true,
+      "expected": "recovered"
+    }
+  ]
+}

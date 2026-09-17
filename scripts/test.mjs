@@ -55,6 +55,8 @@ try {
       "--import",
       "tsx",
       "--test",
+      "--test-concurrency=1",
+      "tests/policy.test.ts",
       "tests/contracts.test.ts",
       "tests/blob.test.ts",
       "tests/foundation.test.ts",

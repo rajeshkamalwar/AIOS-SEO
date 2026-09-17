@@ -1,6 +1,6 @@
 # ADR-007: explicit audit effects and affected scope
 
-Status: Proposed; not an accepted implementation contract.
+Status: Accepted by the product owner on 2026-09-17.
 Date: 2026-09-17.
 
 ## Context
@@ -15,13 +15,13 @@ M2 in document 38 requires the critical runtime controls in documents 33 and 35.
 
 No explicit contract establishes whether quarantine here means an affected output/dependency set or the entire run. Choosing either implicitly would change publication availability and operator recovery obligations. Passing schema examples cannot resolve that behavioral discrepancy.
 
-## Proposed decision
+## Decision
 
 Distinguish `reject_outputs` from `quarantine_run` explicitly. A02/A07/A08/A11 suppress the affected outputs and their dependent conclusions; independent supported results may continue only after their own required gates pass. Integrity failures quarantine the affected run/publication. Missing or unresolvable impact scope must not permit publication.
 
 Release revocation continues to deny admissions, dispatch and acceptance for every dependent mission immediately. Rejection never grants permission to continue a revoked mission. Existing independent evaluation and operator-reviewed recovery requirements remain; an agent cannot clear its own restriction.
 
-After acceptance, reconcile documents 21/35, the versioned quality rule artifact and SelfAuditResult schema/catalog together. Define the exact affected-reference representation and transition fixtures before implementing the evaluator. Do not silently alter a released rule version or treat this proposal as a passing evaluation.
+Reconcile documents 21/35, the versioned quality rule artifact and SelfAuditResult schema/catalog together. Define the exact affected-reference representation and transition fixtures before implementing the evaluator. Do not silently alter a released rule version or treat this proposal as a passing evaluation.
 
 ## Alternative
 
@@ -31,4 +31,6 @@ Quarantine the entire affected run for A02/A07/A08/A11. This is conservative abo
 
 Test failure and unknown separately for each affected rule; rejection or quarantine must persist across restart. Verify unsupported outputs never publish, independent output behavior matches the selected policy, revoked work cannot dispatch or commit, absent receipts fail closed, and only independently verified operator recovery can lift quarantine. Tests must assert the chosen scope, not just the effect string.
 
-This proposal neither activates real skills/models nor changes external authority or data policy.
+This decision neither activates real skills/models nor changes external authority or data policy.
+
+Implementation representation: quality rules version 1.1.0; SelfAuditResult schema_version 2 adds scope (`outputs` or `run`), scope_complete, dependency_snapshot_hash, direct_output_ids, affected_output_ids, and recovery_of_id. References are same-site persisted record IDs, normalized as ordered links. `reject_outputs` applies only to a complete dependency closure; unknown/incomplete scope escalates to `quarantine_run`. Existing version-1 shape remains available as SelfAuditResultV1 in the audit contract schema for historical decoding only. New acceptance requires version 2.
