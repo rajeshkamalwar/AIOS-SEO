@@ -189,3 +189,7 @@ Reality boundary: N1 live dispatch and governed render-evidence acceptance remai
 ## Governed local render execution — 2026-09-18, parentf9543a8
 
 [Execution report](../../reports/GOVERNED-OFFLINE-RENDER-EXECUTION.md):446 application and72 compiled tests passed. The opt-in suite passed28 cases, including one actual persisted-source-to-Chromium execution with independently confirmed container removal;27 cases overlap protocol tests. Exact cumulative render permission, immutable source descriptor and final current gates authorize only local fixture replay. GAP-037 closes this bounded prerequisite; GAP-008 accepted artifacts and atomic job completion remain open. No website-write capability.
+
+## Local rendered evidence acceptance — 2026-09-18, parentd04ebff
+
+[Acceptance report](../../reports/LOCAL-RENDER-EVIDENCE-ACCEPTANCE.md):477 application/88 compiled tests and the28-case opt-in suite passed, including one actual Docker-to-private-evidence case. Separate collection credentials accept only transcript-bound, privacy-limited artifacts under current authority. GAP-038 closes this prerequisite; GAP-008 typed render projections/job completion and GAP-039 upstream raw privacy remain open. No real-world/production capability proof or website-write capability.

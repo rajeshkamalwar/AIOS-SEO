@@ -11,7 +11,7 @@ specs: ["docs/14-CAPABILITY-TAXONOMY.md", "docs/15-CAPABILITY-CONTRACT.md", "doc
 implementation: ["packages/perception/collector.ts", "packages/perception/transport.ts", "packages/perception/dns.ts", "packages/perception/address.ts", "packages/persistence/index.ts", "packages/jobs/index.ts"]
 tests: ["tests/collector.test.ts", "tests/http-evidence.test.ts", "tests/jobs.test.ts"]
 reports: ["docs/40-POST-M5-INTEGRATION-REALITY-REVIEW.md", "docs/41-NEXT-PHASE-READINESS-PLAN.md", "docs/reports/N1-IMPLEMENTATION.md"]
-gaps: ["GAP-DOM-HTTP", "GAP-004", "GAP-007"]
+gaps: ["GAP-DOM-HTTP", "GAP-004", "GAP-007", "GAP-039"]
 scope: "Safe bounded low-level HTTP transport and exact synthetic/loopback status-body-receipt persistence and snapshot projection."
 baseline: "2b6d527"
 required_stages: "Canonical15/18/28/35 applicable evidence, implementation, independent test/release, real-world and production proof; applicability and stage evidence must be explicitly reviewed before COMPLETE."
@@ -48,3 +48,5 @@ Open gaps: [GAP-DOM-HTTP](../gaps/GAP-DOM-HTTP.md), [GAP-004](../gaps/GAP-004.md
 ## History
 
 - 2026-09-18 baseline2b6d527: conservative inventory import; no maturity promotion from test counts or draft manifests.
+
+- 2026-09-18: GAP-039 records raw fixture retention privacy work exposed by render acceptance review; existing tests do not certify that missing transformation.

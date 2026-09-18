@@ -2,6 +2,7 @@ import {randomUUID} from 'node:crypto';
 import {hash,manifestHash,base,validate} from '../contracts/index.js';
 import {parseOfflineRenderResult} from '../perception/render-result.js';
 import {Jobs,type Lease} from './index.js';
+import type {OfflineRenderAcceptanceInput} from './offline-render-acceptance.js';
 import {RenderLane} from './render-lane.js';
 import {RenderSupervisor,type RenderInvocationBinding} from './render-supervisor.js';
 import type {OfflineRenderEngine,RenderContainer,RenderCleanup,RenderRunResult} from './docker-offline-render.js';
@@ -15,6 +16,17 @@ export interface OfflineRenderExecutionReceipt {
 export class OfflineRenderFixtureProducer {
  constructor(private jobs:Jobs,private lane:RenderLane,private supervisor:RenderSupervisor,private engine:OfflineRenderEngine){}
  async collect(lease:Lease,options:{signal?:AbortSignal;wallTimeoutMs?:number}={}):Promise<OfflineRenderExecutionReceipt>{
+  return this.execute(lease,options);
+ }
+ /** Private host handoff; no stdout or form/resource content enters job options,
+  * the queue, operational receipts or the caller response. */
+ async collectAndAccept(lease:Lease,options:{signal?:AbortSignal;wallTimeoutMs?:number}={}){
+  let acceptance:Awaited<ReturnType<Jobs['acceptOfflineRenderFixture']>>|undefined;
+  const execution=await this.execute(lease,options,async input=>{acceptance=await this.jobs.acceptOfflineRenderFixture(lease,input);});
+  if(!acceptance)throw new Error('render_result_not_acceptable');
+  return {execution,acceptance};
+ }
+ private async execute(lease:Lease,options:{signal?:AbortSignal;wallTimeoutMs?:number},accept?:(input:OfflineRenderAcceptanceInput)=>Promise<void>):Promise<OfflineRenderExecutionReceipt>{
   const wall=options.wallTimeoutMs??25000;
   if(Object.keys(options).some(k=>!['signal','wallTimeoutMs'].includes(k))||!Number.isSafeInteger(wall)||wall<1||wall>25000)throw new Error('invalid_input');
   if(options.signal?.aborted)throw new Error('aborted');
@@ -65,6 +77,11 @@ export class OfflineRenderFixtureProducer {
   const terminalReceiptId=await this.supervisor.recordTerminalReceipt({...binding,finishedAt:cleanup.finishedAt,termination:cleanup.termination,resultDigest:manifestHash({stdoutSha256,state,conformance,workerState,evidenceAccepted:false}),actualRequests:null,actualBytes:null});
   await this.lane.settle(lease,reservation.reservationId,terminalReceiptId);
   const receipt:OfflineRenderExecutionReceipt={state,invocationId:reservation.invocationId,terminalReceiptId,containerId:container.id,stdoutSha256,conformance,workerState,evidenceAccepted:false};
-  validate(base+'offline-render-execution.schema.json',receipt);return receipt;
+  validate(base+'offline-render-execution.schema.json',receipt);
+  if(accept){
+   if(conformance!=='valid')throw new Error('render_result_not_acceptable');
+   await accept({stdout:run.stdout,receipt,browserBuild:this.engine.browserBuild,imageDigest:container.imageDigest});
+  }
+  return receipt;
  }
 }

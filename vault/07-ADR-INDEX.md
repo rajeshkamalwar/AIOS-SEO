@@ -28,3 +28,5 @@ ADR-007 is the owner-accepted scoped-rejection decision. Its implementation, tra
 - [ADR-016: independent offline-render accounting authority](../docs/decisions/016-render-terminal-accounting.md) — permanent bounded charges and independent terminal witnesses; no dispatch or evidence authority.
 
 - [ADR-017: governed local offline-render execution](../docs/decisions/017-governed-local-render-execution.md) — explicit child/permission, fixed isolated container and operational receipt; no accepted artifacts.
+
+- [ADR-018: local render evidence retention and acceptance](../docs/decisions/018-local-render-evidence-retention.md) — accepted local privacy-limited artifact/acceptance boundary; no typed projection or job completion.

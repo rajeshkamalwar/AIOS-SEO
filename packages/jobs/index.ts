@@ -1,7 +1,7 @@
 import type { Pool, PoolClient } from 'pg';
 import { randomUUID, randomInt } from 'node:crypto';
 import { base, validate, uuid, manifestHash, hash } from '../contracts/index.js';
-import type { LocalBlobs } from '../evidence/index.js';
+import {acceptOfflineRenderFixture,type OfflineRenderAcceptanceInput,type OfflineRenderAcceptance,type RenderArtifacts} from './offline-render-acceptance.js';
 import type { Principal } from '../persistence/index.js';
 import { transaction, scope, tick, insertDomain, event, registryLock, workLock } from '../persistence/transaction.js';
 import { lockGovernedWork,assertWorkHealth,requireLiveRun,requireLease } from './lease-context.js';
@@ -20,7 +20,7 @@ export type BudgetKind=Exclude<keyof Budget,'deadline'>;
 export interface Lease { tenantId:string; siteId:string; runId:string; jobId:string; token:string; attempt:number; attemptId:string }
 const moneyKinds:BudgetKind[]=['http_requests','render_requests','render_pages','model_calls','tokens','cost_microusd'];
 export class Jobs {
- constructor(private pool:Pool, private deletions:DeletionLedger, private artifacts?:Pick<LocalBlobs,'read'>){}
+ constructor(private pool:Pool, private deletions:DeletionLedger, private artifacts?:RenderArtifacts, private renderAcceptorPool?:Pool){}
  private async locks(c:PoolClient){return lockGovernedWork(c);}
  private async health(c:PoolClient){return assertWorkHealth(c);}
  private async live(c:PoolClient,tenant:string,site:string,run:string){return requireLiveRun(c,tenant,site,run,this.deletions);}
@@ -169,6 +169,10 @@ export class Jobs {
    await validateOfflineRenderScope(c,l,r.submitted_by,current,bytes,this.deletions);
    await this.leased(c,l);return {result:prepared,sourceContextHash:current.fingerprint};
   });
+ }
+ async acceptOfflineRenderFixture(l:Lease,input:OfflineRenderAcceptanceInput):Promise<OfflineRenderAcceptance>{
+  if(!this.renderAcceptorPool)throw new Error('render_acceptor_required');
+  return acceptOfflineRenderFixture(this.renderAcceptorPool,this.deletions,this.artifacts,l,input,()=>this.prepareOfflineRenderExecution(l));
  }
  async enqueueOfflineRenderFixture(parent:Lease,snapshotId:string,release:string,key:string):Promise<string>{
   if(!key||key.length>4096)throw new Error('invalid_input');

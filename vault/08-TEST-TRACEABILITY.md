@@ -1,6 +1,6 @@
 # Test traceability
 
-<!-- Derived record/source digest: a67eef41f3dec0d9126f9a0005d618a4f418f21c3b33b7c927a390d0626ac554; regenerate with npm run vault:update. This is not a test receipt. -->
+<!-- Derived record/source digest: f96b32e802589e7898df9e649eb1b248735f95b83e41e24e087228475d501f7e; regenerate with npm run vault:update. This is not a test receipt. -->
 
 Counts below are successive snapshots, **never added together**. A referenced test is not proof of full capability acceptance. Fixture/loopback/offline browser results stay TESTED. Spec validation, production dependency audit and runtime execution establish different things.
 
@@ -30,6 +30,7 @@ Counts below are successive snapshots, **never added together**. A referenced te
 | [OFFLINE-RENDER-SOURCE](milestones/OFFLINE-RENDER-SOURCE.md) | [index.ts](../packages/jobs/index.ts), [offline-render-source.ts](../packages/jobs/offline-render-source.ts) | [offline-render-source.test.ts](../tests/offline-render-source.test.ts), [test.mjs](../scripts/test.mjs), [test-render.mjs](../scripts/test-render.mjs) | [OFFLINE-RENDER-SOURCE-PREPARATION.md](../reports/OFFLINE-RENDER-SOURCE-PREPARATION.md) / parent359a01d |
 | [RENDER-TERMINAL-ACCOUNTING](milestones/RENDER-TERMINAL-ACCOUNTING.md) | [render-lane.ts](../packages/jobs/render-lane.ts), [render-supervisor.ts](../packages/jobs/render-supervisor.ts), [lease-context.ts](../packages/jobs/lease-context.ts), [017-render-supervisor.sql](../packages/persistence/migrations/017-render-supervisor.sql) | [render-lane.test.ts](../tests/render-lane.test.ts), [test.mjs](../scripts/test.mjs) | [RENDER-TERMINAL-ACCOUNTING.md](../reports/RENDER-TERMINAL-ACCOUNTING.md) / parent9620e9a |
 | [GOVERNED-OFFLINE-RENDER-EXECUTION](milestones/GOVERNED-OFFLINE-RENDER-EXECUTION.md) | [offline-render-producer.ts](../packages/jobs/offline-render-producer.ts), [docker-offline-render.ts](../packages/jobs/docker-offline-render.ts), [offline-render-job.ts](../packages/jobs/offline-render-job.ts), [offline-render.ts](../packages/skills/offline-render.ts), [018-offline-render-job.sql](../packages/persistence/migrations/018-offline-render-job.sql) | [render-execution.test.ts](../tests/render-execution.test.ts), [test.mjs](../scripts/test.mjs) | [GOVERNED-OFFLINE-RENDER-EXECUTION.md](../reports/GOVERNED-OFFLINE-RENDER-EXECUTION.md) / parentf9543a8 |
+| [LOCAL-RENDER-EVIDENCE-ACCEPTANCE](milestones/LOCAL-RENDER-EVIDENCE-ACCEPTANCE.md) | [offline-render-acceptance.ts](../packages/jobs/offline-render-acceptance.ts), [render-retention.ts](../packages/perception/render-retention.ts), [render-privacy.ts](../packages/perception/render-privacy.ts), [render-privacy-isolated.ts](../packages/perception/render-privacy-isolated.ts), [019-offline-render-acceptance.sql](../packages/persistence/migrations/019-offline-render-acceptance.sql) | [render-acceptance.test.ts](../tests/render-acceptance.test.ts), [render-privacy.test.ts](../tests/render-privacy.test.ts), [render-retention.test.ts](../tests/render-retention.test.ts) | [LOCAL-RENDER-EVIDENCE-ACCEPTANCE.md](../reports/LOCAL-RENDER-EVIDENCE-ACCEPTANCE.md) / parentd04ebff |
 
 ## Capability and defect trace
 
@@ -56,12 +57,15 @@ Every [capability note](04-COVERAGE-MATRIX.md) maps its exact CAP requirement â†
 - [perception-persistence.test.ts](../tests/perception-persistence.test.ts)
 - [perception.test.ts](../tests/perception.test.ts)
 - [policy.test.ts](../tests/policy.test.ts)
+- [render-acceptance.test.ts](../tests/render-acceptance.test.ts)
 - [render-execution.test.ts](../tests/render-execution.test.ts)
 - [render-input.test.ts](../tests/render-input.test.ts)
 - [render-lane.test.ts](../tests/render-lane.test.ts)
 - [render-manifest.test.ts](../tests/render-manifest.test.ts)
 - [render-persistence.test.ts](../tests/render-persistence.test.ts)
+- [render-privacy.test.ts](../tests/render-privacy.test.ts)
 - [render-result.test.ts](../tests/render-result.test.ts)
+- [render-retention.test.ts](../tests/render-retention.test.ts)
 - [robots.test.ts](../tests/robots.test.ts)
 - [runtime.test.ts](../tests/runtime.test.ts)
 - [site-scope.test.ts](../tests/site-scope.test.ts)

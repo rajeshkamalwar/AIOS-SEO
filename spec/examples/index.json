@@ -224,6 +224,16 @@
       "path": "examples/invalid-offline-render-execution.json",
       "schema": "https://schemas.aios-seo.invalid/v1/offline-render-execution.schema.json",
       "valid": false
+    },
+    {
+      "path": "examples/offline-render-retained-manifest.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/offline-render-retained-manifest.schema.json",
+      "valid": true
+    },
+    {
+      "path": "examples/invalid-offline-render-retained-manifest.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/offline-render-retained-manifest.schema.json",
+      "valid": false
     }
   ],
   "note": "Schema fixtures test shape only. Scenario semantics require implementation tests."
