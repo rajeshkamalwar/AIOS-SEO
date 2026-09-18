@@ -29,7 +29,7 @@ Implementation: [index.ts](../../packages/skills/index.ts), [index.ts](../../pac
 
 Tests: [jobs.test.ts](../../tests/jobs.test.ts), [input-eligibility.test.ts](../../tests/input-eligibility.test.ts), [foundation.test.ts](../../tests/foundation.test.ts), [runtime.test.ts](../../tests/runtime.test.ts)
 
-Evidence/reports: ["reports/PUBLICATION-AND-READ-SCOPE-HARDENING.md", 40-POST-M5-INTEGRATION-REALITY-REVIEW.md](../../docs/40-POST-M5-INTEGRATION-REALITY-REVIEW.md), [41-NEXT-PHASE-READINESS-PLAN.md](../../docs/41-NEXT-PHASE-READINESS-PLAN.md), [N1-IMPLEMENTATION.md](../../docs/reports/N1-IMPLEMENTATION.md)
+Evidence/reports: [40-POST-M5-INTEGRATION-REALITY-REVIEW.md](../../docs/40-POST-M5-INTEGRATION-REALITY-REVIEW.md), [41-NEXT-PHASE-READINESS-PLAN.md](../../docs/41-NEXT-PHASE-READINESS-PLAN.md), [N1-IMPLEMENTATION.md](../../docs/reports/N1-IMPLEMENTATION.md)
 
 Remaining: No full live capability dispatch surface, production OIDC/operator deployment or external tool authority activation.
 

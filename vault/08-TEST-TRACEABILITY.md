@@ -1,6 +1,6 @@
 # Test traceability
 
-<!-- Derived record/source digest: 6316432eef9c1dd7bd6099b247c57fbfb53284974648c55d992317e37a6d94b0; regenerate with npm run vault:update. This is not a test receipt. -->
+<!-- Derived record/source digest: 506890063622356e1cac410936d56fbb42a2d4b91398e5df2d526dd721cd0d61; regenerate with npm run vault:update. This is not a test receipt. -->
 
 Counts below are successive snapshots, **never added together**. A referenced test is not proof of full capability acceptance. Fixture/loopback/offline browser results stay TESTED. Spec validation, production dependency audit and runtime execution establish different things.
 
@@ -25,6 +25,7 @@ Counts below are successive snapshots, **never added together**. A referenced te
 | [READONLY-CORRECTIONS](milestones/READONLY-CORRECTIONS.md) | [index.ts](../packages/api/index.ts), [index.ts](../packages/jobs/index.ts), [index.ts](../packages/understanding/index.ts), [refresh.py](../vault/refresh.py) | [jobs.test.ts](../tests/jobs.test.ts), [understanding.test.ts](../tests/understanding.test.ts), [test_refresh.py](../vault/test_refresh.py) | [POST-VAULT-READONLY-CORRECTIONS.md](../reports/POST-VAULT-READONLY-CORRECTIONS.md) / containing commit; parent673a11b |
 | [API-CONTRACT-CORRECTIONS](milestones/API-CONTRACT-CORRECTIONS.md) | [index.ts](../packages/api/index.ts), [index.ts](../packages/jobs/index.ts) | [api.test.ts](../tests/api.test.ts), [jobs.test.ts](../tests/jobs.test.ts) | [API-CONTRACT-CORRECTIONS.md](../reports/API-CONTRACT-CORRECTIONS.md) / parent d7b721b |
 | [PUBLICATION-SCOPE-HARDENING](milestones/PUBLICATION-SCOPE-HARDENING.md) | [index.ts](../packages/api/index.ts), [015-publication-authority.sql](../packages/persistence/migrations/015-publication-authority.sql) | [jobs.test.ts](../tests/jobs.test.ts), [api-scope.test.ts](../tests/api-scope.test.ts) | [PUBLICATION-AND-READ-SCOPE-HARDENING.md](../reports/PUBLICATION-AND-READ-SCOPE-HARDENING.md) / parent cd4a9d3 |
+| [HTTP-TERMINAL-AUTHORITY](milestones/HTTP-TERMINAL-AUTHORITY.md) | [http-lane.ts](../packages/jobs/http-lane.ts), [http-supervisor.ts](../packages/jobs/http-supervisor.ts), [016-http-supervisor.sql](../packages/persistence/migrations/016-http-supervisor.sql) | [http-lane.test.ts](../tests/http-lane.test.ts) | [HTTP-TERMINAL-AUTHORITY.md](../reports/HTTP-TERMINAL-AUTHORITY.md) / parent dc7ce96 |
 
 ## Capability and defect trace
 

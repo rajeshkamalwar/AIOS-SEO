@@ -19,4 +19,6 @@ Acceptance is a design/authority disposition, not proof of full implementation o
 
 | ADR-013: suppress unverifiable legacy publications | Accepted reversible engineering default | [013-unverified-publication-suppression](../docs/decisions/013-unverified-publication-suppression.md) |
 
+| ADR-014: independent HTTP terminal accounting authority | Accepted reversible local engineering default | [014-http-terminal-authority](../docs/decisions/014-http-terminal-authority.md) |
+
 ADR-007 is the owner-accepted scoped-rejection decision. Its implementation, transition fixtures and subsequent current-input enforcement remain distinct traceable checkpoints; see [M2](milestones/M2.md) and [N1](milestones/N1.md). No accepted ADR grants website-write authority.

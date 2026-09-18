@@ -8,13 +8,7 @@ import { DeletionLedger } from '../policy/deletion.js';
 import type { Lease } from './index.js';
 
 export interface HttpReservation {
- reservationId:string; origin:string; maxDecodedBytes:number; startedAt:string; state:'reserved'|'settled';
-}
-// Scheduling groups DNS-equivalent trailing-dot names and HTTP/HTTPS aliases.
-// The canonical https label is an accounting key, never a URL rewrite or fetch grant.
-// Site scope and receipts retain their exact admitted origin independently.
-function originLane(origin:string):string {
- return 'https://'+new URL(origin).hostname.toLowerCase().replace(/\.+$/, '');
+ reservationId:string; invocationId:string; origin:string; maxDecodedBytes:number; startedAt:string; state:'reserved'|'settled';
 }
 /** Durable accounting only. A receipt is NOT a capability to dispatch a request. */
 export class HttpLane {
@@ -48,7 +42,7 @@ export class HttpLane {
    const normalized=normalizeUrl(r.submitted_url);
    if(normalized.excluded||new URL(normalized.url).origin!==input.origin)throw new Error('scope_denied');
    const prior=(await c.query('SELECT * FROM http_reservation WHERE tenant_id=$1 AND job_id=$2 AND attempt_no=$3',[l.tenantId,l.jobId,l.attempt])).rows[0];
-   const receipt=(row:any):HttpReservation=>({reservationId:row.reservation_id,origin:row.origin,maxDecodedBytes:Number(row.reserved_bytes),startedAt:new Date(row.started_at).toISOString(),state:row.actual_bytes===null?'reserved':'settled'});
+   const receipt=(row:any):HttpReservation=>{if(!row.invocation_id)throw new Error('legacy_invocation_unverified');return ({reservationId:row.reservation_id,invocationId:row.invocation_id,origin:row.origin,maxDecodedBytes:Number(row.reserved_bytes),startedAt:new Date(row.started_at).toISOString(),state:row.settled_at===null?'reserved':'settled'});};
    if(prior){if(prior.origin!==input.origin||Number(prior.reserved_bytes)!==input.maxDecodedBytes)throw new Error('conflict');return receipt(prior);}
    const totals=(await c.query(`SELECT count(*) AS attempts,coalesce(sum(reserved_bytes),0) AS bytes FROM http_reservation WHERE tenant_id=$1 AND crawl_id=$2`,[l.tenantId,l.runId])).rows[0];
    const budget=(await c.query(`SELECT coalesce(sum(CASE WHEN state='settled' THEN actual ELSE amount END),0) AS tenant,
@@ -56,30 +50,21 @@ export class HttpLane {
     FROM budget_reservation WHERE tenant_id=$1 AND kind='http_requests'`,[l.tenantId,l.runId])).rows[0];
    const cap=(await c.query("SELECT amount FROM control.tenant_cap WHERE tenant_id=$1 AND kind='http_requests'",[l.tenantId])).rows[0];
    if(Number(totals.attempts)>=750||Number(totals.bytes)+input.maxDecodedBytes>262144000||!cap||Number(budget.run)+1>Math.min(750,r.budget.http_requests)||Number(budget.tenant)+1>Number(cap.amount))throw new Error('budget_exhausted');
-   const laneKey=originLane(input.origin);
-   await c.query("INSERT INTO control.http_origin VALUES($1,'-infinity',0) ON CONFLICT DO NOTHING",[laneKey]);
-   if(!(await c.query(`UPDATE control.http_origin SET last_started_at=clock_timestamp(),in_flight=in_flight+1
-    WHERE origin=$1 AND in_flight<2 AND last_started_at<=clock_timestamp()-interval '1 second' RETURNING origin`,[laneKey])).rowCount)throw new Error('origin_limited');
    const id=randomUUID();
-   // Reserve the generic lane too, so Jobs.reserve cannot independently overspend its HTTP cap.
-   await c.query("INSERT INTO budget_reservation VALUES($1,$2,$3,$4,$5,'http_requests',1,1,'settled',$6)",[l.tenantId,l.runId,l.jobId,l.attempt,id,manifestHash({id,actual:1})]);
-   const row=(await c.query(`INSERT INTO http_reservation(tenant_id,site_id,crawl_id,job_id,attempt_no,attempt_id,lease_token,reservation_id,origin,reserved_bytes)
-    VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING *`,[l.tenantId,l.siteId,l.runId,l.jobId,l.attempt,l.attemptId,l.token,id,input.origin,input.maxDecodedBytes])).rows[0];
+   // Counter increment, permanent generic charge and reservation commit together.
+   const row=(await c.query('SELECT * FROM control.reserve_http_accounting($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)',
+    [l.tenantId,l.siteId,l.runId,l.jobId,l.attempt,l.attemptId,l.token,input.origin,input.maxDecodedBytes,id,manifestHash({id,actual:1})])).rows[0];
    return receipt(row);
   });
  }
- async settle(l:Lease,id:string,actualDecodedBytes:number):Promise<void>{
-  uuid(id);if(!Number.isSafeInteger(actualDecodedBytes)||actualDecodedBytes<0)throw new Error('invalid_input');
+ async settle(l:Lease,id:string,receiptId:string):Promise<void>{
+  uuid(id);uuid(receiptId);
   return transaction(this.pool,'aios_scheduler',async c=>{
    await this.locks(c,l);
-   // Accounting remains possible after cancellation/revocation; it cannot accept evidence or dispatch.
-   const row=(await c.query(`SELECT * FROM http_reservation WHERE tenant_id=$1 AND site_id=$2 AND crawl_id=$3 AND job_id=$4
-    AND attempt_no=$5 AND attempt_id=$6 AND lease_token=$7 AND reservation_id=$8 FOR UPDATE`,[l.tenantId,l.siteId,l.runId,l.jobId,l.attempt,l.attemptId,l.token,id])).rows[0];
-   if(!row||actualDecodedBytes>Number(row.reserved_bytes))throw new Error('invalid_receipt');
-   if(row.actual_bytes!==null){if(Number(row.actual_bytes)!==actualDecodedBytes)throw new Error('conflict');return;}
-   await c.query('UPDATE http_reservation SET actual_bytes=$3,settled_at=clock_timestamp() WHERE tenant_id=$1 AND reservation_id=$2',[l.tenantId,id,actualDecodedBytes]);
-   if(!(await c.query('UPDATE control.http_origin SET in_flight=in_flight-1 WHERE origin=$1 AND in_flight>0 RETURNING origin',[originLane(row.origin)])).rowCount)throw new Error('accounting_integrity');
-   // Conservative request/byte reservations never refund on completion, cancellation or restart.
+   // Only a separately authenticated, immutable supervisor witness can release
+   // the slot. Post-cancel accounting accepts no evidence and refunds no budget.
+   await c.query('SELECT control.settle_http_terminal($1,$2,$3,$4,$5,$6,$7,$8,$9)',
+    [l.tenantId,l.siteId,l.runId,l.jobId,l.attempt,l.attemptId,l.token,id,receiptId]);
   });
  }
 }

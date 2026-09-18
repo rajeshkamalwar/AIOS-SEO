@@ -29,7 +29,7 @@ Implementation: [index.ts](../../packages/api/index.ts), [index.html](../../apps
 
 Tests: [api.test.ts](../../tests/api.test.ts)
 
-Evidence/reports: ["reports/PUBLICATION-AND-READ-SCOPE-HARDENING.md", "reports/API-CONTRACT-CORRECTIONS.md", 40-POST-M5-INTEGRATION-REALITY-REVIEW.md](../../docs/40-POST-M5-INTEGRATION-REALITY-REVIEW.md), [41-NEXT-PHASE-READINESS-PLAN.md](../../docs/41-NEXT-PHASE-READINESS-PLAN.md), [N1-IMPLEMENTATION.md](../../docs/reports/N1-IMPLEMENTATION.md)
+Evidence/reports: [40-POST-M5-INTEGRATION-REALITY-REVIEW.md](../../docs/40-POST-M5-INTEGRATION-REALITY-REVIEW.md), [41-NEXT-PHASE-READINESS-PLAN.md](../../docs/41-NEXT-PHASE-READINESS-PLAN.md), [N1-IMPLEMENTATION.md](../../docs/reports/N1-IMPLEMENTATION.md)
 
 Remaining: No business-language interpretation engine, outcome narrative or connected persistent client flow; static UI is not implemented business experience.
 

@@ -169,3 +169,7 @@ The pure offline manifest transformer separates each exact DOM into a bounded ar
 Final combined verification: 353 normal tests, 26 compiled parser/replay/manifest tests and 13 Docker regressions pass. Typecheck, build, specification validation (21 schemas, 35 positive and 8 negative examples), diff checks and both production dependency audits pass; audits report zero vulnerabilities. The dedicated local Docker VM was used without host mounts or external resource access.
 
 Reality boundary: N1 live dispatch and governed render-evidence acceptance remain open. The next real-URL activation boundary is the owner-approved N0 deployment/data-use profile required by ADR-006 and document41. Local fixtures cannot establish customer processing/storage/retention/provider-use commitments. No live customer processing or website-write capability was enabled.
+
+## Independent HTTP terminal authority checkpoint
+
+[Detailed report](../../reports/HTTP-TERMINAL-AUTHORITY.md): reservation-generated invocation IDs, separate supervisor pre-execution binding and immutable terminal witnesses now fence slot settlement. Narrow SQL commands prevent direct scheduler refund/counter/ghost-reservation bypasses. Legacy unknown reservations receive no invented binding; unknown bytes remain null. 397 application cases,45 compiled cases and10 vault guards pass; typecheck/build/spec validation and both production dependency audits pass. These are local protocol fixtures, not a real process/egress producer. GAP-005/GAP-004 remain open; no live collection authority.

@@ -2,7 +2,7 @@ import type { Pool, PoolClient } from 'pg';
 import { randomUUID } from 'node:crypto';
 import { base, validate, uuid } from '../contracts/index.js';
 import type { Principal } from './index.js';
-export type ServiceRole = 'aios_runtime'|'aios_scheduler'|'aios_evaluator'|'aios_operator';
+export type ServiceRole = 'aios_runtime'|'aios_scheduler'|'aios_evaluator'|'aios_operator'|'aios_http_supervisor';
 export const registryLock = 68273432, workLock = 68273433;
 export async function transaction<T>(pool: Pool, role: ServiceRole, fn: (c:PoolClient)=>Promise<T>):Promise<T> {
  const c=await pool.connect();
