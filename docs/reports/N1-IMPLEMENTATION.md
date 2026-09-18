@@ -63,3 +63,11 @@ Verification: 234 tests pass; typecheck/build and compiled imports pass; specifi
 A combined integration test now follows real loopback HTTP robots admission through retained body/receipt evidence, a frozen bundle, signed fixture job, leased projection and snapshot readback through a fresh runtime pool. It proves a denied URL is never dispatched and preserves the actual HTTP status rather than inventing success. This does not establish a complete crawl runner, production egress or customer-domain execution.
 
 Verification: 248 tests pass; typecheck/build/specification validation pass; production dependency audit has zero vulnerabilities; diff hygiene passes.
+
+## Offline isolated-render conformance checkpoint
+
+Added a one-shot, digest-pinned Linux/Playwright worker for explicit synthetic HTML replay. The Docker harness supplies no mounts or credentials, disables network access, runs nonroot with Chromium's sandbox, drops all capabilities, applies no-new-privileges/read-only root and bounds CPU, memory, PIDs and temporary storage. Worker probes verify Linux restrictions and Chromium namespace/PID/network/seccomp status. Only the initial fixture document is fulfilled; every other request is denied. This is real JS execution in a local container, not customer-site rendering or production escape-resistance certification.
+
+Seven executable Docker regressions pass: 0/2/5-second DOM mutation samples; denied external/private GET, POST, beacon, socket and popup; actual 100-attempt termination; changed-URL context rejection; non-fixture URL rejection; hung-page failure without invented DOM; host deadline with confirmed container removal. Review corrected an initially diagnostic-only attempt cap and ensured terminal receipts kill late asynchronous setup. ADR-012 records the boundary and seccomp compatibility choice. Raw evidence acceptance, render job authority, resource replay provenance, independent live egress and production activation remain open.
+
+Verification: 248 normal tests and seven separate Docker regressions pass; typecheck/build/specification validation pass; root and isolated-worker production dependency audits both report zero vulnerabilities; diff checks pass.

@@ -58,7 +58,10 @@ Read [AGENTS.md](AGENTS.md) completely first, then this README, then every docum
 39. [38 — First Slice Implementation Plan](docs/38-FIRST-SLICE-IMPLEMENTATION-PLAN.md)
 40. [39 — Phase 3 Readiness Review](docs/39-PHASE-3-READINESS-REVIEW.md)
 
-Then read [ADRs001–006](docs/decisions/001-transactional-domain-core.md) in filename order and [spec/README.md](spec/README.md), all schemas, examples and fixtures.
+41. [40 — Post-M5 Integration Reality Review](docs/40-POST-M5-INTEGRATION-REALITY-REVIEW.md)
+42. [41 — Next-Phase Readiness Plan](docs/41-NEXT-PHASE-READINESS-PLAN.md)
+
+Then read all [ADRs](docs/decisions/001-transactional-domain-core.md) in filename order and [spec/README.md](spec/README.md), all schemas, examples and fixtures.
 
 ## Engineering boundary
 
@@ -66,7 +69,7 @@ Preserve the persistent, domain-native Brain. Do not reinterpret it as a convent
 
 Surface conflicts with the constitution and record accepted changes explicitly. Start with the findings in 07 and decision gates in 13 before requesting application implementation. Specification phases do not scaffold the application. Read documents38–39 for the current implementation boundary; all website mutations remain out of scope for the first slice.
 
-## Local M1 verification
+## Local verification
 
 Requires Node24 and PostgreSQL17 binaries (`PG_BIN` if not on PATH). No customer URL, credentials, model account or existing database is needed.
 
@@ -80,3 +83,5 @@ npm test
 `npm test` creates a private disposable PostgreSQL cluster using Unix sockets, runs the real storage/isolation/restart suite, then removes it. It never uses an existing database service. On Homebrew, PostgreSQL17 can coexist with other installed versions; set `PG_BIN=/opt/homebrew/opt/postgresql@17/bin` when needed. The blob adapter accepts only the local synthetic profile.
 
 The compiled libraries and their schemas/migrations are in ignored `dist/`. The local synthetic read-only slice through M5 is implemented and tested; see the milestone reports, the [post-M5 reality review](docs/40-POST-M5-INTEGRATION-REALITY-REVIEW.md), the [next-phase readiness plan](docs/41-NEXT-PHASE-READINESS-PLAN.md), and the [N0 implementation report](docs/reports/N0-IMPLEMENTATION.md). Production identity, live collection/rendering, model providers and website writes remain separately gated.
+
+For the N1 isolated synthetic renderer, Docker is additionally required. Run `npm run test:render` (optionally set `AIOS_DOCKER_CONTEXT`); see the [worker runbook](workers/render-fixture/README.md) for the fixed offline boundary. This separate suite builds a pinned browser image and tests actual Linux/Chromium isolation, DOM sampling and supervised cleanup. It does not enable live collection or replace the normal suite.
