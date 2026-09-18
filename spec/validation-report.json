@@ -3,9 +3,9 @@
   "scope": "specification_conformance_only",
   "counts": {
     "schemas": 20,
-    "references": 1006,
-    "examples": 33,
-    "negative_examples": 6,
+    "references": 1017,
+    "examples": 34,
+    "negative_examples": 7,
     "artifact_hashes": 13,
     "source_excerpt_hashes": 6,
     "catalog_records": 48,

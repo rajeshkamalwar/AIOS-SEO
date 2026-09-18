@@ -194,6 +194,16 @@
       "path": "examples/invalid-frontier-updated.json",
       "schema": "https://schemas.aios-seo.invalid/v1/event.schema.json",
       "valid": false
+    },
+    {
+      "path": "examples/frontier-links-updated.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/event.schema.json",
+      "valid": true
+    },
+    {
+      "path": "examples/invalid-frontier-links-updated.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/event.schema.json",
+      "valid": false
     }
   ],
   "note": "Schema fixtures test shape only. Scenario semantics require implementation tests."

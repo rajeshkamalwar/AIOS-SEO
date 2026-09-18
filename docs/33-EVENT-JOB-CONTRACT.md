@@ -6,6 +6,8 @@ The event variants specify exact payloads. Producer is authenticated service/ver
 
 `frontier.updated` records a committed read-only frontier classification. Its payload pins crawl, sitemap and robots Observation IDs and cumulative persisted discovered/admitted/excluded/deferred target counts at that update (not page visits or complete site coverage). Admission remains distinct from dispatch. Per-batch inserted/overflow/source-exclusion accounting remains in the durable batch receipt; no URLs, bodies or inferred business claims enter the event. Emit it atomically with target changes, and emit nothing for an idempotent retry.
 
+`frontier.links_updated` has the same cumulative target-count semantics for link-derived expansion, pinning the source PageSnapshot and robots Observation rather than a sitemap Observation. Exact link byte locators, parser version and parent-target lineage belong to the durable batch, not the event bus. Neither frontier event grants collection authority.
+
 ## Atomicity and replay
 
 Commit domain change plus event/outbox in one transaction. Outbox dispatcher retries delivery at least once; consumer inserts inbox(tenant,consumer,event_id) in the same transaction as local state/job creation. Duplicate delivery returns prior result. Idempotency key reuse with different canonical input hash returns conflict. Crawl admission keys are unique per tenant; job key includes tenant, run, kind, input revision and policy version. Per-attempt observation dedupe is separate from intentional new collection.

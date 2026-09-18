@@ -18,6 +18,7 @@ import { createServer } from 'node:http';
 import { collectPublicHop } from '../packages/perception/collector.js';
 import { requestPinned } from '../packages/perception/transport.js';
 import { FixtureFrontier } from '../packages/jobs/frontier.js';
+import { FixtureLinkFrontier } from '../packages/jobs/frontier-links.js';
 const cfg={host:process.env.AIOS_TEST_SOCKET!,port:55439,database:'aios_jobs_test'};
 const root=process.env.AIOS_TEST_ROOT!;
 let admin:pg.Pool,runtime:pg.Pool,scheduler:pg.Pool,operator:pg.Pool,evaluator:pg.Pool;
@@ -206,13 +207,15 @@ test('N1 projection preserves partial status and rolls back domain writes if com
  assert.equal((await admin.query('SELECT state FROM aios.job WHERE job_id=$1',[f.lease.jobId])).rows[0].state,'leased');
  const id=await projector.projectHttpFixture(f.lease,f.receipt.observationId);const r=(await admin.query('SELECT state,truncated FROM aios.page_snapshot WHERE id=$1',[id])).rows[0];assert.deepEqual(r,{state:'partial',truncated:true});await stopAll();
 });
-test('N1 actual loopback HTTP composes scope, durable robots/sitemap frontier and leased snapshot',async t=>{
+test('N1 actual loopback HTTP composes scope, durable sitemap/link frontier and leased snapshots',async t=>{
+ t.after(()=>stopAll());
  const requests:string[]=[],pageBytes=Buffer.from('<title>Fixture service unavailable</title>');
  const server=createServer((req,res)=>{
   requests.push(req.url!);
   if(req.url==='/robots.txt'){res.writeHead(200,{'content-type':'text/plain'});res.end('User-agent: *\nDisallow: /private\n');}
   else if(req.url==='/sitemap.xml'){res.writeHead(200,{'content-type':'application/xml'});res.end('<urlset><url><loc>https://jobs.example/private</loc></url><url><loc>https://jobs.example/services</loc></url></urlset>');}
   else if(req.url==='/services'){res.writeHead(404,{'content-type':'text/html; charset=utf-8'});res.end(pageBytes);}
+  else if(req.url==='/'){res.writeHead(200,{'content-type':'text/html; charset=utf-8'});res.end('<main><a href="/more">More</a><a href="/private">Private</a></main>');}
   else{res.writeHead(500);res.end('unexpected fixture request');}
  });
  await new Promise<void>(resolve=>server.listen(0,'127.0.0.1',resolve));
@@ -261,7 +264,17 @@ test('N1 actual loopback HTTP composes scope, durable robots/sitemap frontier an
   assert.equal((await c.query('SELECT state,result_ref FROM aios.job WHERE job_id=$1',[lease.jobId])).rows[0].result_ref,snapshotId);
   await c.query('COMMIT');
  }finally{await c.query('ROLLBACK');c.release();}
- await stopAll();
+ const home=await fetchFixture('/');
+ const homeInput=await ledger.freeze(p,site,await ledger.cutoff(p,site),evidence,observations);
+ await commands.enqueue(p,site,runId,homeInput,digest,randomUUID(),'project');
+ const homeLease=(await worker.claim())!;assert.ok(homeLease);
+ const homeSnapshot=await new Jobs(scheduler,deletions,blobs).projectHttpFixture(homeLease,home.accepted.observationId);
+ const linkInput=await ledger.freeze(p,site,await ledger.cutoff(p,site),evidence,observations);
+ await new FixtureLinkFrontier(runtime,deletions,blobs).discoverLinks(p,site,runId,linkInput,homeSnapshot,robots.accepted.observationId);
+ const linked=(await admin.query('SELECT url,depth,admitted,discovered_from_id FROM aios.crawl_target WHERE crawl_id=$1 AND url=$2',[runId,'https://jobs.example/more'])).rows[0];
+ const parent=(await admin.query('SELECT id FROM aios.crawl_target WHERE crawl_id=$1 AND url=$2',[runId,'https://jobs.example/'])).rows[0];
+ assert.ok(linked);assert.equal(linked.admitted,true);assert.equal(Number(linked.depth),1);assert.equal(linked.discovered_from_id,parent.id);
+ assert.deepEqual(requests,['/robots.txt','/sitemap.xml','/services','/']);
 });
 test('M2 deletion tombstone survives a stale database epoch and blocks acceptance',async()=>{
  const projected=await projectionFixture();await commands.cancel(p,site,projected.lease.runId);
