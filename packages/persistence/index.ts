@@ -4,10 +4,12 @@ import {
   base,
   hash,
   manifestHash,
+  canonical,
   uuid,
   validate,
 } from "../contracts/index.js";
 import { LocalBlobs } from "../evidence/index.js";
+import { normalizeUrl } from "../perception/url.js";
 
 type Row = Record<string, unknown>;
 export interface Principal {
@@ -28,6 +30,20 @@ export interface Capture {
   capturedAt: string;
   mimeType: "text/html" | "application/json";
   contextHash: string;
+}
+export interface HttpFixtureResult {
+  url: string;
+  method: "GET" | "HEAD";
+  status_code: number | null;
+  headers: { name: string; value: string }[];
+  final_url: string;
+  truncated: boolean;
+  error: { code: string; retryable: boolean; detail: string; evidence_ids: string[] } | null;
+}
+export interface HttpFixtureReceipt {
+  bodyEvidenceId: string | null;
+  receiptEvidenceId: string;
+  observationId: string;
 }
 const tables: Record<string, string> = {
   Site: "site",
@@ -364,6 +380,94 @@ export class Ledger {
         time.known_at,
       ]);
       return { evidenceId, observationId };
+    });
+  }
+  /** Local synthetic capture only; never dispatches HTTP or authorizes worker results. */
+  async acceptHttpFixture(
+    p: Principal,
+    site: string,
+    capture: { attemptId: string; capturedAt: string },
+    result: HttpFixtureResult,
+    bytes: Uint8Array | null,
+  ): Promise<HttpFixtureReceipt> {
+    capture = { ...capture };
+    result = structuredClone(result);
+    uuid(capture.attemptId);
+    validate(base + "common.schema.json#/$defs/time", capture.capturedAt);
+    if (Object.keys(capture).some(k => !["attemptId", "capturedAt"].includes(k))) throw new Error("schema_invalid");
+    // Callers never supply an Evidence identity. It is allocated after scope checks.
+    if (Object.hasOwn(result, "body_evidence_id")) throw new Error("schema_invalid");
+    const input = { ...result, body_evidence_id: null };
+    validate(base + "http-receipt.schema.json", input);
+    const requested = fixtureUrl(result.url), final = fixtureUrl(result.final_url);
+    for (const raw of [result.url, result.final_url]) {
+      const admission = normalizeUrl(raw);
+      if (admission.excluded || admission.url !== raw) throw new Error("policy_blocked");
+    }
+    if (requested.origin !== final.origin) throw new Error("scope_denied");
+    const allowed = new Set(["content-type", "content-length", "content-encoding", "last-modified", "etag", "x-robots-tag", "retry-after"]);
+    const names = result.headers.map(h => h.name);
+    if (new Set(names).size !== names.length || result.headers.some(h => !allowed.has(h.name) || /[\r\n\0]/.test(h.value))) throw new Error("schema_invalid");
+    if (result.headers.reduce((n, h) => n + Buffer.byteLength(h.name + ": " + h.value + "\r\n"), 0) > 32768) throw new Error("response_too_large");
+    const body = bytes === null ? null : Buffer.from(bytes);
+    const mime = result.headers.find(h => h.name === "content-type")?.value.split(";", 1)[0]!.trim().toLowerCase();
+    if (body !== null && (!mime || !["text/html", "application/xhtml+xml", "text/plain", "application/xml", "text/xml"].includes(mime))) throw new Error("schema_invalid");
+    if (body !== null && (result.status_code === null || result.method === "HEAD" || [204, 205, 304].includes(result.status_code))) throw new Error("schema_invalid");
+    if ((result.status_code === null && result.error === null) || (result.truncated && body === null)) throw new Error("schema_invalid");
+    if (result.error && result.error.evidence_ids.length !== 0) throw new Error("schema_invalid");
+    if ((body?.length ?? 0) > 5242880) throw new Error("response_too_large");
+    const inputHash = manifestHash({ capture, result: input, body_hash: body === null ? null : hash(body), body_bytes: body?.length ?? null });
+    return this.tx(p, "write", site, async c => {
+      const s = await this.get(c, "Site", site);
+      if (s.normalized_origin !== requested.origin) throw new Error("scope_denied");
+      await c.query("SELECT pg_advisory_xact_lock_shared($1)", [maintenanceLock]);
+      // Serialization of one attempt precedes uploads; the tenant clock is not held during I/O.
+      await c.query("SELECT pg_advisory_xact_lock(hashtextextended($1,0))", [p.tenantId + ":" + capture.attemptId + ":" + site]);
+      const prior = (await c.query("SELECT * FROM http_fixture_acceptance WHERE tenant_id=$1 AND attempt_id=$2 AND site_id=$3", [p.tenantId, capture.attemptId, site])).rows[0];
+      if (prior) {
+        if (prior.input_hash !== inputHash) throw new Error("conflict");
+        return { bodyEvidenceId: prior.body_evidence_id, receiptEvidenceId: prior.receipt_evidence_id, observationId: prior.observation_id };
+      }
+      if ((await c.query("SELECT 1 FROM acceptance WHERE tenant_id=$1 AND attempt_id=$2 AND subject_id=$3", [p.tenantId, capture.attemptId, site])).rowCount) throw new Error("conflict");
+      const bodyId = body === null ? null : randomUUID(), receiptId = randomUUID(), observationId = randomUUID();
+      const receipt = { ...input, body_evidence_id: bodyId };
+      validate(base + "http-receipt.schema.json", receipt);
+      const receiptBytes = Buffer.from(canonical(receipt));
+      const artifacts = [
+        ...(body === null ? [] : [{ id: bodyId!, bytes: body, mime: mime! }]),
+        { id: receiptId, bytes: receiptBytes, mime: "application/json" },
+      ];
+      for (const artifact of artifacts) await this.blobs.put(this.blobs.key(p.tenantId, site, artifact.id), artifact.bytes);
+      const time = await this.clock(c, p, true);
+      if (Date.parse(capture.capturedAt) > Date.parse(time.known_at)) throw new Error("future_observation");
+      for (const artifact of artifacts) await this.insert(c, {
+        ...this.common("Evidence", p, site, time, artifact.id), state: "available", retention_class: "raw",
+        artifact_key: this.blobs.key(p.tenantId, site, artifact.id), sha256: hash(artifact.bytes), mime_type: artifact.mime,
+        bytes: artifact.bytes.length, captured_at: capture.capturedAt, source_uri: final.href,
+        source_class: "first_party_observation", locator: `bytes:0:${artifact.bytes.length}`, redaction_version: "none-v1",
+        expires_at: new Date(Date.parse(capture.capturedAt) + 7 * 86400000).toISOString(),
+      });
+      await this.insert(c, {
+        ...this.common("Observation", p, site, time, observationId),
+        state: result.status_code === null ? "failed" : result.truncated || result.error !== null ? "partial" : "observed",
+        retention_class: "raw", sensor_id: "http-fixture", sensor_version: "1.0.0", subject_id: site,
+        evidence_ids: artifacts.map(a => a.id), observed_at: capture.capturedAt, window_start: null, window_end: null,
+        source_timezone: "UTC", context_hash: hash(receiptBytes), fresh_until: new Date(Date.parse(capture.capturedAt) + 86400000).toISOString(),
+        attempt_id: capture.attemptId, error: result.error,
+      });
+      await c.query("INSERT INTO http_fixture_acceptance VALUES($1,$2,$3,$4,$5,$6,$7)", [p.tenantId, site, capture.attemptId, inputHash, bodyId, receiptId, observationId]);
+      // Existing capture dedupe shares the same attempt/subject namespace.
+      await c.query("INSERT INTO acceptance VALUES($1,$2,$3,$4,$5,$6,$7)", [p.tenantId, site, capture.attemptId, site, inputHash, receiptId, observationId]);
+      const event = {
+        event_id: randomUUID(), tenant_id: p.tenantId, site_id: site, schema_version: 1,
+        aggregate_id: observationId, aggregate_version: 1, causation_id: null, correlation_id: capture.attemptId,
+        occurred_at: capture.capturedAt, recorded_at: time.known_at, knowledge_seq: time.known_seq,
+        idempotency_key: capture.attemptId, producer: "http-fixture-collector@1.0.0", event_type: "evidence.recorded",
+        payload: { evidence_id: receiptId, observation_id: observationId },
+      };
+      validate(base + "event.schema.json", event);
+      await c.query("INSERT INTO outbox VALUES($1,$2,$3,$4,$5,$6,$7,NULL)", [p.tenantId, site, event.event_id, observationId, event.event_type, event, time.known_at]);
+      return { bodyEvidenceId: bodyId, receiptEvidenceId: receiptId, observationId };
     });
   }
   async cutoff(p: Principal, site: string): Promise<Cutoff> {

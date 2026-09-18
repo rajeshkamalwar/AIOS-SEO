@@ -12,7 +12,7 @@ Exit evidence: signed deployment profile, security review, restore/deletion dril
 
 ## Phase N1 — real public perception
 
-Implementation status: the bounded pinned HTTP collector is implemented and tested. Durable crawl persistence, robots-first orchestration and the isolated renderer remain open.
+Implementation status: transport safety, robots/sitemap/frontier conformance, durable perception storage and submitted seeds, retained synthetic HTTP receipts and a loopback-to-frozen-bundle integration are implemented and tested. See the [N1 implementation report](reports/N1-IMPLEMENTATION.md) for actual boundaries. Governed live dispatch, durable per-hop/byte accounting, complete frontier recovery and the isolated renderer remain open; the local integration test does not establish production egress safety.
 
 Implement the HTTP collector behind controlled egress with DNS/IP pinning, redirect revalidation, response/total budgets, origin fairness and durable CrawlTarget/PageSnapshot acceptance. Add a separate Linux nonroot Playwright worker, pinned browser/container versions, network-deny probes, resource caps and crash-resume tests. Keep robots/sitemap uncertainty and partial accounting explicit.
 

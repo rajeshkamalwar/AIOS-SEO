@@ -65,4 +65,4 @@ export function renderLocal(): RenderResult { return { state: "disabled", eviden
 export function receipt(input: unknown): unknown { validate(base + "http-receipt.schema.json", input); return input; }
 export const limits = Object.freeze(policy);
 export const digest = (bytes: Uint8Array) => hash(bytes);
-export { collectPublicPage } from "./collector.js";
+export { collectPublicPage, collectPublicHop } from "./collector.js";

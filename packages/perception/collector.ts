@@ -34,7 +34,15 @@ async function resolvePublic(host: string, options: CollectorOptions, timeout: n
 
 // Durable admission, robots, budget reservation and deployment authorization
 // belong to the governed dispatcher; URL validation alone grants no authority.
+export type HopReceipt = CollectorReceipt & { nextUrl: string | null };
 export async function collectPublicPage(rawUrl: string, options: CollectorOptions = {}): Promise<CollectorReceipt> {
+  const { nextUrl: _next, ...receipt } = await collect(rawUrl, options, false);
+  return receipt;
+}
+export async function collectPublicHop(rawUrl: string, options: CollectorOptions = {}): Promise<HopReceipt> {
+  return collect(rawUrl, options, true);
+}
+async function collect(rawUrl: string, options: CollectorOptions, singleHop: boolean): Promise<HopReceipt> {
   const maxBytes = bound(options.maxBytes, 5242880), timeoutMs = bound(options.timeoutMs, 20000);
   const maxRedirects = bound(options.maxRedirects, 5, 0), dnsTimeout = bound(options.dnsTimeoutMs, 3000);
   let current = admitted(rawUrl);
@@ -51,11 +59,12 @@ export async function collectPublicPage(rawUrl: string, options: CollectorOption
     if (response.body && response.body.length > remainingBytes) throw new Error("collector_transport_overflow");
     remainingBytes -= response.body?.length ?? 0;
     if (redirectCodes.has(response.status) && response.headers.location) {
-      if (hop >= maxRedirects) throw new Error("redirect_budget");
+      if (!singleHop && hop >= maxRedirects) throw new Error("redirect_budget");
       const next = admitted(response.headers.location, current.toString());
       if (next.origin !== current.origin) throw new Error("redirect_origin_changed");
+      if (singleHop) return { requestedUrl: rawUrl, finalUrl: current.toString(), status: response.status, headers: safeHeaders(response.headers), body: null, redirects, truncated: response.truncated, nextUrl: next.toString() };
       redirects.push(next.toString()); current = next; continue;
     }
-    return { requestedUrl: rawUrl, finalUrl: current.toString(), status: response.status, headers: safeHeaders(response.headers), body: supportedMime(response.headers["content-type"]) ? response.body : null, redirects, truncated: response.truncated };
+    return { requestedUrl: rawUrl, finalUrl: current.toString(), status: response.status, headers: safeHeaders(response.headers), body: supportedMime(response.headers["content-type"]) ? response.body : null, redirects, truncated: response.truncated, nextUrl: null };
   }
 }

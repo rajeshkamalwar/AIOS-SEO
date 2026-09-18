@@ -230,3 +230,15 @@ test("ambient proxies cannot redirect a pinned request", async t => {
   const url = await fixture(t, (_req, res) => { res.writeHead(200, { "Content-Type": "text/xml" }); res.end("<sitemap/>"); });
   assert.equal((await requestPinned(url, loopback, cap)).body?.toString(), "<sitemap/>");
 });
+
+import { collectPublicHop } from "../packages/perception/collector.js";
+
+test("one-hop collection leaves redirects to separately governed dispatch", async () => {
+  let calls = 0;
+  const result = await collectPublicHop('https://example.test/start', {
+    lookupAll: publicAnswer,
+    transport: async () => { calls++; return {status:302,headers:{location:'/next'},body:null,truncated:false}; },
+  });
+  assert.equal(calls,1);assert.equal(result.nextUrl,'https://example.test/next');
+  assert.equal(result.finalUrl,'https://example.test/start');assert.deepEqual(result.redirects,[]);
+});
