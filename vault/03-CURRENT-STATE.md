@@ -1,8 +1,8 @@
 # Current state
 
-<!-- Derived record/source digest: 506890063622356e1cac410936d56fbb42a2d4b91398e5df2d526dd721cd0d61; regenerate with npm run vault:update. This is not a test receipt. -->
+<!-- Derived record/source digest: d5035e7734459900780abae9cf5bf7fca85d37f9ed00bb0689639abac8be6303; regenerate with npm run vault:update. This is not a test receipt. -->
 
-Latest recorded execution evidence: [HTTP-TERMINAL-AUTHORITY](milestones/HTTP-TERMINAL-AUTHORITY.md) — **397 normal / 45 compiled / not recorded Docker** at reported baseline `parent dc7ce96`. Source/report digest changes above do not establish new test results. Read the linked report for environment, failures and scope.
+Latest recorded execution evidence: [HTTP-FIXTURE-PROCESS](milestones/HTTP-FIXTURE-PROCESS.md) — **405 normal / 84 compiled / not recorded Docker** at reported baseline `parent05a0760`. Source/report digest changes above do not establish new test results. Read the linked report for environment, failures and scope.
 
 **Product incomplete.** M1–M5 local exits are reported; N0 customer activation and N1 live integration remain open. Real PostgreSQL transactions and private local blobs, loopback HTTP, persisted fixture frontiers/snapshots and isolated offline Chromium execute. Source fixtures, injected principals, test-authored evaluator records and denied external resources remain explicit limitations. Legacy publication JSON is suppressed because independent publication receipts are absent; see GAP-030 and ADR-013. No capability is real-world or production-proven by those tests.
 
@@ -30,6 +30,7 @@ The owner-approved N0 deployment/data-use profile gates customer processing. It 
 | [API-CONTRACT-CORRECTIONS](milestones/API-CONTRACT-CORRECTIONS.md) | PARTIAL_GAP_CHECKPOINT | TESTED |
 | [PUBLICATION-SCOPE-HARDENING](milestones/PUBLICATION-SCOPE-HARDENING.md) | SCOPED_LOCAL_EXIT_VERIFIED | TESTED |
 | [HTTP-TERMINAL-AUTHORITY](milestones/HTTP-TERMINAL-AUTHORITY.md) | SCOPED_LOCAL_EXIT_VERIFIED | TESTED |
+| [HTTP-FIXTURE-PROCESS](milestones/HTTP-FIXTURE-PROCESS.md) | SCOPED_LOCAL_EXIT_VERIFIED | TESTED |
 
 ## GitHub snapshot and authority
 

@@ -173,3 +173,7 @@ Reality boundary: N1 live dispatch and governed render-evidence acceptance remai
 ## Independent HTTP terminal authority checkpoint
 
 [Detailed report](../../reports/HTTP-TERMINAL-AUTHORITY.md): reservation-generated invocation IDs, separate supervisor pre-execution binding and immutable terminal witnesses now fence slot settlement. Narrow SQL commands prevent direct scheduler refund/counter/ghost-reservation bypasses. Legacy unknown reservations receive no invented binding; unknown bytes remain null. 397 application cases,45 compiled cases and10 vault guards pass; typecheck/build/spec validation and both production dependency audits pass. These are local protocol fixtures, not a real process/egress producer. GAP-005/GAP-004 remain open; no live collection authority.
+
+## Local HTTP process checkpoint — 2026-09-18, parent05a0760
+
+[Process supervision report](../../reports/HTTP-FIXTURE-PROCESS-SUPERVISION.md):405 application tests and84 compiled tests passed. Fixed local child/loopback lifecycle now produces independently recorded termination with actual close timestamps and conservative unknown-byte accounting. GAP-034 closes only this local scope; live dispatch, deployed egress, evidence acceptance and real-world capability proof remain open. No website-write capability.

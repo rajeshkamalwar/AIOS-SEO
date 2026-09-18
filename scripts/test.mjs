@@ -1,6 +1,8 @@
 import { mkdtempSync, mkdirSync, rmSync, existsSync } from "node:fs";
 import { execFileSync, spawnSync } from "node:child_process";
 import { join } from "node:path";
+const compiledHttp = process.argv.includes("--compiled-http");
+if (process.argv.slice(2).some(arg => arg !== "--compiled-http")) throw new Error("Unknown test mode");
 const pg =
   process.env.PG_BIN ??
   (existsSync("/opt/homebrew/opt/postgresql@17/bin/postgres")
@@ -51,7 +53,7 @@ try {
   started = true;
   const result = spawnSync(
     process.execPath,
-    [
+    compiledHttp ? ["--test", "--test-concurrency=1", "dist/tests/foundation.test.js", "dist/tests/http-lane.test.js"] : [
       "--import",
       "tsx",
       "--test",
@@ -98,7 +100,7 @@ try {
   process.exitCode = result.status ?? 1;
   // This integration suite sorts before foundation.test.ts, which creates the
   // cluster runtime role. Run it after foundation in the same disposable DB.
-  if (result.status === 0) {
+  if (result.status === 0 && !compiledHttp) {
     const scoped = spawnSync(process.execPath, ["--import", "tsx", "--test", "tests/api-scope.test.ts"], {
       stdio: "inherit",
       env: { ...process.env, AIOS_TEST_SOCKET: socket, AIOS_TEST_DATA: data, AIOS_TEST_PG_BIN: pg, AIOS_TEST_ROOT: root },

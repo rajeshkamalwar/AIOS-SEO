@@ -8,10 +8,10 @@ local_scope_kind: "partial_behavior"
 completion: "INCOMPLETE"
 canonical_release: "unreleased"
 specs: ["docs/14-CAPABILITY-TAXONOMY.md", "docs/15-CAPABILITY-CONTRACT.md", "docs/18-BUSINESS-ARCHETYPE-MATRIX.md"]
-implementation: ["packages/jobs/index.ts", "packages/jobs/http-lane.ts"]
+implementation: ["packages/jobs/index.ts", "packages/jobs/http-lane.ts", "packages/jobs/http-fixture-supervisor.ts", "packages/perception/http-fixture-worker.ts"]
 tests: ["tests/jobs.test.ts", "tests/http-lane.test.ts"]
-reports: ["reports/HTTP-TERMINAL-AUTHORITY.md", "docs/40-POST-M5-INTEGRATION-REALITY-REVIEW.md", "docs/41-NEXT-PHASE-READINESS-PLAN.md", "docs/reports/N1-IMPLEMENTATION.md"]
-gaps: ["GAP-005", "GAP-DOM-AUDIT", "GAP-015"]
+reports: ["reports/HTTP-TERMINAL-AUTHORITY.md", "docs/40-POST-M5-INTEGRATION-REALITY-REVIEW.md", "docs/41-NEXT-PHASE-READINESS-PLAN.md", "docs/reports/N1-IMPLEMENTATION.md", "reports/HTTP-FIXTURE-PROCESS-SUPERVISION.md"]
+gaps: ["GAP-005", "GAP-DOM-AUDIT", "GAP-015", "GAP-034"]
 scope: "Durable job attempts/leases/deadlines, cancellation/retry limits and conservative global HTTP slot/request/byte accounting including crash recovery tests."
 baseline: "2b6d527"
 required_stages: "Canonical15/18/28/35 applicable evidence, implementation, independent test/release, real-world and production proof; applicability and stage evidence must be explicitly reviewed before COMPLETE."
@@ -50,3 +50,5 @@ Open gaps: [GAP-DOM-AUDIT](../gaps/GAP-DOM-AUDIT.md), [GAP-015](../gaps/GAP-015.
 - 2026-09-18 baseline2b6d527: conservative inventory import; no maturity promotion from test counts or draft manifests.
 
 - 2026-09-18: [HTTP terminal protocol](../../reports/HTTP-TERMINAL-AUTHORITY.md) requires independently authenticated invocation and terminal accounting. Actual process/egress producer remains [GAP-005](../gaps/GAP-005.md); full capability maturity unchanged.
+
+- 2026-09-18: actual fixed local child and loopback socket lifecycle tested in [process-supervision report](../../reports/HTTP-FIXTURE-PROCESS-SUPERVISION.md). No public dispatch, general process-tree sandbox or real-world maturity claim.

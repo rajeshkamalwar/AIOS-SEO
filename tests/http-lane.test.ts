@@ -5,6 +5,8 @@ import { randomUUID,generateKeyPairSync,sign } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { execFileSync } from 'node:child_process';
+import { createServer,type RequestListener } from 'node:http';
+import type { AddressInfo } from 'node:net';
 import { migrate } from '../packages/persistence/migrate.js';
 import { Ledger,type Principal } from '../packages/persistence/index.js';
 import { LocalBlobs } from '../packages/evidence/index.js';
@@ -12,8 +14,9 @@ import { Registry } from '../packages/skills/index.js';
 import { Jobs,type Lease } from '../packages/jobs/index.js';
 import { HttpLane } from '../packages/jobs/http-lane.js';
 import { HttpSupervisor } from '../packages/jobs/http-supervisor.js';
+import { HttpFixtureSupervisor } from '../packages/jobs/http-fixture-supervisor.js';
 import { DeletionLedger } from '../packages/policy/deletion.js';
-import { canonical,manifestHash } from '../packages/contracts/index.js';
+import { canonical,manifestHash,hash } from '../packages/contracts/index.js';
 const cfg={host:process.env.AIOS_TEST_SOCKET!,port:55439,database:'aios_http_lane_test'};
 let admin:pg.Pool,runtime:pg.Pool,scheduler:pg.Pool,operator:pg.Pool,supervisorPool:pg.Pool;
 let ledger:Ledger,commands:Jobs,worker:Jobs,registry:Registry,deletions:DeletionLedger,lane:HttpLane,supervisor:HttpSupervisor,digest:string;
@@ -298,6 +301,91 @@ test('HTTP accounting and occupied global slots survive PostgreSQL crash/restart
  await settle(lb,second.reservationId,0);await settle(blocked,third.reservationId,0);
  assert.equal((await totals()).lane[0].in_flight,0);
  await commands.cancel(b.p,b.site,b.id);
+});
+async function localFixture(handler:RequestListener){
+ const server=createServer(handler);await new Promise<void>(resolve=>server.listen(0,'127.0.0.1',resolve));
+ return {port:(server.address() as AddressInfo).port,close:async()=>{server.closeAllConnections();await new Promise<void>((resolve,reject)=>server.close(error=>error?reject(error):resolve()));}};
+}
+test('Fixture supervisor performs one real robots GET, retains no response body and settles unknown actual bytes',async(t)=>{
+ const origin='https://process-normal.example',r=await run(origin),l=await r.next();t.after(()=>commands.cancel(r.p,r.site,r.id));
+ const body=Buffer.from('User-agent: *\nDisallow: /private\n');let requests=0;
+ const fixture=await localFixture((req,res)=>{requests++;assert.equal(req.method,'GET');assert.equal(req.url,'/robots.txt');assert.equal(req.headers.host,`127.0.0.1:${fixture.port}`);res.writeHead(200,{'content-type':'text/plain'});res.end(body);});t.after(()=>fixture.close());
+ const producer=new HttpFixtureSupervisor(lane,supervisor);
+ const receipt=await producer.collect(l,{url:origin+'/robots.txt',fixturePort:fixture.port,maxDecodedBytes:1000,timeoutMs:5000},{wallTimeoutMs:8000});
+ assert.equal(receipt.state,'completed');assert.equal(receipt.result?.status,200);assert.equal(receipt.result?.retainedBodyBytes,body.length);assert.equal(receipt.result?.retainedBodySha256,hash(body));assert.equal(requests,1);
+ assert.ok(!JSON.stringify(receipt).includes('Disallow: /private'));
+ assert.throws(()=>process.kill(receipt.processId,0));
+ const stored=(await admin.query('SELECT actual_bytes,reserved_bytes,settled_at FROM aios.http_reservation WHERE reservation_id=$1',[receipt.reservation.reservationId])).rows[0];assert.equal(stored.actual_bytes,null);assert.equal(stored.reserved_bytes,'1000');assert.ok(stored.settled_at);
+ await lane.settle(l,receipt.reservation.reservationId,receipt.terminalReceiptId);
+ assert.equal((await admin.query('SELECT in_flight FROM control.http_origin WHERE origin=$1',[origin])).rows[0].in_flight,0);
+});
+test('Fixture supervisor confirms process exit for transport failure without inventing HTTP success',async(t)=>{
+ const origin='https://process-error.example',r=await run(origin),l=await r.next();t.after(()=>commands.cancel(r.p,r.site,r.id));
+ let requests=0;const fixture=await localFixture((req)=>{requests++;req.socket.destroy();});t.after(()=>fixture.close());
+ const receipt=await new HttpFixtureSupervisor(lane,supervisor).collect(l,{url:origin+'/robots.txt',fixturePort:fixture.port,maxDecodedBytes:1000,timeoutMs:5000},{wallTimeoutMs:8000});
+ assert.equal(receipt.state,'failed');assert.equal(receipt.result,null);assert.equal(requests,1);assert.throws(()=>process.kill(receipt.processId,0));
+ assert.equal((await admin.query('SELECT in_flight FROM control.http_origin WHERE origin=$1',[origin])).rows[0].in_flight,0);
+});
+test('Fixture supervisor deadline kills a real hanging request and closes its loopback socket before terminal settlement',async(t)=>{
+ const origin='https://process-hang.example',r=await run(origin),l=await r.next();t.after(()=>commands.cancel(r.p,r.site,r.id));
+ let requests=0,closed=0;let socketClosed!:()=>void;const closeObserved=new Promise<void>(resolve=>socketClosed=resolve);
+ const fixture=await localFixture(req=>{requests++;req.socket.once('close',()=>{closed++;socketClosed();});});t.after(()=>fixture.close());
+ const receipt=await new HttpFixtureSupervisor(lane,supervisor).collect(l,{url:origin+'/robots.txt',fixturePort:fixture.port,maxDecodedBytes:1000,timeoutMs:20000},{wallTimeoutMs:2500});
+ assert.equal(receipt.state,'timeout');assert.equal(receipt.result,null);assert.equal(requests,1);assert.throws(()=>process.kill(receipt.processId,0));
+ await Promise.race([closeObserved,new Promise<never>((_,reject)=>{const timer=setTimeout(()=>reject(new Error('fixture_socket_not_closed')),1000);timer.unref();})]);assert.equal(closed,1);
+ assert.equal((await admin.query('SELECT in_flight FROM control.http_origin WHERE origin=$1',[origin])).rows[0].in_flight,0);
+ const row=(await admin.query('SELECT actual_bytes,reserved_bytes FROM aios.http_reservation WHERE reservation_id=$1',[receipt.reservation.reservationId])).rows[0];assert.equal(row.actual_bytes,null);assert.equal(row.reserved_bytes,'1000');
+});
+test('Fixture supervisor cannot turn a prebound unknown process into its own terminal witness',async(t)=>{
+ const origin='https://process-unknown.example',r=await run(origin),l=await r.next();t.after(()=>commands.cancel(r.p,r.site,r.id));
+ const reserved=await reserve(l,input(origin,1000));let requests=0;
+ const fixture=await localFixture((_,res)=>{requests++;res.end('must not request');});t.after(()=>fixture.close());
+ await assert.rejects(new HttpFixtureSupervisor(lane,supervisor).collect(l,{url:origin+'/robots.txt',fixturePort:fixture.port,maxDecodedBytes:1000,timeoutMs:5000},{wallTimeoutMs:8000}),/conflict/);
+ assert.equal(requests,0);assert.equal((await admin.query('SELECT count(*) FROM aios.http_terminal_receipt WHERE reservation_id=$1',[reserved.reservationId])).rows[0].count,'0');
+ assert.equal((await admin.query('SELECT in_flight FROM control.http_origin WHERE origin=$1',[origin])).rows[0].in_flight,1);
+});
+test('Fixture supervisor rechecks cancellation after binding before allowing its robots request',async(t)=>{
+ const origin='https://process-cancel.example',r=await run(origin),l=await r.next();t.after(()=>commands.cancel(r.p,r.site,r.id));let requests=0;
+ const fixture=await localFixture((_,res)=>{requests++;res.end('not authorized');});t.after(()=>fixture.close());
+ class CancellingSupervisor extends HttpSupervisor {override async bindInvocation(binding:Parameters<HttpSupervisor['bindInvocation']>[0]){await super.bindInvocation(binding);await commands.cancel(r.p,r.site,r.id);}}
+ const receipt=await new HttpFixtureSupervisor(lane,new CancellingSupervisor(supervisorPool)).collect(l,{url:origin+'/robots.txt',fixturePort:fixture.port,maxDecodedBytes:1000,timeoutMs:5000},{wallTimeoutMs:8000});
+ assert.equal(receipt.state,'failed');assert.equal(receipt.result,null);assert.equal(requests,0);assert.throws(()=>process.kill(receipt.processId,0));
+ assert.equal((await admin.query('SELECT in_flight FROM control.http_origin WHERE origin=$1',[origin])).rows[0].in_flight,0);
+});
+test('Fixture child starts with empty environment despite hostile NODE_OPTIONS and parent secrets',async(t)=>{
+ const origin='https://process-environment.example',r=await run(origin),l=await r.next();t.after(()=>commands.cancel(r.p,r.site,r.id));
+ const fixture=await localFixture((_,res)=>{res.writeHead(200,{'content-type':'text/plain'});res.end('User-agent: *');});t.after(()=>fixture.close());
+ const oldOptions=process.env.NODE_OPTIONS,oldSecret=process.env.AIOS_FIXTURE_SECRET;
+ try {
+  process.env.NODE_OPTIONS='--require=/nonexistent-must-not-inherit.js';process.env.AIOS_FIXTURE_SECRET='fixture-secret-must-not-enter-child';
+  const receipt=await new HttpFixtureSupervisor(lane,supervisor).collect(l,{url:origin+'/robots.txt',fixturePort:fixture.port,maxDecodedBytes:1000,timeoutMs:5000},{wallTimeoutMs:8000});
+  assert.equal(receipt.state,'completed');assert.ok(!JSON.stringify(receipt).includes('fixture-secret'));
+ } finally {
+  if(oldOptions===undefined)delete process.env.NODE_OPTIONS;else process.env.NODE_OPTIONS=oldOptions;
+  if(oldSecret===undefined)delete process.env.AIOS_FIXTURE_SECRET;else process.env.AIOS_FIXTURE_SECRET=oldSecret;
+ }
+});
+test('Fixture supervisor never rewrites an earlier process close into post-binding terminal proof',async(t)=>{
+ const origin='https://process-delayed-binding.example',r=await run(origin),l=await r.next();t.after(()=>commands.cancel(r.p,r.site,r.id));let requests=0;
+ const fixture=await localFixture((_,res)=>{requests++;res.end('not authorized');});t.after(()=>fixture.close());
+ const controller=new AbortController();
+ class DelayedSupervisor extends HttpSupervisor {override async bindInvocation(binding:Parameters<HttpSupervisor['bindInvocation']>[0]){controller.abort();await new Promise(resolve=>setTimeout(resolve,300));await super.bindInvocation(binding);}}
+ await assert.rejects(new HttpFixtureSupervisor(lane,new DelayedSupervisor(supervisorPool)).collect(l,{url:origin+'/robots.txt',fixturePort:fixture.port,maxDecodedBytes:1000,timeoutMs:5000},{signal:controller.signal,wallTimeoutMs:8000}),/invalid_receipt/);
+ assert.equal(requests,0);assert.equal((await admin.query('SELECT count(*) FROM aios.http_terminal_receipt WHERE tenant_id=$1',[l.tenantId])).rows[0].count,'0');
+ assert.equal((await admin.query('SELECT in_flight FROM control.http_origin WHERE origin=$1',[origin])).rows[0].in_flight,1);
+});
+test('Fixture AbortSignal cancels a real hanging child and settles only after socket termination',async(t)=>{
+ const origin='https://process-abort.example',r=await run(origin),l=await r.next();t.after(()=>commands.cancel(r.p,r.site,r.id));
+ const controller=new AbortController();let requests=0,closed=0;let socketClosed!:()=>void;const closedPromise=new Promise<void>(resolve=>socketClosed=resolve);
+ const fixture=await localFixture(req=>{requests++;req.socket.once('close',()=>{closed++;socketClosed();});controller.abort();});t.after(()=>fixture.close());
+ const producer=new HttpFixtureSupervisor(lane,supervisor),task={url:origin+'/robots.txt',fixturePort:fixture.port,maxDecodedBytes:1000,timeoutMs:20000};
+ const preAborted=new AbortController();preAborted.abort();await assert.rejects(producer.collect(l,task,{signal:preAborted.signal}),/aborted/);
+ assert.equal((await admin.query('SELECT count(*) FROM aios.http_reservation WHERE tenant_id=$1',[l.tenantId])).rows[0].count,'0');
+ const receipt=await producer.collect(l,task,{signal:controller.signal,wallTimeoutMs:8000});assert.equal(receipt.state,'aborted');assert.equal(receipt.result,null);assert.equal(requests,1);assert.throws(()=>process.kill(receipt.processId,0));
+ await Promise.race([closedPromise,new Promise<never>((_,reject)=>{const timer=setTimeout(()=>reject(new Error('fixture_socket_not_closed')),1000);timer.unref();})]);assert.equal(closed,1);
+ const stored=(await admin.query('SELECT actual_bytes,reserved_bytes,settled_at FROM aios.http_reservation WHERE reservation_id=$1',[receipt.reservation.reservationId])).rows[0];assert.equal(stored.actual_bytes,null);assert.equal(stored.reserved_bytes,'1000');assert.ok(stored.settled_at);
+ await lane.settle(l,receipt.reservation.reservationId,receipt.terminalReceiptId);
+ assert.equal((await admin.query('SELECT in_flight FROM control.http_origin WHERE origin=$1',[origin])).rows[0].in_flight,0);
 });
 test('HTTP lane immediate release revocation fences new accounting but permits terminal settlement',async()=>{
  const origin='https://revocation.example',r=await run(origin),l=await r.next(),receipt=await reserve(l,input(origin));
