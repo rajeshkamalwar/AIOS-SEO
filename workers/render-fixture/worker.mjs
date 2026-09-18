@@ -8,7 +8,7 @@ import { createHash } from 'node:crypto';
 const maxBytes = 5 * 1024 * 1024;
 let browser;
 const result = {
-  profile: 'local-offline-replay-v2', url: null, inputSha256: null, browserBuild: null,
+  profile: 'local-offline-replay-v3', url: null, inputSha256: null, browserBuild: null,
   state: 'failed', samples: [], deniedCount: 0, deniedRequests: [], sandbox: null,
 };
 let limited = false, halted = false, budgetExceeded = false;
@@ -18,7 +18,7 @@ function denied(url, method, resourceType, reason) {
   result.deniedCount++;
   // Bounded fixture diagnostics only; never a raw production logging interface.
   if (result.deniedRequests.length < 100)
-    result.deniedRequests.push({ url: String(url).slice(0, 4096), method, resourceType, reason });
+    result.deniedRequests.push({ url: String(url).slice(0, 4096), method, resourceType, reason, observedAt: new Date().toISOString() });
   // The initial fixture document consumes attempt one. No further request is dispatched.
   if (result.deniedCount >= 99) {
     budgetExceeded = true; halted = true;
@@ -74,6 +74,13 @@ async function render(value) {
   assertRunning();
   const context = await browser.newContext({ viewport: { width: 390, height: 844 }, locale: 'en-US',
     serviceWorkers: 'block', acceptDownloads: false, permissions: [], userAgent: 'AIOSSEOResearchBot/0.1' });
+  // Count context HTTP request objects whose request event has been observed but
+  // requestfinished/requestfailed has not. Includes the fulfilled fixture and
+  // pending aborted requests; sockets are separate denied diagnostics, not HTTP.
+  const pendingRequests = new Set();
+  context.on('request', request => pendingRequests.add(request));
+  context.on('requestfinished', request => pendingRequests.delete(request));
+  context.on('requestfailed', request => pendingRequests.delete(request));
   let initial = true; let page;
   await context.routeWebSocket('**/*', socket => {
     denied(socket.url(), 'GET', 'websocket', 'offline_policy'); socket.close();
@@ -107,7 +114,8 @@ async function render(value) {
     assertRunning();
     if (page.url() !== value.url) { denied(page.url(), 'GET', 'navigation', 'context_changed'); break; }
     if (Buffer.byteLength(dom) > maxBytes) { limited = true; break; }
-    result.samples.push({ offsetMs, actualOffsetMs: Math.round(performance.now() - start), dom });
+    result.samples.push({ offsetMs, actualOffsetMs: Math.round(performance.now() - start),
+      observedAt: new Date().toISOString(), pendingRequests: pendingRequests.size, dom });
   }
   assertRunning();
   result.state = limited ? 'policy_limited' : 'captured';

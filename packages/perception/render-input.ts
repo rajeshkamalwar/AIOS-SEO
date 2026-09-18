@@ -9,7 +9,7 @@ export interface RawReplayEvidence {
  contentType:string;
 }
 export type PreparedOfflineRenderInput=
- | {state:'prepared';profile:'local-offline-replay-v2';url:string;html:string;inputSha256:string;inputBytes:number;
+ | {state:'prepared';profile:'local-offline-replay-v3';url:string;html:string;inputSha256:string;inputBytes:number;
     source:{evidenceId:string;rawSha256:string;rawBytes:number;contentType:string};encoding:string;
     decoderVersion:'html-sniff-6/node24-v1';transformationVersion:'html-decoded-to-utf8-v1'}
  | {state:'not_prepared';reason:'raw_budget'|'input_budget'|'truncated'|'unsupported_mime'|'decoding_failed'};
@@ -42,7 +42,7 @@ export function prepareOfflineRenderInput(bytes:Uint8Array,evidence:RawReplayEvi
  const input=Buffer.from(decoded.text,'utf8');
  if(input.toString('utf8')!==decoded.text)return {state:'not_prepared',reason:'decoding_failed'};
  if(input.byteLength>5242880)return {state:'not_prepared',reason:'input_budget'};
- return {state:'prepared',profile:'local-offline-replay-v2',url:evidence.sourceUri,html:decoded.text,inputSha256:hash(input),inputBytes:input.byteLength,
+ return {state:'prepared',profile:'local-offline-replay-v3',url:evidence.sourceUri,html:decoded.text,inputSha256:hash(input),inputBytes:input.byteLength,
   source:{evidenceId:evidence.evidenceId,rawSha256:evidence.sha256,rawBytes:evidence.bytes,contentType:evidence.contentType},
   encoding:decoded.encoding,decoderVersion:decoded.decoderVersion,transformationVersion:'html-decoded-to-utf8-v1'};
 }

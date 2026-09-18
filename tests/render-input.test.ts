@@ -11,7 +11,7 @@ test('Replay preparation binds exact retained bytes and carries existing source 
  assert.equal(result.inputSha256,sha(bytes));assert.equal(result.inputBytes,bytes.byteLength);
  assert.deepEqual(result.source,{evidenceId:source.evidenceId,rawSha256:source.sha256,rawBytes:source.bytes,contentType:source.contentType});
  assert.equal(result.encoding,'utf-8');assert.equal(result.decoderVersion,'html-sniff-6/node24-v1');assert.equal(result.transformationVersion,'html-decoded-to-utf8-v1');
- assert.equal('status_code' in result,false);assert.equal(result.profile,'local-offline-replay-v2');
+ assert.equal('status_code' in result,false);assert.equal(result.profile,'local-offline-replay-v3');
 });
 test('Replay preparation separates transcoded input digest from source digest and retains encoding declaration',()=>{
  const bytes=Buffer.from([0x63,0x61,0x66,0xe9]),source={...context(bytes),contentType:'text/html; charset=windows-1252'};

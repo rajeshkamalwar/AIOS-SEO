@@ -67,8 +67,9 @@ let expectedBuild;
 async function render(input,{timeoutMs=35000,expectedUrl=input.url}={}){
  if(typeof input.html!=='string'||Buffer.from(input.html,'utf8').toString('utf8')!==input.html)throw new Error('fixture_input_encoding');
  const inputSha256=hash(Buffer.from(input.html,'utf8'));
+ const startedAt=new Date().toISOString();
  const result=await runContainer({input:JSON.stringify(input),timeoutMs});
- return parseOfflineRenderResult(result.stdoutBytes,{url:expectedUrl,browserBuild:expectedBuild,inputSha256});
+ return parseOfflineRenderResult(result.stdoutBytes,{url:expectedUrl,browserBuild:expectedBuild,inputSha256,startedAt,finishedAt:new Date().toISOString()});
 }
 
 await docker(['build','--tag',image,directory],{timeoutMs:120000});
@@ -82,10 +83,12 @@ const positiveHtml=`<!doctype html><html><head><title>Fixture</title></head><bod
  setTimeout(()=>document.getElementById('state').textContent='second',500);
  setTimeout(()=>document.getElementById('state').textContent='third',3000);
 </script></body></html>`;
+const positiveStartedAt=new Date().toISOString();
 const positive=await render({url,html:positiveHtml});
 const positiveInputHash=hash(Buffer.from(positiveHtml));
+const positiveExpected={url,browserBuild:expectedBuild,inputSha256:positiveInputHash,startedAt:positiveStartedAt,finishedAt:new Date().toISOString()};
 assert.equal(positive.inputSha256,positiveInputHash);
-assert.throws(()=>parseOfflineRenderResult(Buffer.from(JSON.stringify(positive)),{url,browserBuild:expectedBuild,inputSha256:hash(Buffer.from(positiveHtml+'changed'))}),/render_result_invalid/);
+assert.throws(()=>parseOfflineRenderResult(Buffer.from(JSON.stringify(positive)),{...positiveExpected,inputSha256:hash(Buffer.from(positiveHtml+'changed'))}),/render_result_invalid/);
 await assert.rejects(render({url,html:'\ud800'}),/fixture_input_encoding/);
 assert.equal(positive.url,url);
 assert.equal(positive.state,'captured');
@@ -97,6 +100,8 @@ for(let i=0;i<3;i++){
  const sample=positive.samples[i];
  assert.ok(Number.isFinite(sample.actualOffsetMs)&&sample.actualOffsetMs>=sample.offsetMs);
  assert.ok(sample.actualOffsetMs<20000);
+ assert.ok(Date.parse(sample.observedAt)>=Date.parse(positiveExpected.startedAt)&&Date.parse(sample.observedAt)<=Date.parse(positiveExpected.finishedAt));
+ assert.equal(sample.pendingRequests,0,'inline-only fixture has no outstanding context HTTP requests');
  assert.match(sample.dom,new RegExp('<main id="state">'+['initial','second','third'][i]+'</main>'));
 }
 console.log('PASS isolated Chromium captures real inline JS at 0/2/5 seconds');
@@ -104,8 +109,9 @@ console.log('PASS isolated Chromium captures real inline JS at 0/2/5 seconds');
 const empty=await render({url,html:''});
 assert.equal(empty.state,'captured');assert.equal(empty.inputSha256,hash(Buffer.alloc(0)));
 for(const input of [JSON.stringify({url,html:'\ud800'}),Buffer.concat([Buffer.from('{"url":"'+url+'","html":"'),Buffer.from([0xff]),Buffer.from('"}')])]){
+ const startedAt=new Date().toISOString();
  const failed=await runContainer({input});
- const parsed=parseOfflineRenderResult(failed.stdoutBytes,{url,browserBuild:expectedBuild,inputSha256:hash(Buffer.alloc(0))});
+ const parsed=parseOfflineRenderResult(failed.stdoutBytes,{url,browserBuild:expectedBuild,inputSha256:hash(Buffer.alloc(0)),startedAt,finishedAt:new Date().toISOString()});
  assert.equal(parsed.state,'failed');assert.equal(parsed.url,null);assert.equal(parsed.inputSha256,null);assert.deepEqual(parsed.samples,[]);
 }
 console.log('PASS exact input-byte binding includes empty HTML and rejects malformed input encoding');
@@ -123,7 +129,7 @@ const invalidBytes=Buffer.from(JSON.stringify(invalidEncoding));
 invalidBytes[invalidBytes.indexOf('INVALID_UTF8_MARKER')]=0xff;
 const echoed=await runContainer({input:invalidBytes,echoProbe:true});
 assert.deepEqual(echoed.stdoutBytes,invalidBytes);
-assert.throws(()=>parseOfflineRenderResult(echoed.stdoutBytes,{url,browserBuild:expectedBuild,inputSha256:positiveInputHash}),/render_result_invalid/);
+assert.throws(()=>parseOfflineRenderResult(echoed.stdoutBytes,positiveExpected),/render_result_invalid/);
 console.log('PASS host preserves and rejects invalid UTF-8 worker output');
 
 for(const sample of positive.samples){
