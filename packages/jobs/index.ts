@@ -4,6 +4,7 @@ import { base, validate, uuid, manifestHash } from '../contracts/index.js';
 import type { Principal } from '../persistence/index.js';
 import { transaction, scope, tick, insertDomain, event, registryLock, workLock } from '../persistence/transaction.js';
 import { eligible } from '../skills/index.js';
+import { normalizeUrl } from '../perception/url.js';
 import { DeletionLedger } from '../policy/deletion.js';
 export interface Budget { http_requests:number; render_requests:number; render_pages:number; model_calls:number; tokens:number; cost_microusd:number; deadline:string }
 export type BudgetKind=Exclude<keyof Budget,'deadline'>;
@@ -47,6 +48,10 @@ export class Jobs {
    await insertDomain(c,'crawl',{record_type:'Crawl',id,schema_version:1,version:1,created_at:t.recorded_at,...t,updated_at:t.recorded_at,deleted_at:null,state:'queued',retention_class:'operations',provenance_ids:[],tenant_id:p.tenantId,site_id:site,submitted_by:p.userId,policy_version:'discovery-v1',input_hash:inputHash,idempotency_key:key,stage:'validating',budget,started_at:null,completed_at:null,completion_reason:null});
    await c.query('INSERT INTO work_fence SELECT $1,$2,$3,deletion_epoch,false FROM tenant WHERE id=$1',[p.tenantId,site,id]);
    await c.query('INSERT INTO audit_scope(tenant_id,crawl_id) VALUES($1,$2)',[p.tenantId,id]);
+   const siteRow=(await c.query('SELECT submitted_url FROM site WHERE tenant_id=$1 AND id=$2',[p.tenantId,site])).rows[0];
+   const seed=normalizeUrl(siteRow.submitted_url);
+   if(seed.excluded)throw new Error('policy_blocked');
+   await c.query('SELECT control.seed_submitted_target($1,$2)',[id,seed.url]);
    await event(c,p.tenantId,site,id,id,'crawl.requested',{crawl_id:id,policy_version:'discovery-v1'});return id;
   });
  }

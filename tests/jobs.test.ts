@@ -118,6 +118,35 @@ test('M5 durable API adapter submits and reopens a persisted run',async()=>{
  const reopened=await api.handle({method:'GET',path:`/v1/sites/${site}/understanding`,principal:p});assert.equal(reopened.status,200);assert.equal((reopened.body as any).watermark,1);
  await stopAll();
 });
+test('N1 submission creates one durable unadmitted seed atomically and idempotently', async()=>{
+ const key=randomUUID(),b=budget();const id=await commands.submit(p,site,key,b);
+ const rows=(await admin.query('SELECT * FROM aios.crawl_target WHERE tenant_id=$1 AND crawl_id=$2',[p.tenantId,id])).rows;
+ assert.equal(rows.length,1);assert.equal(rows[0].state,'discovered');assert.equal(rows[0].admitted,false);
+ assert.equal(rows[0].url,'https://jobs.example/');assert.equal(rows[0].url_key,rows[0].url);
+ assert.equal(rows[0].attempts,'0');
+ assert.equal(await commands.submit(p,site,key,b),id);
+ assert.equal((await admin.query('SELECT * FROM aios.crawl_target WHERE tenant_id=$1 AND crawl_id=$2',[p.tenantId,id])).rowCount,1);
+ await assert.rejects(runtime.query("UPDATE aios.crawl_target SET admitted=true WHERE crawl_id=$1",[id]),/permission denied/);
+ await stopAll();
+});
+
+test('N1 seed authority rejects missing scope and foreign URLs; event failure rolls back seed and run', async()=>{
+ await assert.rejects(runtime.query('SELECT control.seed_submitted_target($1,$2)',[randomUUID(),'https://jobs.example/']),/scope_denied/);
+ const id=await commands.submit(p,site,randomUUID(),budget());
+ const c=await runtime.connect();
+ try {
+  await c.query('BEGIN');await c.query("SELECT set_config('app.tenant_id',$1,true),set_config('app.user_id',$2,true)",[p.tenantId,p.userId]);
+  await assert.rejects(c.query('SELECT control.seed_submitted_target($1,$2)',[id,'https://foreign.example/']),/scope_denied/);
+ } finally {await c.query('ROLLBACK');c.release();}
+ await stopAll();
+ const key=randomUUID();
+ await admin.query("CREATE FUNCTION aios.test_seed_event_failure() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'seed_event_failure'; END $$; CREATE TRIGGER test_seed_event_failure BEFORE INSERT ON aios.outbox FOR EACH ROW EXECUTE FUNCTION aios.test_seed_event_failure()");
+ const before=(await admin.query('SELECT count(*) FROM aios.crawl_target')).rows[0].count;
+ try {await assert.rejects(commands.submit(p,site,key,budget()),/seed_event_failure/);}
+ finally {await admin.query('DROP TRIGGER test_seed_event_failure ON aios.outbox; DROP FUNCTION aios.test_seed_event_failure()');}
+ assert.equal((await admin.query('SELECT 1 FROM aios.crawl WHERE idempotency_key=$1',[key])).rowCount,0);
+ assert.equal((await admin.query('SELECT count(*) FROM aios.crawl_target')).rows[0].count,before);
+});
 test('M2 deletion tombstone survives a stale database epoch and blocks acceptance',async()=>{
  await run();const l=(await worker.claim())!;await deletions.record(p.tenantId,site);
  await assert.rejects(worker.complete(l,bundle),/deleted_scope/);await assert.rejects(commands.submit(p,site,randomUUID(),budget()),/deleted_scope/);
