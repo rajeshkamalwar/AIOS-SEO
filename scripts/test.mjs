@@ -69,6 +69,7 @@ try {
       "tests/sitemap.test.ts",
       "tests/collector.test.ts",
       "tests/decoding.test.ts",
+      "tests/dom.test.ts",
       "tests/understanding.test.ts",
       "tests/api.test.ts",
       "tests/runtime.test.ts",

@@ -20,6 +20,7 @@
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1",
     "html-encoding-sniffer": "6.0.0",
+    "parse5": "8.0.1",
     "pg": "^8.16.3",
     "sax": "1.6.1"
   },

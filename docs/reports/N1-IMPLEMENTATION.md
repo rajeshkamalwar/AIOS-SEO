@@ -14,7 +14,7 @@ These are local conformance tests, not production firewall/sandbox certification
 
 ## Remaining N1 acceptance
 
-Governed live dispatch, complete durable frontier transitions, integrated per-hop accounting, retries/fairness and isolated rendering remain required. Subsequent checkpoints below record completed prerequisites; storage and synthetic fixture acceptance do not establish live-worker acceptance. The collector is not integrated as a customer-facing live execution path. N0 deployment/privacy approval and independent network enforcement still gate customer URLs. No inference or website-write behavior was added.
+Governed live dispatch, complete durable frontier transitions, integrated per-hop accounting, retries/fairness and governed live-render integration remain required. Subsequent checkpoints below record completed prerequisites; storage and synthetic fixture acceptance do not establish live-worker acceptance. The collector is not integrated as a customer-facing live execution path. N0 deployment/privacy approval and independent network enforcement still gate customer URLs. No inference or website-write behavior was added.
 
 ## Collector safety checkpoint verification
 
@@ -71,3 +71,17 @@ Added a one-shot, digest-pinned Linux/Playwright worker for explicit synthetic H
 Seven executable Docker regressions pass: 0/2/5-second DOM mutation samples; denied external/private GET, POST, beacon, socket and popup; actual 100-attempt termination; changed-URL context rejection; non-fixture URL rejection; hung-page failure without invented DOM; host deadline with confirmed container removal. Review corrected an initially diagnostic-only attempt cap and ensured terminal receipts kill late asynchronous setup. ADR-012 records the boundary and seccomp compatibility choice. Raw evidence acceptance, render job authority, resource replay provenance, independent live egress and production activation remain open.
 
 Verification: 248 normal tests and seven separate Docker regressions pass; typecheck/build/specification validation pass; root and isolated-worker production dependency audits both report zero vulnerabilities; diff checks pass.
+
+## HTTP accounting restart regression
+
+A real immediate PostgreSQL stop/restart now proves that active HTTP reservations, both global slots, attempt charges and conservative decoded-byte charges survive. Reopened services reject new work while slots/caps remain occupied. The previously authenticated receipt can settle exactly once after cancellation without refunding budget.
+
+Unknown worker termination remains distinct from lease expiry. Automatic reclaim requires a future reservation-to-invocation binding and independent terminal supervisor/egress receipt; none exists yet, so no timeout-based slot release is added. This is an explicit dispatcher-integration dependency, not permission to infer completion from a missing heartbeat.
+
+## Inert HTML extraction checkpoint
+
+Added deterministic extraction of title, canonical/base declarations, named metadata (including robots), resolved anchors and qualified main-text candidates. Every retained value has the original evidence ID, digest, parser version and half-open byte locator. Tests cover malformed HTML, literal versus absent/empty fields, hidden metadata semantics, foreign/base destinations without fetch authority, UTF-8/UTF-16/Windows-1252 byte mapping including astral characters/BOM/CRLF, and partial-source qualification. XHTML and encodings without an exact locator map abstain. Static text is never labeled computed-visible; no raw/render mismatch, SEO defect or business claim is produced.
+
+Pinned `parse5` 8.0.1 is justified by HTML's tolerant tree-construction semantics and source-location support; regex extraction cannot correctly handle raw text, entities, malformed nesting or source positions. Its [parser options](https://parse5.js.org/interfaces/parse5.ParserOptions.html) and [character-based offsets](https://parse5.js.org/interfaces/parse5.Token.Location.html) require explicit original-byte mapping. The application node cap applies after parsing, so future live use still requires isolated CPU/memory execution. This pure library has no pipeline consumer or network authority yet.
+
+Verification: 264 normal tests and seven Docker regressions pass; typecheck/build/specification validation pass; production dependency audit reports zero vulnerabilities; diff checks pass. The Docker build context now explicitly includes only worker runtime files, excluding unrelated files or credentials.

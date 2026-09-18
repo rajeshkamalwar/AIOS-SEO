@@ -4,6 +4,7 @@ import pg from 'pg';
 import { randomUUID,generateKeyPairSync,sign } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
+import { execFileSync } from 'node:child_process';
 import { migrate } from '../packages/persistence/migrate.js';
 import { Ledger,type Principal } from '../packages/persistence/index.js';
 import { LocalBlobs } from '../packages/evidence/index.js';
@@ -144,6 +145,46 @@ test('HTTP lane cumulative decoded cap is not reset by settlements',async()=>{
  }
  await advance(origin);await assert.rejects(lane.reserve(await r.next(),input(origin,1)),/budget_exhausted/);
  await commands.cancel(r.p,r.site,r.id);
+});
+test('HTTP accounting and occupied global slots survive PostgreSQL crash/restart without refunds',async()=>{
+ const origin='https://crash.example',a=await run(origin,1),b=await run(origin);
+ const la=await a.next(),lb=await b.next(),first=await lane.reserve(la,input(origin));
+ await advance(origin);const second=await lane.reserve(lb,input(origin));
+ const exhausted=await a.next(),blocked=await b.next();
+ const totals=async()=>({
+  bytes:(await admin.query('SELECT tenant_id,crawl_id,reserved_bytes,actual_bytes FROM aios.http_reservation WHERE origin=$1 ORDER BY tenant_id',[origin])).rows,
+  requests:(await admin.query('SELECT tenant_id,crawl_id,amount,actual,state FROM aios.budget_reservation WHERE reservation_id=ANY($1) ORDER BY tenant_id',[[first.reservationId,second.reservationId]])).rows,
+  lane:(await admin.query('SELECT * FROM control.http_origin WHERE origin=$1',[origin])).rows,
+ });
+ const before=await totals();
+ assert.equal(before.bytes.length,2);assert.ok(before.bytes.every(r=>r.reserved_bytes==='5242880'&&r.actual_bytes===null));
+ assert.ok(before.requests.every(r=>r.amount==='1'&&r.actual==='1'&&r.state==='settled'));
+ assert.equal(before.lane[0].in_flight,2);
+ await Promise.all([runtime.end(),scheduler.end(),operator.end(),admin.end()]);
+ // Restart only the disposable cluster created by scripts/test.mjs, never a user service.
+ const data=process.env.AIOS_TEST_DATA!;assert.ok(data.startsWith('/tmp/aios-m1-'));
+ execFileSync(join(process.env.AIOS_TEST_PG_BIN!,'pg_ctl'),['-D',data,'-l',join(process.env.AIOS_TEST_ROOT!,'postgres.log'),'-m','immediate','-w','restart'],{stdio:'pipe'});
+ admin=new pg.Pool({...cfg,user:'aios_test_owner'});runtime=new pg.Pool({...cfg,user:'aios_runtime'});
+ scheduler=new pg.Pool({...cfg,user:'aios_scheduler'});operator=new pg.Pool({...cfg,user:'aios_operator'});
+ deletions=await DeletionLedger.open(join(process.env.AIOS_TEST_ROOT!,'http-lane-deletions'));
+ ledger=new Ledger(runtime,await LocalBlobs.create(join(process.env.AIOS_TEST_ROOT!,'http-lane-blobs'),'local-synthetic-v1'),'local-synthetic-v1');
+ commands=new Jobs(runtime,deletions);worker=new Jobs(scheduler,deletions);registry=new Registry(operator);lane=new HttpLane(scheduler,deletions);
+ assert.deepEqual(await totals(),before);
+ await advance(origin);
+ await assert.rejects(lane.reserve(exhausted,input(origin)),/budget_exhausted/);
+ await assert.rejects(lane.reserve(blocked,input(origin)),/origin_limited/);
+ await commands.cancel(a.p,a.site,a.id);
+ // Exact trusted accounting receipt remains settleable after cancellation/reconnect;
+ // neither a database restart nor an expired/cancelled lease proves a network stop.
+ await lane.settle(la,first.reservationId,0);await lane.settle(la,first.reservationId,0);
+ assert.equal((await totals()).lane[0].in_flight,1);
+ assert.deepEqual((await totals()).requests,before.requests);
+ assert.ok((await totals()).bytes.every(r=>r.reserved_bytes==='5242880'));
+ const third=await lane.reserve(blocked,input(origin));
+ assert.equal((await totals()).lane[0].in_flight,2);
+ await lane.settle(lb,second.reservationId,0);await lane.settle(blocked,third.reservationId,0);
+ assert.equal((await totals()).lane[0].in_flight,0);
+ await commands.cancel(b.p,b.site,b.id);
 });
 test('HTTP lane immediate release revocation fences new accounting but permits terminal settlement',async()=>{
  const origin='https://revocation.example',r=await run(origin),l=await r.next(),receipt=await lane.reserve(l,input(origin));
