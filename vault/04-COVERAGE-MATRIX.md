@@ -1,6 +1,6 @@
 # Coverage matrix
 
-<!-- Derived record/source digest: 919789946fe9f140c9a47200e59d2a757ec4272e9482c4b23bcca2c27b9fb715; regenerate with npm run vault:update. This is not a test receipt. -->
+<!-- Derived record/source digest: 7ffe524b55a8a58fde3f2a596234e883c5e7087ea4c9480d5664d74a428b84e8; regenerate with npm run vault:update. This is not a test receipt. -->
 
 All 36 domains / 195 canonical rows are indexed. Full-capability maturity and local prerequisite maturity are separate. **No full-capability completion is asserted.** Names are navigation labels; definitions remain in [14](../docs/14-CAPABILITY-TAXONOMY.md) and inherited contracts15/18.
 
@@ -138,7 +138,7 @@ All 36 domains / 195 canonical rows are indexed. Full-capability maturity and lo
 
 | Capability | Full maturity | Local evidence scope | Completion | Persistent gaps |
 | --- | --- | --- | --- | --- |
-| [CAP-CRW-01](capabilities/CAP-CRW-01.md) Scoped discovery | DEFINED | partial_behavior / TESTED | INCOMPLETE | [GAP-DOM-CRW](gaps/GAP-DOM-CRW.md), [GAP-004](gaps/GAP-004.md), [GAP-007](gaps/GAP-007.md), [GAP-041](gaps/GAP-041.md), [GAP-039](gaps/GAP-039.md), [GAP-042](gaps/GAP-042.md), [GAP-043](gaps/GAP-043.md), [GAP-044](gaps/GAP-044.md), [GAP-045](gaps/GAP-045.md) |
+| [CAP-CRW-01](capabilities/CAP-CRW-01.md) Scoped discovery | DEFINED | partial_behavior / TESTED | INCOMPLETE | [GAP-DOM-CRW](gaps/GAP-DOM-CRW.md), [GAP-004](gaps/GAP-004.md), [GAP-007](gaps/GAP-007.md), [GAP-041](gaps/GAP-041.md), [GAP-039](gaps/GAP-039.md), [GAP-042](gaps/GAP-042.md), [GAP-043](gaps/GAP-043.md), [GAP-044](gaps/GAP-044.md), [GAP-045](gaps/GAP-045.md), [GAP-046](gaps/GAP-046.md) |
 | [CAP-CRW-02](capabilities/CAP-CRW-02.md) Crawl prioritization | DEFINED | partial_behavior / TESTED | INCOMPLETE | [GAP-DOM-CRW](gaps/GAP-DOM-CRW.md), [GAP-004](gaps/GAP-004.md), [GAP-007](gaps/GAP-007.md) |
 | [CAP-CRW-03](capabilities/CAP-CRW-03.md) Trap and duplicate-work control | DEFINED | partial_behavior / TESTED | INCOMPLETE | [GAP-DOM-CRW](gaps/GAP-DOM-CRW.md), [GAP-004](gaps/GAP-004.md), [GAP-007](gaps/GAP-007.md) |
 | [CAP-CRW-04](capabilities/CAP-CRW-04.md) Coverage reconciliation | DEFINED | foundation_only / TESTED | INCOMPLETE | [GAP-DOM-CRW](gaps/GAP-DOM-CRW.md), [GAP-004](gaps/GAP-004.md), [GAP-007](gaps/GAP-007.md) |
@@ -315,7 +315,7 @@ All 36 domains / 195 canonical rows are indexed. Full-capability maturity and lo
 
 | Capability | Full maturity | Local evidence scope | Completion | Persistent gaps |
 | --- | --- | --- | --- | --- |
-| [CAP-ROB-01](capabilities/CAP-ROB-01.md) robots.txt evaluation | DEFINED | partial_behavior / TESTED | INCOMPLETE | [GAP-DOM-ROB](gaps/GAP-DOM-ROB.md), [GAP-004](gaps/GAP-004.md), [GAP-007](gaps/GAP-007.md), [GAP-044](gaps/GAP-044.md), [GAP-045](gaps/GAP-045.md) |
+| [CAP-ROB-01](capabilities/CAP-ROB-01.md) robots.txt evaluation | DEFINED | partial_behavior / TESTED | INCOMPLETE | [GAP-DOM-ROB](gaps/GAP-DOM-ROB.md), [GAP-004](gaps/GAP-004.md), [GAP-007](gaps/GAP-007.md), [GAP-044](gaps/GAP-044.md), [GAP-045](gaps/GAP-045.md), [GAP-046](gaps/GAP-046.md) |
 | [CAP-ROB-02](capabilities/CAP-ROB-02.md) Meta robots analysis | DEFINED | foundation_only / TESTED | INCOMPLETE | [GAP-DOM-ROB](gaps/GAP-DOM-ROB.md), [GAP-004](gaps/GAP-004.md), [GAP-007](gaps/GAP-007.md) |
 | [CAP-ROB-03](capabilities/CAP-ROB-03.md) X-Robots-Tag analysis | DEFINED | foundation_only / TESTED | INCOMPLETE | [GAP-DOM-ROB](gaps/GAP-DOM-ROB.md), [GAP-004](gaps/GAP-004.md), [GAP-007](gaps/GAP-007.md) |
 | [CAP-ROB-04](capabilities/CAP-ROB-04.md) Directive conflict resolution | DEFINED | specification_only / NOT_DEFINED | INCOMPLETE | [GAP-DOM-ROB](gaps/GAP-DOM-ROB.md), [GAP-004](gaps/GAP-004.md), [GAP-007](gaps/GAP-007.md) |

@@ -2,6 +2,7 @@ import type { Pool, PoolClient } from 'pg';
 import { verify } from 'node:crypto';
 import { base, canonical, manifestHash, validate, uuid } from '../contracts/index.js';
 import { transaction, registryLock } from '../persistence/transaction.js';
+import {assertHttpSeedManifest} from './http-seed.js';
 import {assertHttpBootstrapManifest} from './http-bootstrap.js';
 import {assertOfflineRenderManifest} from './offline-render.js';
 export interface Approval { author:string; reviewer:string; manifest_digest:string; evaluation_digest:string; approved_at:string; scope:'local-synthetic-v1'; dependencies:string[] }
@@ -12,7 +13,7 @@ export class Registry {
   const digest=manifestHash(manifest);
   if(approval.manifest_digest!==digest || approval.author===approval.reviewer || approval.scope!=='local-synthetic-v1' || !/^[a-f0-9]{64}$/.test(approval.evaluation_digest) || !Number.isFinite(Date.parse(approval.approved_at)) || Date.parse(approval.approved_at)>Date.now())throw new Error('approval_invalid');
   // Installing handlers is code deployment, never a manifest-controlled arbitrary operation.
-  if(manifest.procedure.some((s:any)=>s.operation!=='reliability_v1')){if(manifest.procedure[0]?.operation==='http_bootstrap_fixture_v1')assertHttpBootstrapManifest(manifest);else assertOfflineRenderManifest(manifest);}
+  if(manifest.procedure.some((s:any)=>s.operation!=='reliability_v1')){if(manifest.procedure[0]?.operation==='http_bootstrap_fixture_v1')assertHttpBootstrapManifest(manifest);else if(manifest.procedure[0]?.operation==='http_seed_fixture_v1')assertHttpSeedManifest(manifest);else assertOfflineRenderManifest(manifest);}
   if(manifest.external_authority!=='read_only')throw new Error('handler_not_installed');
   if(Date.parse(manifest.freshness_deadline)<=Date.now() || Date.parse(manifest.last_verified)>Date.now())throw new Error('skill_stale');
   return transaction(this.pool,'aios_operator',async c=>{

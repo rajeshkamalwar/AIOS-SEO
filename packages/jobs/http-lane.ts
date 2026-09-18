@@ -1,3 +1,4 @@
+import {assertHttpSeedContext} from './http-seed-job.js';
 import {assertHttpBootstrapRelease} from '../skills/http-bootstrap.js';
 import {readHttpBootstrapDescriptor,resolveHttpBootstrapSource} from './http-bootstrap-job.js';
 import type { Pool, PoolClient } from 'pg';
@@ -42,8 +43,10 @@ export class HttpLane {
    if(!j)throw new Error('lease_lost');
    await eligible(c,j.release_digest,false);
    if(j.kind==='fetch'){
+    if((await c.query('SELECT 1 FROM http_seed_job WHERE tenant_id=$1 AND job_id=$2',[l.tenantId,l.jobId])).rowCount){const {descriptor:d}=await assertHttpSeedContext(c,l,this.deletions);if(input.origin!==d.origin||input.maxDecodedBytes!==d.maxDecodedBytes)throw new Error('source_context_changed');}else{
     await assertHttpBootstrapRelease(c,j.release_digest);const d=await readHttpBootstrapDescriptor(c,j),source=await resolveHttpBootstrapSource(c,l,j.input_ref);
     if(d.sourceContextHash!==source.fingerprint||input.origin!==d.origin||input.maxDecodedBytes!==d.maxDecodedBytes)throw new Error('source_context_changed');
+    }
     if((await c.query('SELECT 1 FROM http_reservation WHERE tenant_id=$1 AND job_id=$2 AND attempt_no<>$3',[l.tenantId,l.jobId,l.attempt])).rowCount)throw new Error('budget_exhausted');
    }
    const normalized=normalizeUrl(r.submitted_url);

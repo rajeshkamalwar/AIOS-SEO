@@ -12,7 +12,21 @@ export interface HttpBootstrapSeedAdmission {invocationId:string;observationId:s
 /** Classifies only the submitted seed from a completed local bootstrap. No fetch. */
 export async function admitHttpBootstrapSeed(pool:Pool,deletions:DeletionLedger,blobs:Pick<LocalBlobs,'read'>|undefined,lease:Lease):Promise<HttpBootstrapSeedAdmission>{
  const l={...lease};if(!blobs)throw new Error('artifact_adapter_required');
- const gate=async(c:PoolClient)=>{
+ const gate=(c:PoolClient)=>httpBootstrapSeedContext(c,l,deletions);
+ const initial=await transaction(pool,'aios_scheduler',gate);
+ const scopeBytes=await blobs.read(initial.source.evidence.artifact_key,initial.source.evidence.sha256,Number(initial.source.evidence.bytes));validateHttpBootstrapScope(initial.source,scopeBytes,l);
+ const parsed=await readHttpBootstrapProjectionInput(pool,deletions,blobs,l);
+ if(parsed.initial.fingerprint!==initial.projection.fingerprint||manifestHash(parsed.result)!==manifestHash(initial.projection.prior.result))throw new Error('source_context_changed');
+ const policy=parsed.decision;
+ const disposition=policy.state==='known'?(pageAllowed(policy,initial.target.url)?'allowed':'disallowed'):policy.state;
+ return transaction(pool,'aios_scheduler',async c=>{
+  const current=await gate(c);if(current.fingerprint!==initial.fingerprint&&!(current.prior&&!initial.prior&&current.projection.fingerprint===initial.projection.fingerprint&&current.source.fingerprint===initial.source.fingerprint))throw new Error('source_context_changed');
+  const row=(await c.query('SELECT * FROM control.admit_http_bootstrap_seed($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)',[l.tenantId,l.siteId,l.runId,l.jobId,l.attempt,l.attemptId,l.token,initial.target.id,initial.target.version,disposition,initial.projection.prior.receipt_hash])).rows[0];
+  validate(base+'http-bootstrap-seed-admission.schema.json',row.result);return row.result;
+ });
+}
+
+export async function httpBootstrapSeedContext(c:PoolClient,l:Lease,deletions:DeletionLedger){
   const projection=await httpBootstrapProjectionContext(c,l,deletions);if(!projection.prior)throw new Error('bootstrap_incomplete');
   const source=await resolveHttpBootstrapSource(c,l,projection.descriptor.bundleId);
   const targets=(await c.query("SELECT * FROM crawl_target WHERE tenant_id=$1 AND site_id=$2 AND crawl_id=$3 AND seed_kind='submitted' AND deleted_at IS NULL",[l.tenantId,l.siteId,l.runId])).rows;
@@ -41,17 +55,5 @@ export async function admitHttpBootstrapSeed(pool:Pool,deletions:DeletionLedger,
   }
   await assertInputsEligible(c,l.tenantId,l.siteId,l.runId,[target.id,...(prior?[prior.bundle_id]:[])]);
   const context={projection:projection.fingerprint,source:source.fingerprint,target,targetLinks,bundle,bundleLinks};
-  return {projection,source,target,prior,fingerprint:manifestHash(JSON.parse(JSON.stringify(context)))};
- };
- const initial=await transaction(pool,'aios_scheduler',gate);
- const scopeBytes=await blobs.read(initial.source.evidence.artifact_key,initial.source.evidence.sha256,Number(initial.source.evidence.bytes));validateHttpBootstrapScope(initial.source,scopeBytes,l);
- const parsed=await readHttpBootstrapProjectionInput(pool,deletions,blobs,l);
- if(parsed.initial.fingerprint!==initial.projection.fingerprint||manifestHash(parsed.result)!==manifestHash(initial.projection.prior.result))throw new Error('source_context_changed');
- const policy=parsed.decision;
- const disposition=policy.state==='known'?(pageAllowed(policy,initial.target.url)?'allowed':'disallowed'):policy.state;
- return transaction(pool,'aios_scheduler',async c=>{
-  const current=await gate(c);if(current.fingerprint!==initial.fingerprint&&!(current.prior&&!initial.prior&&current.projection.fingerprint===initial.projection.fingerprint&&current.source.fingerprint===initial.source.fingerprint))throw new Error('source_context_changed');
-  const row=(await c.query('SELECT * FROM control.admit_http_bootstrap_seed($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)',[l.tenantId,l.siteId,l.runId,l.jobId,l.attempt,l.attemptId,l.token,initial.target.id,initial.target.version,disposition,initial.projection.prior.receipt_hash])).rows[0];
-  validate(base+'http-bootstrap-seed-admission.schema.json',row.result);return row.result;
- });
+  return {projection,source,target,prior,bundle,fingerprint:manifestHash(JSON.parse(JSON.stringify(context)))};
 }

@@ -1,0 +1,137 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.aios-seo.invalid/v1/http-seed-descriptor.schema.json",
+  "description": "Immutable local submitted-seed dispatch context; shape validation does not establish source, robots or current execution authority.",
+  "type": "object",
+  "properties": {
+    "parentJobId": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+    },
+    "parentAttemptId": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+    },
+    "tenantId": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+    },
+    "siteId": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+    },
+    "crawlId": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+    },
+    "bundleId": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+    },
+    "targetId": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+    },
+    "bootstrapInvocationId": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+    },
+    "scopeObservationId": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+    },
+    "scopeEvidenceId": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+    },
+    "robotsObservationId": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+    },
+    "robotsReceiptEvidenceId": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+    },
+    "scopeSha256": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/hash"
+    },
+    "robotsContextHash": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/hash"
+    },
+    "sourceContextHash": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/hash"
+    },
+    "parentAttempt": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "knownSeq": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "targetVersion": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "version": {
+      "const": 1
+    },
+    "handler": {
+      "const": "http_seed_fixture_v1"
+    },
+    "profile": {
+      "const": "isolated-http-seed-fixture-v1"
+    },
+    "policy": {
+      "const": "discovery-v1"
+    },
+    "method": {
+      "const": "GET"
+    },
+    "maxDecodedBytes": {
+      "const": 5242880
+    },
+    "timeoutMs": {
+      "const": 20000
+    },
+    "robotsBodyEvidenceId": {
+      "anyOf": [
+        {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "origin": {
+      "type": "string",
+      "format": "uri",
+      "maxLength": 256
+    },
+    "url": {
+      "type": "string",
+      "format": "uri",
+      "maxLength": 4096
+    }
+  },
+  "required": [
+    "parentJobId",
+    "parentAttemptId",
+    "tenantId",
+    "siteId",
+    "crawlId",
+    "bundleId",
+    "targetId",
+    "bootstrapInvocationId",
+    "scopeObservationId",
+    "scopeEvidenceId",
+    "robotsObservationId",
+    "robotsReceiptEvidenceId",
+    "scopeSha256",
+    "robotsContextHash",
+    "sourceContextHash",
+    "parentAttempt",
+    "knownSeq",
+    "targetVersion",
+    "version",
+    "handler",
+    "profile",
+    "policy",
+    "method",
+    "maxDecodedBytes",
+    "timeoutMs",
+    "robotsBodyEvidenceId",
+    "origin",
+    "url"
+  ],
+  "additionalProperties": false
+}

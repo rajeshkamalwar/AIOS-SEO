@@ -1,6 +1,6 @@
 # Gap register
 
-<!-- Derived record/source digest: 919789946fe9f140c9a47200e59d2a757ec4272e9482c4b23bcca2c27b9fb715; regenerate with npm run vault:update. This is not a test receipt. -->
+<!-- Derived record/source digest: 7ffe524b55a8a58fde3f2a596234e883c5e7087ea4c9480d5664d74a428b84e8; regenerate with npm run vault:update. This is not a test receipt. -->
 
 Persistent IDs are never renumbered or deleted. Lifecycle: OPEN → FIX_IN_PROGRESS → FIXED → TESTED → VERIFIED → CLOSED. Historical R/D/S design dispositions are preserved separately from runtime/production gaps; FIXED design does not certify operations. Severity applies to the named scope, not a blanket stop on all work.
 
@@ -51,6 +51,7 @@ Persistent IDs are never renumbered or deleted. Lifecycle: OPEN → FIX_IN_PROGR
 | [GAP-043](gaps/GAP-043.md) | Governed local HTTP evidence acceptance | HIGH — Private observed response handoff and fenced local Evidence acceptance | CLOSED | Prove exact observed response binding, preupload retention checks, separately authorized current-gated atomic acceptance, replay and actual local isolated integration. |
 | [GAP-044](gaps/GAP-044.md) | Governed robots result and atomic fetch completion | HIGH — Local accepted bootstrap observation to operational robots result and completed fetch job | CLOSED | Verify exact accepted inputs, honest known/denied/unknown result, current gates, atomic completion/outbox and immutable current-gated replay. |
 | [GAP-045](gaps/GAP-045.md) | Independent governed submitted-seed admission | HIGH — Completed robots evidence to frozen successor inputs and actual submitted-target classification | CLOSED | Verify exact current completed-source chain, independent seed classification without fake sitemap, immutable post-robots bundle and atomic idempotent event/target transition. |
+| [GAP-046](gaps/GAP-046.md) | Governed submitted-page dispatch | HIGH — Local admitted seed to isolated one-call HTTP execution | CLOSED | Verify exact current seed/source/bundle authority, unique durable target claim and one-call isolated execution with independent cleanup accounting. |
 | [GAP-101](gaps/GAP-101.md) | Reserved/private and special-use address filtering | HIGH — Named local conformance defect only; not deployed safety certification | CLOSED | Satisfied for named local defect by retained implementation report and linked regression; broader operational gates remain OPEN. |
 | [GAP-102](gaps/GAP-102.md) | Response overflow, transfer and decoded size enforcement | HIGH — Named local conformance defect only; not deployed safety certification | CLOSED | Satisfied for named local defect by retained implementation report and linked regression; broader operational gates remain OPEN. |
 | [GAP-103](gaps/GAP-103.md) | DNS pinning, redirects, cancellation and URL credential exclusions | HIGH — Named local conformance defect only; not deployed safety certification | CLOSED | Satisfied for named local defect by retained implementation report and linked regression; broader operational gates remain OPEN. |

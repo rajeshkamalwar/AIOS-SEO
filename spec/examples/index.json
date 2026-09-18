@@ -284,6 +284,41 @@
       "path": "examples/invalid-frontier-seed-classified.json",
       "schema": "https://schemas.aios-seo.invalid/v1/event.schema.json",
       "valid": false
+    },
+    {
+      "path": "examples/skill-http-seed-fixture.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/skill.schema.json",
+      "valid": true
+    },
+    {
+      "path": "examples/http-seed-execution.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/http-seed-execution.schema.json",
+      "valid": true
+    },
+    {
+      "path": "examples/invalid-http-seed-execution.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/http-seed-execution.schema.json",
+      "valid": false
+    },
+    {
+      "path": "examples/http-seed-descriptor.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/http-seed-descriptor.schema.json",
+      "valid": true
+    },
+    {
+      "path": "examples/invalid-http-seed-descriptor.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/http-seed-descriptor.schema.json",
+      "valid": false
+    },
+    {
+      "path": "examples/frontier-seed-fetch-claimed.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/event.schema.json",
+      "valid": true
+    },
+    {
+      "path": "examples/invalid-frontier-seed-fetch-claimed.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/event.schema.json",
+      "valid": false
     }
   ],
   "note": "Schema fixtures test shape only. Scenario semantics require implementation tests."

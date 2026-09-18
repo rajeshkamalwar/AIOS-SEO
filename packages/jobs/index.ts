@@ -1,3 +1,5 @@
+import {assertHttpSeedRelease} from '../skills/http-seed.js';
+import {assertHttpSeedContext,readHttpSeedDescriptor,prepareHttpSeedSource,httpSeedSource,httpSeedDescriptor,type HttpSeedJobDescriptor} from './http-seed-job.js';
 import {admitHttpBootstrapSeed,type HttpBootstrapSeedAdmission} from './http-bootstrap-seed.js';
 import {projectHttpBootstrapFixture,type HttpBootstrapProjection} from './http-bootstrap-projection.js';
 import {acceptHttpBootstrapFixture,type HttpBootstrapAcceptanceInput,type HttpBootstrapAcceptance} from './http-bootstrap-acceptance.js';
@@ -110,16 +112,17 @@ export class Jobs {
      }
      await this.live(c,j.tenant_id,j.site_id,j.crawl_id);await eligible(c,j.release_digest,false);
      if(j.kind==='render'){await assertOfflineRenderRelease(c,j.release_digest);await readRenderDescriptor(c,j);}
-     if(j.kind==='fetch'){await assertHttpBootstrapRelease(c,j.release_digest);await readHttpBootstrapDescriptor(c,j);}
+     if(j.kind==='fetch'){if((await c.query('SELECT 1 FROM http_seed_job WHERE tenant_id=$1 AND job_id=$2',[j.tenant_id,j.job_id])).rowCount){await assertHttpSeedRelease(c,j.release_digest);await readHttpSeedDescriptor(c,j);}else{await assertHttpBootstrapRelease(c,j.release_digest);await readHttpBootstrapDescriptor(c,j);}}
      const token=randomUUID(),attemptId=randomUUID(),attempt=Number(j.attempt)+1;
      await c.query("UPDATE job SET state='leased',attempt=$3,lease_token=$4,lease_until=least(clock_timestamp()+interval '30 seconds',deadline),error=NULL WHERE tenant_id=$1 AND job_id=$2",[j.tenant_id,j.job_id,attempt,token]);
      await c.query('INSERT INTO job_attempt VALUES($1,$2,$3,$4,clock_timestamp(),NULL,NULL,$5)',[j.tenant_id,j.job_id,attempt,attemptId,j.expected_input_hash]);
+     if(j.kind==='fetch'&&(await c.query('SELECT 1 FROM http_seed_job WHERE tenant_id=$1 AND job_id=$2',[j.tenant_id,j.job_id])).rowCount)await assertHttpSeedContext(c,{tenantId:j.tenant_id,siteId:j.site_id,runId:j.crawl_id,jobId:j.job_id,token,attempt,attemptId},this.deletions);
      await c.query('INSERT INTO control.scheduler_turn VALUES($1,nextval(\'control.dispatch_turn\')) ON CONFLICT(tenant_id) DO UPDATE SET last_dispatch=excluded.last_dispatch',[j.tenant_id]);
      await event(c,j.tenant_id,j.site_id,j.crawl_id,j.crawl_id,'crawl.started',{crawl_id:j.crawl_id,job_id:j.job_id});
      return {tenantId:j.tenant_id,siteId:j.site_id,runId:j.crawl_id,jobId:j.job_id,token,attempt,attemptId};
     }catch(e){
      await c.query('ROLLBACK TO SAVEPOINT candidate');
-     if (!(e instanceof Error) || !['scope_denied','run_fenced','deleted_scope','deadline','skill_revoked','skill_stale','skill_deprecated','skill_unapproved','handler_not_installed','source_context_changed'].includes(e.message)) throw e;
+     if (!(e instanceof Error) || !['scope_denied','run_fenced','deleted_scope','deadline','skill_revoked','skill_stale','skill_deprecated','skill_unapproved','handler_not_installed','source_context_changed','target_claimed','target_unavailable','seed_not_admitted','source_unavailable','artifact_integrity_failed','audit_input_rejected','audit_run_quarantined','audit_graph_budget_exceeded'].includes(e.message)) throw e;
      // Invalid grants/releases are terminal. Permission lookup failure never becomes remote work.
      await c.query("SELECT set_config('app.tenant_id',$1,true)",[j.tenant_id]);
      await c.query("UPDATE job SET state='failed',lease_token=NULL,lease_until=NULL,error=$3 WHERE tenant_id=$1 AND job_id=$2",[j.tenant_id,j.job_id,{code:'policy_blocked',retryable:false,detail:e.message,evidence_ids:[]}]);
@@ -196,6 +199,26 @@ export class Jobs {
   const bytes=await this.artifacts.read(source.evidence.artifact_key,source.evidence.sha256,Number(source.evidence.bytes));
   validateHttpBootstrapScope(source,bytes,l);
   const current=await resolve();if(current.fingerprint!==source.fingerprint)throw new Error('source_context_changed');return current;
+ }
+ async enqueueHttpSeedFixture(parent:Lease,release:string,key:string):Promise<string>{
+  parent={...parent};if(!key||key.length>4096)throw new Error('invalid_input');
+  const initial=await prepareHttpSeedSource(this.pool,this.deletions,this.artifacts,parent);
+  return transaction(this.pool,'aios_scheduler',async c=>{
+   const source=await httpSeedSource(c,parent,this.deletions);if(source.stableFingerprint!==initial.stableFingerprint)throw new Error('source_context_changed');
+   await eligible(c,release,true);await assertHttpSeedRelease(c,release);
+   const descriptor=httpSeedDescriptor(parent,source);validate(base+'http-seed-descriptor.schema.json',descriptor);
+   const expected=manifestHash({descriptor,release,kind:'fetch',policy:'discovery-v1'});
+   return (await c.query('SELECT control.enqueue_http_seed($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) AS id',[parent.tenantId,parent.siteId,parent.runId,parent.jobId,parent.attempt,parent.attemptId,parent.token,release,key,descriptor,expected,randomUUID()])).rows[0].id;
+  });
+ }
+ async prepareHttpSeedExecution(l:Lease):Promise<HttpSeedJobDescriptor>{
+  l={...l};const initial=await transaction(this.pool,'aios_scheduler',c=>assertHttpSeedContext(c,l,this.deletions));
+  await prepareHttpSeedSource(this.pool,this.deletions,this.artifacts,initial.parent);
+  await this.assertHttpSeedExecution(l,initial.descriptor);return initial.descriptor;
+ }
+ async assertHttpSeedExecution(l:Lease,expected:HttpSeedJobDescriptor):Promise<void>{
+  l={...l};expected=structuredClone(expected);
+  await transaction(this.pool,'aios_scheduler',async c=>{const current=await assertHttpSeedContext(c,l,this.deletions);if(manifestHash(current.descriptor)!==manifestHash(expected))throw new Error('source_context_changed');});
  }
  async admitHttpBootstrapSeed(l:Lease):Promise<HttpBootstrapSeedAdmission>{return admitHttpBootstrapSeed(this.pool,this.deletions,this.artifacts,l);}
  async projectHttpBootstrapFixture(l:Lease):Promise<HttpBootstrapProjection>{return projectHttpBootstrapFixture(this.pool,this.deletions,this.artifacts,l);}

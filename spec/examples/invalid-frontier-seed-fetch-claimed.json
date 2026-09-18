@@ -1,0 +1,25 @@
+{
+  "event_id": "10000000-0000-4000-8000-000000000001",
+  "tenant_id": "10000000-0000-4000-8000-000000000002",
+  "site_id": "10000000-0000-4000-8000-000000000003",
+  "schema_version": 1,
+  "aggregate_id": "33333333-3333-4333-8333-333333333333",
+  "aggregate_version": 3,
+  "causation_id": null,
+  "correlation_id": "10000000-0000-4000-8000-000000000004",
+  "occurred_at": "2026-09-18T00:00:00.000Z",
+  "recorded_at": "2026-09-18T00:00:00.000Z",
+  "knowledge_seq": 12,
+  "idempotency_key": "10000000-0000-4000-8000-000000000005",
+  "producer": "http-seed-fixture@1.0.0",
+  "event_type": "frontier.seed_fetch_claimed",
+  "payload": {
+    "crawl_id": "10000000-0000-4000-8000-000000000004",
+    "target_id": "33333333-3333-4333-8333-333333333333",
+    "job_id": "10000000-0000-4000-8000-000000000003",
+    "invocation_id": "10000000-0000-4000-8000-000000000004",
+    "reservation_id": "10000000-0000-4000-8000-000000000005",
+    "policy_version": "discovery-v1",
+    "url": "https://receipt.example/services"
+  }
+}
