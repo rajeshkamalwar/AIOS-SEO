@@ -1,6 +1,6 @@
 # Test traceability
 
-<!-- Derived record/source digest: 39b8ce1af956df32793d711c55d3d1808a10ff6d653f3b967cadb758898ac4cd; regenerate with npm run vault:update. This is not a test receipt. -->
+<!-- Derived record/source digest: a91e6b1c6d5dc811215b726186a8745b85d456a4da495f3b24e0103be82e4462; regenerate with npm run vault:update. This is not a test receipt. -->
 
 Counts below are successive snapshots, **never added together**. A referenced test is not proof of full capability acceptance. Fixture/loopback/offline browser results stay TESTED. Spec validation, production dependency audit and runtime execution establish different things.
 
@@ -34,6 +34,7 @@ Counts below are successive snapshots, **never added together**. A referenced te
 | [LOCAL-RENDER-PROJECTION](milestones/LOCAL-RENDER-PROJECTION.md) | [offline-render-projection.ts](../packages/jobs/offline-render-projection.ts), [offline-render-producer.ts](../packages/jobs/offline-render-producer.ts), [020-offline-render-projection.sql](../packages/persistence/migrations/020-offline-render-projection.sql) | [render-projection.test.ts](../tests/render-projection.test.ts), [test.mjs](../scripts/test.mjs) | [LOCAL-RENDER-PROJECTION.md](../reports/LOCAL-RENDER-PROJECTION.md) / parent8a86864 |
 | [ISOLATED-HTTP-EGRESS](milestones/ISOLATED-HTTP-EGRESS.md) | [isolated-http-fixture-supervisor.ts](../packages/jobs/isolated-http-fixture-supervisor.ts), [docker-http-fixture.ts](../packages/jobs/docker-http-fixture.ts), [http-fixture-broker.ts](../packages/perception/http-fixture-broker.ts), [transport.ts](../packages/perception/transport.ts), [worker.mjs](../workers/http-fixture/worker.mjs) | [http-isolated.test.ts](../tests/http-isolated.test.ts), [http-fixture-broker.test.ts](../tests/http-fixture-broker.test.ts), [http-fixture-engine.test.ts](../tests/http-fixture-engine.test.ts) | [ISOLATED-HTTP-EGRESS.md](../reports/ISOLATED-HTTP-EGRESS.md) / parent6131ee2 |
 | [REVIEWED-FIXTURE-RETENTION](milestones/REVIEWED-FIXTURE-RETENTION.md) | [index.ts](../packages/persistence/index.ts), [offline-render-source.ts](../packages/jobs/offline-render-source.ts), [reviewed-fixtures.ts](../packages/perception/reviewed-fixtures.ts), [frontier-context.ts](../packages/jobs/frontier-context.ts), [index.ts](../packages/jobs/index.ts), [index.ts](../packages/api/index.ts) | [http-evidence.test.ts](../tests/http-evidence.test.ts), [offline-render-source.test.ts](../tests/offline-render-source.test.ts), [reviewed-fixtures.test.ts](../tests/reviewed-fixtures.test.ts), [site-scope.test.ts](../tests/site-scope.test.ts), [jobs.test.ts](../tests/jobs.test.ts), [render-acceptance.test.ts](../tests/render-acceptance.test.ts), [render-projection.test.ts](../tests/render-projection.test.ts) | [REVIEWED-FIXTURE-RETENTION.md](../reports/REVIEWED-FIXTURE-RETENTION.md) / parente937e79 |
+| [GOVERNED-HTTP-BOOTSTRAP](milestones/GOVERNED-HTTP-BOOTSTRAP.md) | [http-bootstrap-job.ts](../packages/jobs/http-bootstrap-job.ts), [index.ts](../packages/jobs/index.ts), [isolated-http-fixture-supervisor.ts](../packages/jobs/isolated-http-fixture-supervisor.ts), [http-lane.ts](../packages/jobs/http-lane.ts), [http-bootstrap.ts](../packages/skills/http-bootstrap.ts), [021-http-bootstrap-job.sql](../packages/persistence/migrations/021-http-bootstrap-job.sql) | [http-bootstrap.test.ts](../tests/http-bootstrap.test.ts), [http-isolated.test.ts](../tests/http-isolated.test.ts), [http-fixture-broker.test.ts](../tests/http-fixture-broker.test.ts), [http-fixture-engine.test.ts](../tests/http-fixture-engine.test.ts) | [GOVERNED-HTTP-BOOTSTRAP.md](../reports/GOVERNED-HTTP-BOOTSTRAP.md) / parent42d88b3 |
 
 ## Capability and defect trace
 
@@ -52,6 +53,7 @@ Every [capability note](04-COVERAGE-MATRIX.md) maps its exact CAP requirement â†
 - [foundation.test.ts](../tests/foundation.test.ts)
 - [frontier-links.test.ts](../tests/frontier-links.test.ts)
 - [frontier-persistence.test.ts](../tests/frontier-persistence.test.ts)
+- [http-bootstrap.test.ts](../tests/http-bootstrap.test.ts)
 - [http-evidence.test.ts](../tests/http-evidence.test.ts)
 - [http-fixture-broker.test.ts](../tests/http-fixture-broker.test.ts)
 - [http-fixture-engine.test.ts](../tests/http-fixture-engine.test.ts)

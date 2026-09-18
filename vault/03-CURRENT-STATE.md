@@ -1,8 +1,8 @@
 # Current state
 
-<!-- Derived record/source digest: 39b8ce1af956df32793d711c55d3d1808a10ff6d653f3b967cadb758898ac4cd; regenerate with npm run vault:update. This is not a test receipt. -->
+<!-- Derived record/source digest: a91e6b1c6d5dc811215b726186a8745b85d456a4da495f3b24e0103be82e4462; regenerate with npm run vault:update. This is not a test receipt. -->
 
-Latest recorded execution evidence: [REVIEWED-FIXTURE-RETENTION](milestones/REVIEWED-FIXTURE-RETENTION.md) — **533 normal / 130 compiled / 3 Docker** at reported baseline `parente937e79`. Source/report digest changes above do not establish new test results. Read the linked report for environment, failures and scope.
+Latest recorded execution evidence: [GOVERNED-HTTP-BOOTSTRAP](milestones/GOVERNED-HTTP-BOOTSTRAP.md) — **547 normal / 109 compiled / 2 Docker** at reported baseline `parent42d88b3`. Source/report digest changes above do not establish new test results. Read the linked report for environment, failures and scope.
 
 **Product incomplete.** M1–M5 local exits are reported; N0 customer activation and N1 live integration remain open. Real PostgreSQL transactions and private local blobs, loopback HTTP, persisted fixture frontiers/snapshots and isolated offline Chromium execute. Source fixtures, injected principals, test-authored evaluator records and denied external resources remain explicit limitations. Legacy publication JSON is suppressed because independent publication receipts are absent; see GAP-030 and ADR-013. No capability is real-world or production-proven by those tests.
 
@@ -38,6 +38,7 @@ The owner-approved N0 deployment/data-use profile gates customer processing. It 
 | [LOCAL-RENDER-PROJECTION](milestones/LOCAL-RENDER-PROJECTION.md) | SCOPED_LOCAL_EXIT_VERIFIED | TESTED |
 | [ISOLATED-HTTP-EGRESS](milestones/ISOLATED-HTTP-EGRESS.md) | SCOPED_LOCAL_EXIT_VERIFIED | TESTED |
 | [REVIEWED-FIXTURE-RETENTION](milestones/REVIEWED-FIXTURE-RETENTION.md) | SCOPED_LOCAL_EXIT_VERIFIED | TESTED |
+| [GOVERNED-HTTP-BOOTSTRAP](milestones/GOVERNED-HTTP-BOOTSTRAP.md) | SCOPED_LOCAL_EXIT_VERIFIED | TESTED |
 
 ## GitHub snapshot and authority
 

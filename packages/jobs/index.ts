@@ -1,3 +1,5 @@
+import {assertHttpBootstrapRelease} from '../skills/http-bootstrap.js';
+import {resolveHttpBootstrapSource,validateHttpBootstrapScope,httpBootstrapDescriptor,readHttpBootstrapDescriptor,type HttpBootstrapJobDescriptor} from './http-bootstrap-job.js';
 import {assertReviewedRawFixture,assertReviewedHttpFixtureMetadata} from '../perception/reviewed-fixtures.js';
 import {projectOfflineRenderFixture,type OfflineRenderProjection} from './offline-render-projection.js';
 import type { Pool, PoolClient } from 'pg';
@@ -105,6 +107,7 @@ export class Jobs {
      }
      await this.live(c,j.tenant_id,j.site_id,j.crawl_id);await eligible(c,j.release_digest,false);
      if(j.kind==='render'){await assertOfflineRenderRelease(c,j.release_digest);await readRenderDescriptor(c,j);}
+     if(j.kind==='fetch'){await assertHttpBootstrapRelease(c,j.release_digest);await readHttpBootstrapDescriptor(c,j);}
      const token=randomUUID(),attemptId=randomUUID(),attempt=Number(j.attempt)+1;
      await c.query("UPDATE job SET state='leased',attempt=$3,lease_token=$4,lease_until=least(clock_timestamp()+interval '30 seconds',deadline),error=NULL WHERE tenant_id=$1 AND job_id=$2",[j.tenant_id,j.job_id,attempt,token]);
      await c.query('INSERT INTO job_attempt VALUES($1,$2,$3,$4,clock_timestamp(),NULL,NULL,$5)',[j.tenant_id,j.job_id,attempt,attemptId,j.expected_input_hash]);
@@ -178,6 +181,46 @@ export class Jobs {
  async acceptOfflineRenderFixture(l:Lease,input:OfflineRenderAcceptanceInput):Promise<OfflineRenderAcceptance>{
   if(!this.renderAcceptorPool)throw new Error('render_acceptor_required');
   return acceptOfflineRenderFixture(this.renderAcceptorPool,this.deletions,this.artifacts,l,input,()=>this.prepareOfflineRenderExecution(l));
+ }
+ private async prepareHttpBootstrapSource(l:Lease,kind:'project'|'fetch'){
+  if(!this.artifacts)throw new Error('artifact_adapter_required');
+  const resolve=()=>transaction(this.pool,'aios_scheduler',async c=>{
+   await this.locks(c);const {j}=await this.leased(c,l);if(j.kind!==kind)throw new Error('handler_not_installed');
+   if(kind==='fetch'){await assertHttpBootstrapRelease(c,j.release_digest);await readHttpBootstrapDescriptor(c,j);}
+   return resolveHttpBootstrapSource(c,l,j.input_ref);
+  });
+  const source=await resolve();
+  const bytes=await this.artifacts.read(source.evidence.artifact_key,source.evidence.sha256,Number(source.evidence.bytes));
+  validateHttpBootstrapScope(source,bytes,l);
+  const current=await resolve();if(current.fingerprint!==source.fingerprint)throw new Error('source_context_changed');return current;
+ }
+ async enqueueHttpBootstrapFixture(parent:Lease,release:string,key:string):Promise<string>{
+  if(!key||key.length>4096)throw new Error('invalid_input');
+  const source=await this.prepareHttpBootstrapSource(parent,'project'),descriptor=httpBootstrapDescriptor(parent,source);
+  return transaction(this.pool,'aios_scheduler',async c=>{
+   await this.locks(c);const {j}=await this.leased(c,parent);if(j.kind!=='project')throw new Error('handler_not_installed');
+   await eligible(c,release,true);await assertHttpBootstrapRelease(c,release);
+   const current=await resolveHttpBootstrapSource(c,parent,j.input_ref);if(current.fingerprint!==descriptor.sourceContextHash)throw new Error('source_context_changed');
+   const expected=manifestHash({descriptor,release,kind:'fetch',policy:'discovery-v1'});
+   return (await c.query('SELECT control.enqueue_http_bootstrap($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) AS id',[parent.tenantId,parent.siteId,parent.runId,parent.jobId,parent.attempt,parent.attemptId,parent.token,release,key,descriptor,expected,randomUUID()])).rows[0].id;
+  });
+ }
+ async prepareHttpBootstrapExecution(l:Lease):Promise<HttpBootstrapJobDescriptor>{
+  const descriptor=await transaction(this.pool,'aios_scheduler',async c=>{
+   await this.locks(c);const {j}=await this.leased(c,l);if(j.kind!=='fetch')throw new Error('handler_not_installed');
+   await assertHttpBootstrapRelease(c,j.release_digest);return readHttpBootstrapDescriptor(c,j);
+  });
+  const source=await this.prepareHttpBootstrapSource(l,'fetch');
+  const current=httpBootstrapDescriptor({...l,jobId:descriptor.parentJobId,attemptId:descriptor.parentAttemptId,attempt:descriptor.parentAttempt},source);
+  if(manifestHash(current)!==manifestHash(descriptor))throw new Error('source_context_changed');return descriptor;
+ }
+ async assertHttpBootstrapExecution(l:Lease,expected:HttpBootstrapJobDescriptor):Promise<void>{
+  return transaction(this.pool,'aios_scheduler',async c=>{
+   await this.locks(c);const {j}=await this.leased(c,l);if(j.kind!=='fetch')throw new Error('handler_not_installed');
+   await assertHttpBootstrapRelease(c,j.release_digest);const descriptor=await readHttpBootstrapDescriptor(c,j);
+   if(manifestHash(expected)!==manifestHash(descriptor))throw new Error('source_context_changed');
+   const source=await resolveHttpBootstrapSource(c,l,j.input_ref);if(source.fingerprint!==descriptor.sourceContextHash)throw new Error('source_context_changed');await this.leased(c,l);
+  });
  }
  async enqueueOfflineRenderFixture(parent:Lease,snapshotId:string,release:string,key:string):Promise<string>{
   if(!key||key.length>4096)throw new Error('invalid_input');
@@ -259,7 +302,7 @@ export class Jobs {
   });
  }
  async complete(l:Lease,result:string){uuid(result);return transaction(this.pool,'aios_scheduler',async c=>{
-  await this.locks(c);const {j}=await this.leased(c,l);if(j.kind==='render')throw new Error('handler_not_installed');
+  await this.locks(c);const {j}=await this.leased(c,l);if(['render','fetch'].includes(j.kind))throw new Error('handler_not_installed');
   // M2 completion validates an existing frozen input/output bundle. Domain-producing handlers are installed in later milestones.
   if(!(await c.query("SELECT 1 FROM evidence_bundle WHERE tenant_id=$1 AND site_id=$2 AND id=$3 AND state='frozen'",[l.tenantId,l.siteId,result])).rowCount)throw new Error('schema_invalid');
   await c.query("UPDATE job SET state='completed',lease_token=NULL,lease_until=NULL,result_ref=$3 WHERE tenant_id=$1 AND job_id=$2",[l.tenantId,l.jobId,result]);

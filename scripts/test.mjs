@@ -2,7 +2,9 @@ import { mkdtempSync, mkdirSync, rmSync, existsSync } from "node:fs";
 import { execFileSync, spawnSync } from "node:child_process";
 import { join } from "node:path";
 const compiledHttp = process.argv.includes("--compiled-http");
-if (process.argv.slice(2).length > 1 || process.argv.slice(2).some(arg => !["--fixture-retention", "--compiled-fixture-retention", "--http-isolated", "--compiled-http-isolated", "--http-isolated-docker", "--render-projection", "--compiled-render-projection", "--render-projection-docker", "--render-acceptance-docker", "--render-acceptance", "--compiled-render-acceptance", "--compiled-http", "--render-source", "--compiled-render-source", "--compiled-render-lane", "--render-execution", "--compiled-render-execution"].includes(arg))) throw new Error("Unknown or combined test mode");
+if (process.argv.slice(2).length > 1 || process.argv.slice(2).some(arg => !["--http-bootstrap", "--compiled-http-bootstrap", "--fixture-retention", "--compiled-fixture-retention", "--http-isolated", "--compiled-http-isolated", "--http-isolated-docker", "--render-projection", "--compiled-render-projection", "--render-projection-docker", "--render-acceptance-docker", "--render-acceptance", "--compiled-render-acceptance", "--compiled-http", "--render-source", "--compiled-render-source", "--compiled-render-lane", "--render-execution", "--compiled-render-execution"].includes(arg))) throw new Error("Unknown or combined test mode");
+const httpBootstrap=process.argv.includes("--http-bootstrap");
+const compiledHttpBootstrap=process.argv.includes("--compiled-http-bootstrap");
 const fixtureRetention=process.argv.includes("--fixture-retention");
 const compiledFixtureRetention=process.argv.includes("--compiled-fixture-retention");
 const httpIsolatedDocker=process.argv.includes("--http-isolated-docker");
@@ -70,10 +72,10 @@ try {
   const result = spawnSync(
     process.execPath,
     compiledHttp ? ["--test", "--test-concurrency=1", "dist/tests/foundation.test.js", "dist/tests/http-lane.test.js"] : [
-      ...(compiledFixtureRetention || compiledHttpIsolated || compiledRenderProjection || compiledRenderAcceptance || compiledRenderSource || compiledRenderLane || compiledRenderExecution ? [] : ["--import", "tsx"]),
+      ...(compiledHttpBootstrap || compiledFixtureRetention || compiledHttpIsolated || compiledRenderProjection || compiledRenderAcceptance || compiledRenderSource || compiledRenderLane || compiledRenderExecution ? [] : ["--import", "tsx"]),
       "--test",
       "--test-concurrency=1",
-      ...(compiledFixtureRetention ? ["dist/tests/foundation.test.js", "dist/tests/http-evidence.test.js", "dist/tests/reviewed-fixtures.test.js", "dist/tests/offline-render-source.test.js", "dist/tests/site-scope.test.js"] : fixtureRetention ? ["tests/foundation.test.ts", "tests/http-evidence.test.ts", "tests/reviewed-fixtures.test.ts", "tests/offline-render-source.test.ts", "tests/site-scope.test.ts"] : compiledHttpIsolated ? ["dist/tests/foundation.test.js", "dist/tests/http-isolated.test.js", "dist/tests/http-fixture-broker.test.js", "dist/tests/http-fixture-engine.test.js"] : httpIsolated ? ["tests/foundation.test.ts", "tests/http-isolated.test.ts", "tests/http-fixture-broker.test.ts", "tests/http-fixture-engine.test.ts"] : compiledRenderProjection ? ["dist/tests/foundation.test.js", "dist/tests/render-projection.test.js"] : renderProjection ? ["tests/foundation.test.ts", "tests/render-projection.test.ts"] : compiledRenderAcceptance ? ["dist/tests/foundation.test.js", "dist/tests/render-acceptance.test.js"] : renderAcceptance ? ["tests/foundation.test.ts", "tests/render-acceptance.test.ts"] : compiledRenderExecution ? ["dist/tests/foundation.test.js", "dist/tests/render-execution.test.js"] : renderExecution ? ["tests/foundation.test.ts", "tests/render-execution.test.ts"] : compiledRenderLane ? ["dist/tests/foundation.test.js", "dist/tests/render-lane.test.js"] : compiledRenderSource ? ["dist/tests/foundation.test.js", "dist/tests/offline-render-source.test.js"] : renderSource ? ["tests/foundation.test.ts", "tests/offline-render-source.test.ts"] : [
+      ...(compiledHttpBootstrap ? ["dist/tests/foundation.test.js", "dist/tests/http-bootstrap.test.js", "dist/tests/http-isolated.test.js", "dist/tests/http-fixture-broker.test.js", "dist/tests/http-fixture-engine.test.js"] : httpBootstrap ? ["tests/foundation.test.ts", "tests/http-bootstrap.test.ts", "tests/http-isolated.test.ts", "tests/http-fixture-broker.test.ts", "tests/http-fixture-engine.test.ts"] : compiledFixtureRetention ? ["dist/tests/foundation.test.js", "dist/tests/http-evidence.test.js", "dist/tests/reviewed-fixtures.test.js", "dist/tests/offline-render-source.test.js", "dist/tests/site-scope.test.js"] : fixtureRetention ? ["tests/foundation.test.ts", "tests/http-evidence.test.ts", "tests/reviewed-fixtures.test.ts", "tests/offline-render-source.test.ts", "tests/site-scope.test.ts"] : compiledHttpIsolated ? ["dist/tests/foundation.test.js", "dist/tests/http-isolated.test.js", "dist/tests/http-fixture-broker.test.js", "dist/tests/http-fixture-engine.test.js"] : httpIsolated ? ["tests/foundation.test.ts", "tests/http-isolated.test.ts", "tests/http-fixture-broker.test.ts", "tests/http-fixture-engine.test.ts"] : compiledRenderProjection ? ["dist/tests/foundation.test.js", "dist/tests/render-projection.test.js"] : renderProjection ? ["tests/foundation.test.ts", "tests/render-projection.test.ts"] : compiledRenderAcceptance ? ["dist/tests/foundation.test.js", "dist/tests/render-acceptance.test.js"] : renderAcceptance ? ["tests/foundation.test.ts", "tests/render-acceptance.test.ts"] : compiledRenderExecution ? ["dist/tests/foundation.test.js", "dist/tests/render-execution.test.js"] : renderExecution ? ["tests/foundation.test.ts", "tests/render-execution.test.ts"] : compiledRenderLane ? ["dist/tests/foundation.test.js", "dist/tests/render-lane.test.js"] : compiledRenderSource ? ["dist/tests/foundation.test.js", "dist/tests/offline-render-source.test.js"] : renderSource ? ["tests/foundation.test.ts", "tests/offline-render-source.test.ts"] : [
       "tests/policy.test.ts",
       "tests/contracts.test.ts",
       "tests/blob.test.ts",
@@ -83,6 +85,7 @@ try {
       "tests/jobs.test.ts",
       "tests/http-lane.test.ts",
       "tests/http-isolated.test.ts",
+      "tests/http-bootstrap.test.ts",
       "tests/http-fixture-broker.test.ts",
       "tests/http-fixture-engine.test.ts",
       "tests/render-lane.test.ts",
@@ -133,7 +136,7 @@ try {
   process.exitCode = result.status ?? 1;
   // This integration suite sorts before foundation.test.ts, which creates the
   // cluster runtime role. Run it after foundation in the same disposable DB.
-  if (result.status === 0 && !fixtureRetention && !compiledFixtureRetention && !httpIsolated && !compiledHttpIsolated && !compiledHttp && !renderSource && !compiledRenderSource && !compiledRenderLane && !renderExecution && !compiledRenderExecution && !renderAcceptance && !compiledRenderAcceptance && !renderProjection && !compiledRenderProjection) {
+  if (result.status === 0 && !httpBootstrap && !compiledHttpBootstrap && !fixtureRetention && !compiledFixtureRetention && !httpIsolated && !compiledHttpIsolated && !compiledHttp && !renderSource && !compiledRenderSource && !compiledRenderLane && !renderExecution && !compiledRenderExecution && !renderAcceptance && !compiledRenderAcceptance && !renderProjection && !compiledRenderProjection) {
     const scoped = spawnSync(process.execPath, ["--import", "tsx", "--test", "tests/api-scope.test.ts"], {
       stdio: "inherit",
       env: { ...process.env, AIOS_TEST_SOCKET: socket, AIOS_TEST_DATA: data, AIOS_TEST_PG_BIN: pg, AIOS_TEST_ROOT: root },

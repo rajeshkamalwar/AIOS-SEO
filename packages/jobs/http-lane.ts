@@ -1,3 +1,5 @@
+import {assertHttpBootstrapRelease} from '../skills/http-bootstrap.js';
+import {readHttpBootstrapDescriptor,resolveHttpBootstrapSource} from './http-bootstrap-job.js';
 import type { Pool, PoolClient } from 'pg';
 import { randomUUID } from 'node:crypto';
 import { uuid, manifestHash } from '../contracts/index.js';
@@ -39,6 +41,11 @@ export class HttpLane {
     [l.tenantId,l.siteId,l.runId,l.jobId,l.token,l.attempt,l.attemptId])).rows[0];
    if(!j)throw new Error('lease_lost');
    await eligible(c,j.release_digest,false);
+   if(j.kind==='fetch'){
+    await assertHttpBootstrapRelease(c,j.release_digest);const d=await readHttpBootstrapDescriptor(c,j),source=await resolveHttpBootstrapSource(c,l,j.input_ref);
+    if(d.sourceContextHash!==source.fingerprint||input.origin!==d.origin||input.maxDecodedBytes!==d.maxDecodedBytes)throw new Error('source_context_changed');
+    if((await c.query('SELECT 1 FROM http_reservation WHERE tenant_id=$1 AND job_id=$2 AND attempt_no<>$3',[l.tenantId,l.jobId,l.attempt])).rowCount)throw new Error('budget_exhausted');
+   }
    const normalized=normalizeUrl(r.submitted_url);
    if(normalized.excluded||new URL(normalized.url).origin!==input.origin)throw new Error('scope_denied');
    const prior=(await c.query('SELECT * FROM http_reservation WHERE tenant_id=$1 AND job_id=$2 AND attempt_no=$3',[l.tenantId,l.jobId,l.attempt])).rows[0];
