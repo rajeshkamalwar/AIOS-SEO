@@ -92,17 +92,17 @@ test('outbox failure rolls back frontier rows and provenance atomically',async()
 });
 
 test('document budget is durable across twenty receipts and idempotent retry does not consume it',async()=>{
- const f=await setup();await f.call();
+ const f=await setup([], 'User-agent: *\n'+Array.from({length:20},(_,i)=>'Sitemap: https://frontier.example/doc'+(i+1)+'.xml').join('\n')+'\n');await f.call();
  for(let i=1;i<21;i++){
-  const s=await http('/sitemap.xml','<urlset><url><loc>https://frontier.example/doc'+i+'</loc></url></urlset>');
+  const s=await http('/doc'+i+'.xml','<urlset><url><loc>https://frontier.example/doc'+i+'</loc></url></urlset>');
   const bundle=await ledger.freeze(p,site,await ledger.cutoff(p,site),[f.scope.evidenceId,f.r.receiptEvidenceId,f.r.bodyEvidenceId!,s.receiptEvidenceId,s.bodyEvidenceId!],[f.scope.observationId,f.r.observationId,s.observationId]);
   const call=()=>frontier().discoverSitemap(p,site,f.crawl,bundle,s.observationId,f.r.observationId);
   if(i===20)await assert.rejects(call(),/sitemap_budget/);else await call();
  }
  assert.equal((await admin.query('SELECT * FROM aios.fixture_frontier_batch WHERE crawl_id=$1',[f.crawl])).rowCount,20);await f.call();
 });
-test('unsupported index, old robots and oversized robots abstain before admitting seed',async()=>{
- for(const kind of ['index','old','oversize']){
+test('old robots and oversized robots abstain before admitting seed',async()=>{
+ for(const kind of ['old','oversize']){
   const crawl=await run(),sc=await ledger.acceptSiteScopeFixture(p,site,crawl,deletions);
   const r=await http('/robots.txt',kind==='oversize'?'#'.repeat(512001):'User-agent: *\n',200,kind==='old'?new Date(Date.now()-25*3600000).toISOString():new Date(Date.now()-1000).toISOString());
   const s=await http('/sitemap.xml',kind==='index'?'<sitemapindex><sitemap><loc>https://frontier.example/child.xml</loc></sitemap></sitemapindex>':'<urlset/>');

@@ -7,6 +7,7 @@ import { transaction, scope, tick, insertDomain, event, registryLock, workLock }
 import { eligible } from '../skills/index.js';
 import { normalizeUrl } from '../perception/url.js';
 import { DeletionLedger } from '../policy/deletion.js';
+import { assertInputsEligible } from '../policy/input-eligibility.js';
 export interface Budget { http_requests:number; render_requests:number; render_pages:number; model_calls:number; tokens:number; cost_microusd:number; deadline:string }
 export type BudgetKind=Exclude<keyof Budget,'deadline'>;
 export interface Lease { tenantId:string; siteId:string; runId:string; jobId:string; token:string; attempt:number; attemptId:string }
@@ -149,6 +150,8 @@ export class Jobs {
    if(j.kind!=='project')throw new Error('handler_not_installed');
    const accepted=(await c.query('SELECT * FROM http_fixture_acceptance WHERE tenant_id=$1 AND site_id=$2 AND observation_id=$3',[l.tenantId,l.siteId,observationId])).rows[0];
    if(!accepted?.body_evidence_id)throw new Error('snapshot_unavailable');
+   const inputIds=[j.input_ref,l.runId,l.siteId,observationId,accepted.body_evidence_id,accepted.receipt_evidence_id];
+   await assertInputsEligible(c,l.tenantId,l.siteId,l.runId,inputIds);
    const rows=(await c.query("SELECT * FROM evidence WHERE tenant_id=$1 AND site_id=$2 AND id=ANY($3::uuid[]) AND state='available' AND expires_at>clock_timestamp()",[l.tenantId,l.siteId,[accepted.body_evidence_id,accepted.receipt_evidence_id]])).rows;
    if(rows.length!==2)throw new Error('snapshot_unavailable');
    const evidence=rows.find(r=>r.id===accepted.body_evidence_id)!,receiptEvidence=rows.find(r=>r.id===accepted.receipt_evidence_id)!;
@@ -166,10 +169,14 @@ export class Jobs {
    if(receipt.body_evidence_id!==evidence.id || receipt.status_code===null || receipt.status_code>=300&&receipt.status_code<400 || receipt.method!=='GET' || receipt.url!==receipt.final_url || receipt.final_url!==evidence.source_uri || receiptEvidence.source_uri!==evidence.source_uri)throw new Error('snapshot_unavailable');
    // File reads precede the database knowledge-clock lock. Recheck the lease after I/O.
    await this.leased(c,l);
+   const page=(await c.query('SELECT id FROM page WHERE tenant_id=$1 AND site_id=$2 AND url_key=$3',[l.tenantId,l.siteId,evidence.source_uri])).rows[0];
+   if(page)inputIds.push(page.id);
+   await assertInputsEligible(c,l.tenantId,l.siteId,l.runId,inputIds);
    const snapshot=(await c.query('SELECT control.project_http_fixture($1,$2,$3,$4,$5,$6) AS id',[l.jobId,l.token,l.attempt,l.attemptId,observationId,bytes.toString('utf8')])).rows[0].id;
    await c.query("UPDATE job SET state='completed',lease_token=NULL,lease_until=NULL,result_ref=$3 WHERE tenant_id=$1 AND job_id=$2",[l.tenantId,l.jobId,snapshot]);
    await c.query("UPDATE job_attempt SET ended_at=clock_timestamp(),outcome='completed' WHERE tenant_id=$1 AND job_id=$2 AND attempt_no=$3",[l.tenantId,l.jobId,l.attempt]);
    await event(c,l.tenantId,l.siteId,l.runId,l.runId,'job.completed',{job_id:l.jobId,result_ref:snapshot},2);
+   await assertInputsEligible(c,l.tenantId,l.siteId,l.runId,[...inputIds,snapshot]);
    return snapshot;
   });
  }

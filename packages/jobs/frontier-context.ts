@@ -5,6 +5,7 @@ import { scope,registryLock,workLock } from '../persistence/transaction.js';
 import type { LocalBlobs } from '../evidence/index.js';
 import { DeletionLedger } from '../policy/deletion.js';
 import { robotsState } from '../perception/robots-admission.js';
+import { assertInputsEligible } from '../policy/input-eligibility.js';
 /** Transaction-internal fixture evidence gates shared by deterministic frontier projections. */
 export async function frontierContext(c:PoolClient,p:Principal,site:string,run:string,bundleId:string,robotsObservationId:string,deletions:DeletionLedger,artifacts:Pick<LocalBlobs,'read'>){
  if(!(deletions instanceof DeletionLedger))throw new Error('deletion_adapter_required');
@@ -20,12 +21,19 @@ export async function frontierContext(c:PoolClient,p:Principal,site:string,run:s
     return r;
    };
    const r=await current();
+   const inputIds=new Set<string>([bundleId,run,site]);
+   const assertInputs=async(ids:readonly string[]=[])=>{
+    for(const id of ids)inputIds.add(id);
+    await assertInputsEligible(c,p.tenantId,site,run,[...inputIds]);
+   };
    if((await c.query('SELECT 1 FROM fixture_frontier_batch WHERE tenant_id=$1 AND crawl_id=$2 AND robots_observation_id<>$3 UNION ALL SELECT 1 FROM fixture_link_batch WHERE tenant_id=$1 AND crawl_id=$2 AND robots_observation_id<>$3 LIMIT 1',[p.tenantId,run,robotsObservationId])).rowCount)throw new Error('robots_context_conflict');
    const bundle=(await c.query("SELECT * FROM evidence_bundle WHERE tenant_id=$1 AND site_id=$2 AND id=$3 AND state='frozen'",[p.tenantId,site,bundleId])).rows[0];
    if(!bundle)throw new Error('bundle_membership_required');
+   await assertInputs();
    const links=(await c.query('SELECT field_name,target_id FROM record_link WHERE tenant_id=$1 AND owner_id=$2',[p.tenantId,bundleId])).rows;
    const pinned=(field:string,id:string)=>links.some(l=>l.field_name===field&&l.target_id===id);
    const observation=async(id:string)=>{
+    await assertInputs([id]);
     observationIds.add(id);
     if(!pinned('observation_ids',id))throw new Error('bundle_membership_required');
     const row=(await c.query("SELECT * FROM observation WHERE tenant_id=$1 AND site_id=$2 AND id=$3 AND knowledge_seq<=$4 AND fresh_until>clock_timestamp() AND observed_at<=clock_timestamp() AND state='observed'",[p.tenantId,site,id,bundle.known_seq])).rows[0];
@@ -33,6 +41,7 @@ export async function frontierContext(c:PoolClient,p:Principal,site:string,run:s
    };
    const evidenceIds:string[]=[],observationIds=new Set<string>();
    const evidence=async(id:string)=>{
+    await assertInputs([id]);
     evidenceIds.push(id);
     if(!pinned('evidence_ids',id))throw new Error('bundle_membership_required');
     const row=(await c.query("SELECT * FROM evidence WHERE tenant_id=$1 AND site_id=$2 AND id=$3 AND knowledge_seq<=$4 AND state='available' AND expires_at>clock_timestamp()",[p.tenantId,site,id,bundle.known_seq])).rows[0];
@@ -63,9 +72,10 @@ export async function frontierContext(c:PoolClient,p:Principal,site:string,run:s
    if(policy.state!=='known')throw new Error('robots_unavailable');
    const recheck=async()=>{
    await current();
+   await assertInputs();
    for(const id of observationIds)await observation(id);
    if(!(await c.query("SELECT 1 WHERE $1::timestamptz>clock_timestamp()-interval '24 hours'",[robots.obs.observed_at])).rowCount||
       (await c.query("SELECT count(*)::integer AS count FROM evidence WHERE tenant_id=$1 AND site_id=$2 AND id=ANY($3::uuid[]) AND state='available' AND expires_at>clock_timestamp()",[p.tenantId,site,[...new Set(evidenceIds)]])).rows[0].count!==new Set(evidenceIds).size)throw new Error('source_unavailable');
    };
-   return {r,bundle,acceptedScope,http,policy,recheck,current};
+   return {r,bundle,acceptedScope,http,policy,recheck,current,assertInputs};
 }

@@ -21,6 +21,7 @@ export class FixtureLinkFrontier {
    if(!snapshot)throw new Error('snapshot_unavailable');
    const parent=(await c.query('SELECT * FROM crawl_target WHERE tenant_id=$1 AND site_id=$2 AND crawl_id=$3 AND url_key=$4 AND admitted',[p.tenantId,site,run,snapshot.url])).rows[0];
    if(!parent)throw new Error('parent_unavailable');
+   await ctx.assertInputs([snapshot.id,parent.id,snapshot.page_id]);
    if(Number(parent.depth)>=6)return {state:'not_discovered',reason:'depth_budget'};
    if(snapshot.state!=='captured'||snapshot.truncated||Number(snapshot.status_code)<200||Number(snapshot.status_code)>=300)return {state:'not_discovered',reason:'incomplete_raw_snapshot'};
    const raw=await ctx.http(snapshot.observation_id);

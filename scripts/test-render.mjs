@@ -6,6 +6,7 @@ import { parseOfflineRenderResult } from '../packages/perception/render-result.t
 import { extractHtmlIsolated } from '../packages/perception/dom-isolated.ts';
 import { hash } from '../packages/contracts/index.ts';
 import { prepareOfflineRenderInput } from '../packages/perception/render-input.ts';
+import { buildOfflineRenderManifest } from '../packages/perception/render-manifest.ts';
 
 const directory=fileURLToPath(new URL('../workers/render-fixture/',import.meta.url));
 const seccomp=fileURLToPath(new URL('../workers/render-fixture/seccomp.json',import.meta.url));
@@ -84,9 +85,10 @@ const positiveHtml=`<!doctype html><html><head><title>Fixture</title></head><bod
  setTimeout(()=>document.getElementById('state').textContent='third',3000);
 </script></body></html>`;
 const positiveStartedAt=new Date().toISOString();
-const positive=await render({url,html:positiveHtml});
+const positiveWire=await runContainer({input:JSON.stringify({url,html:positiveHtml})});
 const positiveInputHash=hash(Buffer.from(positiveHtml));
 const positiveExpected={url,browserBuild:expectedBuild,inputSha256:positiveInputHash,startedAt:positiveStartedAt,finishedAt:new Date().toISOString()};
+const positive=parseOfflineRenderResult(positiveWire.stdoutBytes,positiveExpected);
 assert.equal(positive.inputSha256,positiveInputHash);
 assert.throws(()=>parseOfflineRenderResult(Buffer.from(JSON.stringify(positive)),{...positiveExpected,inputSha256:hash(Buffer.from(positiveHtml+'changed'))}),/render_result_invalid/);
 await assert.rejects(render({url,html:'\ud800'}),/fixture_input_encoding/);
@@ -105,6 +107,15 @@ for(let i=0;i<3;i++){
  assert.match(sample.dom,new RegExp('<main id="state">'+['initial','second','third'][i]+'</main>'));
 }
 console.log('PASS isolated Chromium captures real inline JS at 0/2/5 seconds');
+
+const positivePrepared=prepareOfflineRenderInput(Buffer.from(positiveHtml),{evidenceId:randomUUID(),sha256:positiveInputHash,bytes:Buffer.byteLength(positiveHtml),sourceUri:url,contentType:'text/html; charset=utf-8',truncated:false});
+assert.equal(positivePrepared.state,'prepared');
+const separated=buildOfflineRenderManifest({result:positive,stdout:positiveWire.stdoutBytes,prepared:positivePrepared,context:{tenantId:randomUUID(),siteId:randomUUID(),crawlId:randomUUID(),pageSnapshotId:randomUUID(),invocationId:randomUUID(),startedAt:positiveExpected.startedAt,finishedAt:positiveExpected.finishedAt,browserBuild:expectedBuild},receiptEvidenceId:randomUUID(),domEvidenceIds:positive.samples.map(()=>randomUUID())});
+assert.equal(separated.manifest.transport.sha256,hash(positiveWire.stdoutBytes));
+assert.equal(separated.manifest.transport.retained,false);
+assert.notEqual(hash(separated.manifestBytes),hash(positiveWire.stdoutBytes));
+for(const [index,artifact] of separated.domArtifacts.entries())assert.deepEqual(artifact.bytes,Buffer.from(positive.samples[index].dom));
+console.log('PASS original Chromium receipt transforms into distinct manifest and exact DOM artifacts');
 
 const empty=await render({url,html:''});
 assert.equal(empty.state,'captured');assert.equal(empty.inputSha256,hash(Buffer.alloc(0)));

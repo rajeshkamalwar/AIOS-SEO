@@ -1,0 +1,474 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.aios-seo.invalid/v1/offline-render-manifest.schema.json",
+  "type": "object",
+  "properties": {
+    "receipt_type": {
+      "const": "offline_render_fixture"
+    },
+    "schema_version": {
+      "const": 1
+    },
+    "deployment_profile": {
+      "const": "local-synthetic-v1"
+    },
+    "authority": {
+      "const": "fixture_only"
+    },
+    "live_dispatch": {
+      "const": false
+    },
+    "website_write": {
+      "const": false
+    },
+    "tenant_id": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+    },
+    "site_id": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+    },
+    "crawl_id": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+    },
+    "page_snapshot_id": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+    },
+    "invocation_id": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+    },
+    "receipt_evidence_id": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+    },
+    "source": {
+      "type": "object",
+      "properties": {
+        "evidence_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "sha256": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/hash"
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 5242880
+        },
+        "content_type": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        }
+      },
+      "required": [
+        "evidence_id",
+        "sha256",
+        "bytes",
+        "content_type"
+      ],
+      "additionalProperties": false
+    },
+    "preparation": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "const": "html-decoded-to-utf8-v1"
+        },
+        "decoder_version": {
+          "const": "html-sniff-6/node24-v1"
+        },
+        "encoding": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "input_sha256": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/hash"
+        },
+        "input_bytes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 5242880
+        },
+        "url": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        }
+      },
+      "required": [
+        "version",
+        "decoder_version",
+        "encoding",
+        "input_sha256",
+        "input_bytes",
+        "url"
+      ],
+      "additionalProperties": false
+    },
+    "invocation": {
+      "type": "object",
+      "properties": {
+        "started_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "finished_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "expected_browser_build": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        }
+      },
+      "required": [
+        "started_at",
+        "finished_at",
+        "expected_browser_build"
+      ],
+      "additionalProperties": false
+    },
+    "transport": {
+      "type": "object",
+      "properties": {
+        "sha256": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/hash"
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 20971520
+        },
+        "retained": {
+          "const": false
+        }
+      },
+      "required": [
+        "sha256",
+        "bytes",
+        "retained"
+      ],
+      "additionalProperties": false
+    },
+    "worker": {
+      "type": "object",
+      "properties": {
+        "profile": {
+          "const": "local-offline-replay-v3"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "inputSha256": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/hash"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "browserBuild": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": [
+            "captured",
+            "policy_limited",
+            "failed",
+            "timeout"
+          ]
+        },
+        "samples": {
+          "type": "array",
+          "maxItems": 3,
+          "items": {
+            "type": "object",
+            "properties": {
+              "offsetMs": {
+                "enum": [
+                  0,
+                  2000,
+                  5000
+                ]
+              },
+              "actualOffsetMs": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 20000
+              },
+              "observedAt": {
+                "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+              },
+              "pendingRequests": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "evidence_id": {
+                "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+              },
+              "sha256": {
+                "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/hash"
+              },
+              "bytes": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 5242880
+              }
+            },
+            "required": [
+              "offsetMs",
+              "actualOffsetMs",
+              "observedAt",
+              "pendingRequests",
+              "evidence_id",
+              "sha256",
+              "bytes"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "deniedCount": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 99
+        },
+        "deniedRequests": {
+          "type": "array",
+          "maxItems": 99,
+          "items": {
+            "type": "object",
+            "properties": {
+              "url": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4096
+              },
+              "method": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64,
+                "pattern": "^[!#$%&'*+.^_`|~0-9A-Za-z-]+$"
+              },
+              "resourceType": {
+                "enum": ["document", "stylesheet", "image", "media", "font", "script", "texttrack", "xhr", "fetch", "eventsource", "websocket", "manifest", "other", "ping", "popup", "download", "navigation"]
+              },
+              "reason": {
+                "enum": [
+                  "offline_policy",
+                  "context_changed"
+                ]
+              },
+              "observedAt": {
+                "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+              }
+            },
+            "required": [
+              "url",
+              "method",
+              "resourceType",
+              "reason",
+              "observedAt"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "sandbox": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "namespace": {
+                  "const": true
+                },
+                "pid": {
+                  "const": true
+                },
+                "network": {
+                  "const": true
+                },
+                "seccomp": {
+                  "const": true
+                }
+              },
+              "required": [
+                "namespace",
+                "pid",
+                "network",
+                "seccomp"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error": {
+          "enum": [
+            null,
+            "render_failed",
+            "timeout",
+            "attempt_budget_exhausted"
+          ]
+        }
+      },
+      "required": [
+        "profile",
+        "url",
+        "inputSha256",
+        "browserBuild",
+        "state",
+        "samples",
+        "deniedCount",
+        "deniedRequests",
+        "sandbox",
+        "error"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "state": {
+                "const": "captured"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "samples": {
+                "minItems": 3,
+                "maxItems": 3
+              },
+              "deniedCount": {
+                "const": 0
+              },
+              "error": {
+                "const": null
+              },
+              "url": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4096
+              },
+              "inputSha256": {
+                "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/hash"
+              },
+              "browserBuild": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4096
+              },
+              "sandbox": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "state": {
+                "const": "failed"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "error": {
+                "const": "render_failed"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "state": {
+                "const": "timeout"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "error": {
+                "const": "timeout"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "url": {
+                "type": "null"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "inputSha256": {
+                "const": null
+              },
+              "browserBuild": {
+                "const": null
+              },
+              "sandbox": {
+                "const": null
+              },
+              "samples": {
+                "maxItems": 0
+              },
+              "deniedCount": {
+                "const": 0
+              },
+              "deniedRequests": {
+                "maxItems": 0
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "required": [
+    "receipt_type",
+    "schema_version",
+    "deployment_profile",
+    "authority",
+    "live_dispatch",
+    "website_write",
+    "tenant_id",
+    "site_id",
+    "crawl_id",
+    "page_snapshot_id",
+    "invocation_id",
+    "receipt_evidence_id",
+    "source",
+    "preparation",
+    "invocation",
+    "transport",
+    "worker"
+  ],
+  "additionalProperties": false
+}
