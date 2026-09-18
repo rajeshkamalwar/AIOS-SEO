@@ -1,37 +1,17 @@
 import { createHash } from "node:crypto";
-import { lookup } from "node:dns/promises";
+import { resolveAddresses } from "./dns.js";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { validate, base, hash } from "../contracts/index.js";
 
 const policy = JSON.parse(await readFile(new URL("../../spec/discovery-policy.json", import.meta.url), "utf8"));
-const forbidden = /(^|\/)(logout|delete|remove|unsubscribe|checkout|cart|wp-admin|admin|login|account)(\/|$)/i;
-const secretQuery = /^(token|key|secret|password|auth|signature|session)$/i;
-
-export type UrlDecision = { url: string; key: string; excluded?: string };
-export function normalizeUrl(raw: string, origin?: string): UrlDecision {
-  if (/[[\]{}<>\u0000-\u001f\\]/.test(raw)) throw new Error("url_invalid");
-  let u: URL;
-  try { u = new URL(raw, origin); } catch { throw new Error("url_invalid"); }
-  if (!["http:", "https:"].includes(u.protocol) || u.username || u.password || u.port) throw new Error("url_forbidden");
-  u.hostname = u.hostname.toLowerCase();
-  if (!u.hostname.includes(".") || u.hostname === "localhost" || /^\d+(?:\.\d+){3}$/.test(u.hostname) || u.hostname.endsWith(".local")) throw new Error("url_forbidden");
-  u.hash = "";
-  for (const [k] of u.searchParams) if (secretQuery.test(k)) throw new Error("url_credential_query");
-  u.pathname ||= "/";
-  const value = u.toString();
-  if (forbidden.test(u.pathname) || [...u.searchParams.keys()].some(k => k.toLowerCase() === "action" && forbidden.test(u.searchParams.get(k) ?? ""))) return { url: value, key: value, excluded: "action_like" };
-  return { url: value, key: createHash("sha256").update(value).digest("hex") };
-}
+export { normalizeUrl } from "./url.js";
+import { normalizeUrl, type UrlDecision } from "./url.js";
+import { isGlobalAddress } from "./address.js";
 
 export async function assertPublicDestination(hostname: string): Promise<void> {
-  const results = await lookup(hostname, { all: true, verbatim: true });
-  if (!results.length || results.some(({ address }) => !isGlobal(address))) throw new Error("private_destination");
-}
-function isGlobal(address: string): boolean {
-  if (address.includes(":")) return !/^(::|::1|fc|fd|fe8|fe9|fea|feb)/i.test(address);
-  const p = address.split(".").map(Number); if (p.length !== 4 || p.some(n => !Number.isInteger(n))) return false;
-  const a = p[0]!, b = p[1]!; return a !== 10 && a !== 127 && !(a === 169 && b === 254) && !(a === 192 && b === 168) && !(a === 172 && b >= 16 && b <= 31) && !(a === 0) && !(a >= 224);
+  const results = await resolveAddresses(hostname, 3000);
+  if (!results.length || results.some(({ address }) => !isGlobalAddress(address))) throw new Error("private_destination");
 }
 
 type Rule = { agent: string; allow: string[]; disallow: string[] };

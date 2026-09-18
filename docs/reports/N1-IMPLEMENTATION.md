@@ -1,17 +1,25 @@
 # N1 implementation report
 
-## Scope
+## Current scope
 
-Added the first controlled HTTP collection path. Each request resolves all addresses, rejects private or reserved destinations, pins the selected address at connection time, bounds redirects and response bytes, sends GET only, preserves response headers/body provenance for supported document MIME types, and suppresses unsupported bodies.
+The low-level HTTP collector now shares canonical URL admission and address filtering with perception. It rejects special-use IPv4/IPv6, translated/mapped addresses, malformed/mixed DNS answers, unsafe initial and redirect URLs, credential queries and action-like URLs. DNS includes bounded CNAME traversal and cancellation. Each new hop resolves again; its connection uses the validated IP while retaining the hostname for HTTP and TLS verification.
 
-The transport is injectable for deterministic fixture tests; production callers use the pinned Node HTTP/S transport. Redirects must remain on the same origin and are revalidated on every hop.
+Transport enforces an absolute deadline, connect/header deadlines, 32KiB header cap, bounded decoded and transferred bodies, and gzip/deflate/Brotli decoding. Exact-cap bodies remain complete; overflow terminates the stream and marks its prefix truncated. Unsupported MIME and redirects stop at headers. Cookie/authentication/custom headers are excluded from returned receipts. Production transport does not use ambient proxy agents.
 
-## Evidence
+## Regression evidence
 
-- Public-address resolution and pinning are covered by `tests/collector.test.ts`.
-- Private destination answers fail before transport dispatch.
-- The existing URL, robots, sitemap, frontier and IPv6 egress tests remain green.
+The initial regressions failed on reserved addresses, admission bypass, fragment forwarding and invalid limit overrides before the fixes. The expanded suite exercises real loopback HTTP streams: boundary sizes, multi-chunk overflow and early close, decompression bombs, successful decompression, corrupt/truncated transfers, unsupported MIME/encoding, oversized headers, absolute slow-trickle timeout and HTTP Host. A self-signed TLS server is rejected before HTTP dispatch. Unit cases cover DNS mixed answers, rebinding, alias cycles/depth, family mismatch, DNS timeout, redirect scope/limits, URL policy, secret-header exclusion and permitted ordinary public addresses.
 
-## Remaining N1 work
+These are local conformance tests, not production firewall/sandbox certification or a live customer crawl. ADR-010 records the conservative transport choices.
 
-Durable CrawlTarget/PageSnapshot persistence, robots-first orchestration, retry/fairness accounting, an isolated nonroot browser worker, and adversarial live fixture-server/network tests remain before N1 exit. No inference or website-write behavior was added.
+## Remaining N1 acceptance
+
+Robots conformance/admission, durable CrawlTarget/PageSnapshot acceptance, persistent run budgets, separately charged redirect hops, retries/fairness, failure receipt persistence, charset extraction and isolated rendering remain required. The collector is not integrated as a customer-facing live execution path. N0 deployment/privacy approval and independent network enforcement still gate customer URLs. No inference or website-write behavior was added.
+
+## Collector safety checkpoint verification
+
+- `npm test`: 194 passed, zero failed/skipped.
+- `npm run typecheck` and `npm run build`: passed.
+- `spec/validate.py` using the specification virtualenv: passed (19 schemas, 989 references, 31 positive and 4 negative examples).
+- `npm audit --omit=dev`: zero vulnerabilities.
+- `git diff --check`: passed.
