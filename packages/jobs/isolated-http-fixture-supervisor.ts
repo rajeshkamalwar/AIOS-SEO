@@ -26,6 +26,13 @@ export class IsolatedHttpFixtureSupervisor {
   if(!acceptance)throw new Error('http_result_not_acceptable');
   return {execution,acceptance};
  }
+ /** Complete only this admitted bootstrap job; projection grants no next fetch. */
+ async collectAcceptAndProject(lease:Lease,input:{fixturePort:number},options:{signal?:AbortSignal;wallTimeoutMs?:number}={}){
+  const l={...lease};
+  const accepted=await this.collectAndAccept(l,input,options);
+  const projection=await this.jobs.projectHttpBootstrapFixture(l);
+  return {...accepted,projection};
+ }
  private async execute(lease:Lease,input:{fixturePort:number},options:{signal?:AbortSignal;wallTimeoutMs?:number},accept?:(input:HttpBootstrapAcceptanceInput)=>Promise<void>):Promise<IsolatedHttpFixtureResult>{
   const wall=options.wallTimeoutMs??25000,externalSignal=options.signal;
   if(Object.keys(input).join(',')!=='fixturePort'||Object.keys(options).some(k=>!['signal','wallTimeoutMs'].includes(k))||!Number.isSafeInteger(input.fixturePort)||input.fixturePort<1||input.fixturePort>65535||!Number.isSafeInteger(wall)||wall<1||wall>25000)throw new Error('invalid_input');

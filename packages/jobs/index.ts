@@ -1,3 +1,4 @@
+import {projectHttpBootstrapFixture,type HttpBootstrapProjection} from './http-bootstrap-projection.js';
 import {acceptHttpBootstrapFixture,type HttpBootstrapAcceptanceInput,type HttpBootstrapAcceptance} from './http-bootstrap-acceptance.js';
 import {assertHttpBootstrapRelease} from '../skills/http-bootstrap.js';
 import {resolveHttpBootstrapSource,validateHttpBootstrapScope,httpBootstrapDescriptor,readHttpBootstrapDescriptor,type HttpBootstrapJobDescriptor} from './http-bootstrap-job.js';
@@ -195,6 +196,7 @@ export class Jobs {
   validateHttpBootstrapScope(source,bytes,l);
   const current=await resolve();if(current.fingerprint!==source.fingerprint)throw new Error('source_context_changed');return current;
  }
+ async projectHttpBootstrapFixture(l:Lease):Promise<HttpBootstrapProjection>{return projectHttpBootstrapFixture(this.pool,this.deletions,this.artifacts,l);}
  async acceptHttpBootstrapFixture(l:Lease,input:HttpBootstrapAcceptanceInput):Promise<HttpBootstrapAcceptance>{
   if(!this.httpAcceptorPool)throw new Error('http_acceptor_required');
   const lease={...l};return acceptHttpBootstrapFixture(this.httpAcceptorPool,this.deletions,this.artifacts,lease,input,()=>this.prepareHttpBootstrapExecution(lease));

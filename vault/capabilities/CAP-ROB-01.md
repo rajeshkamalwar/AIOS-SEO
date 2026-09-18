@@ -8,14 +8,15 @@ local_scope_kind: "partial_behavior"
 completion: "INCOMPLETE"
 canonical_release: "unreleased"
 specs: ["docs/14-CAPABILITY-TAXONOMY.md", "docs/15-CAPABILITY-CONTRACT.md", "docs/18-BUSINESS-ARCHETYPE-MATRIX.md"]
-implementation: ["packages/perception/robots.ts", "packages/perception/robots-admission.ts", "packages/jobs/frontier-context.ts"]
-tests: ["tests/robots.test.ts", "tests/frontier-persistence.test.ts", "tests/jobs.test.ts"]
-reports: ["docs/40-POST-M5-INTEGRATION-REALITY-REVIEW.md", "docs/41-NEXT-PHASE-READINESS-PLAN.md", "docs/reports/N1-IMPLEMENTATION.md"]
-gaps: ["GAP-DOM-ROB", "GAP-004", "GAP-007"]
+implementation: ["packages/perception/robots.ts", "packages/perception/robots-admission.ts", "packages/jobs/frontier-context.ts", "packages/jobs/http-bootstrap-projection.ts", "packages/jobs/isolated-http-fixture-supervisor.ts"]
+tests: ["tests/robots.test.ts", "tests/frontier-persistence.test.ts", "tests/jobs.test.ts", "tests/http-bootstrap-projection.test.ts"]
+reports: ["docs/40-POST-M5-INTEGRATION-REALITY-REVIEW.md", "docs/41-NEXT-PHASE-READINESS-PLAN.md", "docs/reports/N1-IMPLEMENTATION.md", "reports/GOVERNED-ROBOTS-COMPLETION.md"]
+gaps: ["GAP-DOM-ROB", "GAP-004", "GAP-007", "GAP-044"]
 scope: "Bounded RFC-style agent/group/path matching, status handling and robots-first synthetic collection/admission."
 baseline: "2b6d527"
 required_stages: "Canonical15/18/28/35 applicable evidence, implementation, independent test/release, real-world and production proof; applicability and stage evidence must be explicitly reviewed before COMPLETE."
 ---
+
 
 # CAP-ROB-01 — robots.txt evaluation
 
@@ -48,3 +49,7 @@ Open gaps: [GAP-DOM-ROB](../gaps/GAP-DOM-ROB.md), [GAP-004](../gaps/GAP-004.md),
 ## History
 
 - 2026-09-18 baseline2b6d527: conservative inventory import; no maturity promotion from test counts or draft manifests.
+
+- 2026-09-19 afterf5402a1: [governed robots completion](../../reports/GOVERNED-ROBOTS-COMPLETION.md) progresses GAP-044; verification pending, full capability maturity unchanged.
+
+- 2026-09-19: GAP-044 closed locally against [report](../../reports/GOVERNED-ROBOTS-COMPLETION.md):584 source/89 compiled/1 actual Docker integration. Parent and full capability scope remain incomplete.

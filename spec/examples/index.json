@@ -254,6 +254,16 @@
       "path": "examples/invalid-http-bootstrap-acceptance.json",
       "schema": "https://schemas.aios-seo.invalid/v1/http-bootstrap-acceptance.schema.json",
       "valid": false
+    },
+    {
+      "path": "examples/http-bootstrap-projection.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/http-bootstrap-projection.schema.json",
+      "valid": true
+    },
+    {
+      "path": "examples/invalid-http-bootstrap-projection.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/http-bootstrap-projection.schema.json",
+      "valid": false
     }
   ],
   "note": "Schema fixtures test shape only. Scenario semantics require implementation tests."
