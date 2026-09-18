@@ -1,0 +1,101 @@
+{
+  "skill_id": "seo.offline-render-fixture",
+  "version": "1.0.0-draft",
+  "status": "draft",
+  "source_pins": [
+    {
+      "source_id": "internal",
+      "source_class": "internal_policy",
+      "uri": "repo:AGENTS.md",
+      "revision_sha256": "a249a90474130e6a496de0b88a243ea992372fa6287c07d86d192fd958a60cf0",
+      "excerpt_sha256": "aabbe6a8f62ff0c7273ee1748a31f363c9807c2c836a4fe1b0902e12ca349408",
+      "locator": "AGENTS 5, 6, 7, 12, 16; note is an AIOS paraphrase"
+    }
+  ],
+  "last_verified": "2026-09-15T02:46:37Z",
+  "freshness_deadline": "2026-09-16T02:46:37Z",
+  "applicability": {
+    "archetypes": [
+      "local_service",
+      "hybrid"
+    ],
+    "page_types": [
+      "home",
+      "service",
+      "about",
+      "contact"
+    ],
+    "languages": [
+      "en"
+    ],
+    "on_unknown": "provisional"
+  },
+  "capability_dependencies": [
+    "CAP-HTTP-01"
+  ],
+  "evidence_requirements": [
+    {
+      "kind": "raw_html",
+      "minimum_count": 1,
+      "max_age_seconds": 86400,
+      "coverage": "partial_allowed",
+      "on_missing": "abstain"
+    }
+  ],
+  "procedure": [
+    {
+      "step_id": "replay",
+      "operation": "offline_render_v1",
+      "executor": "deterministic",
+      "tool_id": "render.observe",
+      "input_kinds": [
+        "raw_html"
+      ],
+      "output_kind": "offline_render_receipt",
+      "on_failure": "abstain"
+    }
+  ],
+  "output_schema": "https://schemas.aios-seo.invalid/v1/offline-render-execution.schema.json",
+  "tool_permissions": [
+    {
+      "tool_id": "render.observe",
+      "version": "1.0.0",
+      "max_calls": 1
+    }
+  ],
+  "external_authority": "read_only",
+  "forbidden_behavior": [
+    "website_write",
+    "submission",
+    "credential_access",
+    "cross_tenant",
+    "source_fabrication",
+    "shell_execution"
+  ],
+  "policy_constraints": [
+    "discovery-v1",
+    "local-synthetic-v1"
+  ],
+  "validation": [
+    "schema",
+    "scope",
+    "evidence",
+    "freshness"
+  ],
+  "fixtures": [
+    "local-offline-replay-v3"
+  ],
+  "negative_fixtures": [
+    "render-permission-mismatch",
+    "render-source-changed",
+    "skill-revoked"
+  ],
+  "evaluation_gates": [
+    "Q01",
+    "Q02",
+    "Q03"
+  ],
+  "deprecation": null,
+  "revocation": null,
+  "replacement": null
+}

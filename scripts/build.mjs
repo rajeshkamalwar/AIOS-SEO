@@ -14,3 +14,6 @@ cpSync(
   "dist/packages/persistence/migrations",
   { recursive: true },
 );
+
+mkdirSync("dist/workers/render-fixture", { recursive: true });
+copyFileSync("workers/render-fixture/seccomp.json", "dist/workers/render-fixture/seccomp.json");

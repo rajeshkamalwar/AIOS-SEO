@@ -10,6 +10,9 @@ import { normalizeUrl } from '../perception/url.js';
 import { DeletionLedger } from '../policy/deletion.js';
 import { assertInputsEligible } from '../policy/input-eligibility.js';
 import { resolveOfflineRenderSource,prepareOfflineRenderSource,validateOfflineRenderScope,type OfflineRenderPreparation } from './offline-render-source.js';
+import {assertOfflineRenderRelease} from '../skills/offline-render.js';
+import {renderDescriptor,readRenderDescriptor,type OfflineRenderJobDescriptor,type ReadyOfflineRenderInput} from './offline-render-job.js';
+export type {OfflineRenderJobDescriptor} from './offline-render-job.js';
 export interface Budget { http_requests:number; render_requests:number; render_pages:number; model_calls:number; tokens:number; cost_microusd:number; deadline:string }
 export type CrawlState='queued'|'running'|'complete_in_scope'|'partial'|'blocked'|'failed'|'cancelled';
 export interface SubmissionReceipt {runId:string; replayed:boolean; state:CrawlState}
@@ -99,6 +102,7 @@ export class Jobs {
       await c.query("UPDATE crawl SET state='running',started_at=clock_timestamp(),updated_at=clock_timestamp(),version=version+1 WHERE tenant_id=$1 AND id=$2",[j.tenant_id,j.crawl_id]);
      }
      await this.live(c,j.tenant_id,j.site_id,j.crawl_id);await eligible(c,j.release_digest,false);
+     if(j.kind==='render'){await assertOfflineRenderRelease(c,j.release_digest);await readRenderDescriptor(c,j);}
      const token=randomUUID(),attemptId=randomUUID(),attempt=Number(j.attempt)+1;
      await c.query("UPDATE job SET state='leased',attempt=$3,lease_token=$4,lease_until=least(clock_timestamp()+interval '30 seconds',deadline),error=NULL WHERE tenant_id=$1 AND job_id=$2",[j.tenant_id,j.job_id,attempt,token]);
      await c.query('INSERT INTO job_attempt VALUES($1,$2,$3,$4,clock_timestamp(),NULL,NULL,$5)',[j.tenant_id,j.job_id,attempt,attemptId,j.expected_input_hash]);
@@ -107,7 +111,7 @@ export class Jobs {
      return {tenantId:j.tenant_id,siteId:j.site_id,runId:j.crawl_id,jobId:j.job_id,token,attempt,attemptId};
     }catch(e){
      await c.query('ROLLBACK TO SAVEPOINT candidate');
-     if (!(e instanceof Error) || !['scope_denied','run_fenced','deleted_scope','deadline','skill_revoked','skill_stale','skill_deprecated','skill_unapproved'].includes(e.message)) throw e;
+     if (!(e instanceof Error) || !['scope_denied','run_fenced','deleted_scope','deadline','skill_revoked','skill_stale','skill_deprecated','skill_unapproved','handler_not_installed','source_context_changed'].includes(e.message)) throw e;
      // Invalid grants/releases are terminal. Permission lookup failure never becomes remote work.
      await c.query("SELECT set_config('app.tenant_id',$1,true)",[j.tenant_id]);
      await c.query("UPDATE job SET state='failed',lease_token=NULL,lease_until=NULL,error=$3 WHERE tenant_id=$1 AND job_id=$2",[j.tenant_id,j.job_id,{code:'policy_blocked',retryable:false,detail:e.message,evidence_ids:[]}]);
@@ -142,10 +146,14 @@ export class Jobs {
  }
  /** Guarded preparation of retained local HTML only; not a renderer admission or job handler. */
  async prepareOfflineRenderFixture(l:Lease,snapshotId:string):Promise<OfflineRenderPreparation>{
+  return (await this.prepareRenderSource(l,snapshotId,'project')).result;
+ }
+ private async prepareRenderSource(l:Lease,snapshotId:string,kind:'project'|'render'){
   uuid(snapshotId);if(!this.artifacts)throw new Error('artifact_adapter_required');
   const resolve=()=>transaction(this.pool,'aios_scheduler',async c=>{
    await this.locks(c);const {j}=await this.leased(c,l);
-   if(j.kind!=='project')throw new Error('handler_not_installed');
+   if(j.kind!==kind)throw new Error('handler_not_installed');
+   if(kind==='render'){await assertOfflineRenderRelease(c,j.release_digest);await readRenderDescriptor(c,j);}
    return resolveOfflineRenderSource(c,l,j.input_ref,snapshotId);
   });
   const source=await resolve();
@@ -154,12 +162,50 @@ export class Jobs {
   const prepared=prepareOfflineRenderSource(l,source,bytes);
   return transaction(this.pool,'aios_scheduler',async c=>{
    await this.locks(c);const {r,j}=await this.leased(c,l);
-   if(j.kind!=='project')throw new Error('handler_not_installed');
+   if(j.kind!==kind)throw new Error('handler_not_installed');
+   if(kind==='render'){await assertOfflineRenderRelease(c,j.release_digest);await readRenderDescriptor(c,j);}
    const current=await resolveOfflineRenderSource(c,l,j.input_ref,snapshotId);
    if(current.fingerprint!==source.fingerprint)throw new Error('source_context_changed');
    await validateOfflineRenderScope(c,l,r.submitted_by,current,bytes,this.deletions);
-   await this.leased(c,l);return prepared;
+   await this.leased(c,l);return {result:prepared,sourceContextHash:current.fingerprint};
   });
+ }
+ async enqueueOfflineRenderFixture(parent:Lease,snapshotId:string,release:string,key:string):Promise<string>{
+  if(!key||key.length>4096)throw new Error('invalid_input');
+  const prepared=await this.prepareRenderSource(parent,snapshotId,'project');
+  if(prepared.result.prepared.state!=='prepared')throw new Error('snapshot_unavailable');
+  const descriptor=renderDescriptor(prepared.result,prepared.result.prepared,prepared.sourceContextHash,parent);
+  return transaction(this.pool,'aios_scheduler',async c=>{
+   await this.locks(c);const {j}=await this.leased(c,parent);if(j.kind!=='project')throw new Error('handler_not_installed');
+   await eligible(c,release,true);await assertOfflineRenderRelease(c,release);
+   const current=await resolveOfflineRenderSource(c,parent,j.input_ref,snapshotId);
+   if(current.fingerprint!==descriptor.sourceContextHash)throw new Error('source_context_changed');
+   const expected=manifestHash({descriptor,release,kind:'render',policy:'discovery-v1'});
+   return (await c.query('SELECT control.enqueue_offline_render($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) AS id',[parent.tenantId,parent.siteId,parent.runId,parent.jobId,parent.attempt,parent.attemptId,parent.token,release,key,descriptor,expected,randomUUID()])).rows[0].id;
+  });
+ }
+ /** Metadata-only final gate; never consumes another artifact-read permission. */
+ async assertOfflineRenderExecution(l:Lease,expected:OfflineRenderJobDescriptor):Promise<void>{
+  return transaction(this.pool,'aios_scheduler',async c=>{
+   await this.locks(c);const {j}=await this.leased(c,l);if(j.kind!=='render')throw new Error('handler_not_installed');
+   await assertOfflineRenderRelease(c,j.release_digest);const descriptor=await readRenderDescriptor(c,j);
+   if(manifestHash(descriptor)!==manifestHash(expected))throw new Error('source_context_changed');
+   if(!(await c.query("SELECT 1 FROM tenant WHERE id=$1 AND policy_profile_id='local-synthetic-v1'",[l.tenantId])).rowCount)throw new Error('policy_blocked');
+   const source=await resolveOfflineRenderSource(c,l,j.input_ref,descriptor.pageSnapshotId);
+   if(source.fingerprint!==descriptor.sourceContextHash)throw new Error('source_context_changed');
+   await this.leased(c,l);
+  });
+ }
+ async prepareOfflineRenderExecution(l:Lease):Promise<{prepared:ReadyOfflineRenderInput;descriptor:OfflineRenderJobDescriptor}>{
+  const descriptor=await transaction(this.pool,'aios_scheduler',async c=>{
+   await this.locks(c);const {j}=await this.leased(c,l);if(j.kind!=='render')throw new Error('handler_not_installed');
+   await assertOfflineRenderRelease(c,j.release_digest);return readRenderDescriptor(c,j);
+  });
+  const output=await this.prepareRenderSource(l,descriptor.pageSnapshotId,'render');
+  if(output.result.prepared.state!=='prepared')throw new Error('snapshot_unavailable');
+  const current=renderDescriptor(output.result,output.result.prepared,output.sourceContextHash,{jobId:descriptor.parentJobId,attemptId:descriptor.parentAttemptId,attempt:descriptor.parentAttempt});
+  if(manifestHash(current)!==manifestHash(descriptor))throw new Error('source_context_changed');
+  return {prepared:output.result.prepared,descriptor};
  }
  /** Deterministic persistence projection; never a discovery/network or SEO inference handler. */
  async projectHttpFixture(l:Lease,observationId:string):Promise<string>{
@@ -201,7 +247,7 @@ export class Jobs {
   });
  }
  async complete(l:Lease,result:string){uuid(result);return transaction(this.pool,'aios_scheduler',async c=>{
-  await this.locks(c);await this.leased(c,l);
+  await this.locks(c);const {j}=await this.leased(c,l);if(j.kind==='render')throw new Error('handler_not_installed');
   // M2 completion validates an existing frozen input/output bundle. Domain-producing handlers are installed in later milestones.
   if(!(await c.query("SELECT 1 FROM evidence_bundle WHERE tenant_id=$1 AND site_id=$2 AND id=$3 AND state='frozen'",[l.tenantId,l.siteId,result])).rowCount)throw new Error('schema_invalid');
   await c.query("UPDATE job SET state='completed',lease_token=NULL,lease_until=NULL,result_ref=$3 WHERE tenant_id=$1 AND job_id=$2",[l.tenantId,l.jobId,result]);

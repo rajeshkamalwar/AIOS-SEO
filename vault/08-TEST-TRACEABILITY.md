@@ -1,6 +1,6 @@
 # Test traceability
 
-<!-- Derived record/source digest: 8cbd0c215d714ad70f6a22bece840f347ef17c187176afa5a6ed9f248bad669e; regenerate with npm run vault:update. This is not a test receipt. -->
+<!-- Derived record/source digest: a67eef41f3dec0d9126f9a0005d618a4f418f21c3b33b7c927a390d0626ac554; regenerate with npm run vault:update. This is not a test receipt. -->
 
 Counts below are successive snapshots, **never added together**. A referenced test is not proof of full capability acceptance. Fixture/loopback/offline browser results stay TESTED. Spec validation, production dependency audit and runtime execution establish different things.
 
@@ -29,6 +29,7 @@ Counts below are successive snapshots, **never added together**. A referenced te
 | [HTTP-FIXTURE-PROCESS](milestones/HTTP-FIXTURE-PROCESS.md) | [http-fixture-supervisor.ts](../packages/jobs/http-fixture-supervisor.ts), [http-fixture-worker.ts](../packages/perception/http-fixture-worker.ts) | [http-lane.test.ts](../tests/http-lane.test.ts), [test.mjs](../scripts/test.mjs) | [HTTP-FIXTURE-PROCESS-SUPERVISION.md](../reports/HTTP-FIXTURE-PROCESS-SUPERVISION.md) / parent05a0760 |
 | [OFFLINE-RENDER-SOURCE](milestones/OFFLINE-RENDER-SOURCE.md) | [index.ts](../packages/jobs/index.ts), [offline-render-source.ts](../packages/jobs/offline-render-source.ts) | [offline-render-source.test.ts](../tests/offline-render-source.test.ts), [test.mjs](../scripts/test.mjs), [test-render.mjs](../scripts/test-render.mjs) | [OFFLINE-RENDER-SOURCE-PREPARATION.md](../reports/OFFLINE-RENDER-SOURCE-PREPARATION.md) / parent359a01d |
 | [RENDER-TERMINAL-ACCOUNTING](milestones/RENDER-TERMINAL-ACCOUNTING.md) | [render-lane.ts](../packages/jobs/render-lane.ts), [render-supervisor.ts](../packages/jobs/render-supervisor.ts), [lease-context.ts](../packages/jobs/lease-context.ts), [017-render-supervisor.sql](../packages/persistence/migrations/017-render-supervisor.sql) | [render-lane.test.ts](../tests/render-lane.test.ts), [test.mjs](../scripts/test.mjs) | [RENDER-TERMINAL-ACCOUNTING.md](../reports/RENDER-TERMINAL-ACCOUNTING.md) / parent9620e9a |
+| [GOVERNED-OFFLINE-RENDER-EXECUTION](milestones/GOVERNED-OFFLINE-RENDER-EXECUTION.md) | [offline-render-producer.ts](../packages/jobs/offline-render-producer.ts), [docker-offline-render.ts](../packages/jobs/docker-offline-render.ts), [offline-render-job.ts](../packages/jobs/offline-render-job.ts), [offline-render.ts](../packages/skills/offline-render.ts), [018-offline-render-job.sql](../packages/persistence/migrations/018-offline-render-job.sql) | [render-execution.test.ts](../tests/render-execution.test.ts), [test.mjs](../scripts/test.mjs) | [GOVERNED-OFFLINE-RENDER-EXECUTION.md](../reports/GOVERNED-OFFLINE-RENDER-EXECUTION.md) / parentf9543a8 |
 
 ## Capability and defect trace
 
@@ -55,6 +56,7 @@ Every [capability note](04-COVERAGE-MATRIX.md) maps its exact CAP requirement â†
 - [perception-persistence.test.ts](../tests/perception-persistence.test.ts)
 - [perception.test.ts](../tests/perception.test.ts)
 - [policy.test.ts](../tests/policy.test.ts)
+- [render-execution.test.ts](../tests/render-execution.test.ts)
 - [render-input.test.ts](../tests/render-input.test.ts)
 - [render-lane.test.ts](../tests/render-lane.test.ts)
 - [render-manifest.test.ts](../tests/render-manifest.test.ts)

@@ -27,11 +27,14 @@ export async function resolveOfflineRenderSource(c:PoolClient,l:Lease,bundleId:s
  if(!page)throw new Error('snapshot_unavailable');
  const target=(await c.query('SELECT * FROM crawl_target WHERE tenant_id=$1 AND site_id=$2 AND crawl_id=$3 AND url_key=$4 AND admitted AND deleted_at IS NULL AND knowledge_seq<=$5',[...args,l.runId,page.url,bundle.known_seq])).rows[0];
  if(!target)throw new Error('parent_unavailable');
+ const site=(await c.query("SELECT * FROM site WHERE tenant_id=$1 AND id=$2 AND deleted_at IS NULL",args)).rows[0];
+ if(!site)throw new Error('scope_denied');
  const scopeAcceptance=(await c.query('SELECT * FROM site_scope_acceptance WHERE tenant_id=$1 AND site_id=$2 AND crawl_id=$3',[...args,l.runId])).rows[0];
  if(!scopeAcceptance)throw new Error('scope_receipt_required');
  const robots=(await c.query('SELECT robots_observation_id FROM fixture_frontier_batch WHERE tenant_id=$1 AND site_id=$2 AND crawl_id=$3 UNION SELECT robots_observation_id FROM fixture_link_batch WHERE tenant_id=$1 AND site_id=$2 AND crawl_id=$3',[...args,l.runId])).rows;
  if(robots.length!==1)throw new Error(robots.length?'robots_context_conflict':'robots_unavailable');
  const robotsObservationId=robots[0]!.robots_observation_id as string;
+ if(!(await c.query("SELECT 1 FROM observation WHERE tenant_id=$1 AND site_id=$2 AND id=$3 AND observed_at>clock_timestamp()-interval '24 hours'",[...args,robotsObservationId])).rowCount)throw new Error('robots_unavailable');
  const accepted=(await c.query('SELECT * FROM http_fixture_acceptance WHERE tenant_id=$1 AND site_id=$2 AND observation_id=$3',[...args,snapshot.observation_id])).rows[0];
  const robotsAccepted=(await c.query('SELECT * FROM http_fixture_acceptance WHERE tenant_id=$1 AND site_id=$2 AND observation_id=$3',[...args,robotsObservationId])).rows[0];
  if(!accepted||accepted.body_evidence_id!==snapshot.evidence_id||!robotsAccepted)throw new Error('snapshot_unavailable');
@@ -99,7 +102,7 @@ export async function resolveOfflineRenderSource(c:PoolClient,l:Lease,bundleId:s
   const sourceIds=links.filter(row=>row.owner_id===ancestor.id&&row.field_name==='provenance_ids').map(row=>row.target_id);
   if(sitemapDocuments.filter(row=>sourceIds.includes(row.observation_id)).length!==1)throw new Error('snapshot_context_invalid');
  }
- const context={snapshot,page,target,bundle,scopeAcceptance,accepted,robotsAccepted,robotsObservationId,evidence,observations,links,ids,lineage,ancestorTargets,ancestorSnapshots,ancestorBundles,sitemapDocuments};
+ const context={site,snapshot,page,target,bundle,scopeAcceptance,accepted,robotsAccepted,robotsObservationId,evidence,observations,links,ids,lineage,ancestorTargets,ancestorSnapshots,ancestorBundles,sitemapDocuments};
  return {...context,fingerprint:manifestHash(JSON.parse(JSON.stringify(context)))};
 }
 /** Validate exact retained raw/context bytes; decode once outside DB locks. */

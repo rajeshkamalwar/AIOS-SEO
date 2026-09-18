@@ -2,7 +2,9 @@ import { mkdtempSync, mkdirSync, rmSync, existsSync } from "node:fs";
 import { execFileSync, spawnSync } from "node:child_process";
 import { join } from "node:path";
 const compiledHttp = process.argv.includes("--compiled-http");
-if (process.argv.slice(2).length > 1 || process.argv.slice(2).some(arg => !["--compiled-http", "--render-source", "--compiled-render-source", "--compiled-render-lane"].includes(arg))) throw new Error("Unknown or combined test mode");
+if (process.argv.slice(2).length > 1 || process.argv.slice(2).some(arg => !["--compiled-http", "--render-source", "--compiled-render-source", "--compiled-render-lane", "--render-execution", "--compiled-render-execution"].includes(arg))) throw new Error("Unknown or combined test mode");
+const renderExecution = process.argv.includes("--render-execution");
+const compiledRenderExecution = process.argv.includes("--compiled-render-execution");
 const compiledRenderLane = process.argv.includes("--compiled-render-lane");
 const renderSource = process.argv.includes("--render-source");
 const compiledRenderSource = process.argv.includes("--compiled-render-source");
@@ -57,10 +59,10 @@ try {
   const result = spawnSync(
     process.execPath,
     compiledHttp ? ["--test", "--test-concurrency=1", "dist/tests/foundation.test.js", "dist/tests/http-lane.test.js"] : [
-      ...(compiledRenderSource || compiledRenderLane ? [] : ["--import", "tsx"]),
+      ...(compiledRenderSource || compiledRenderLane || compiledRenderExecution ? [] : ["--import", "tsx"]),
       "--test",
       "--test-concurrency=1",
-      ...(compiledRenderLane ? ["dist/tests/foundation.test.js", "dist/tests/render-lane.test.js"] : compiledRenderSource ? ["dist/tests/foundation.test.js", "dist/tests/offline-render-source.test.js"] : renderSource ? ["tests/foundation.test.ts", "tests/offline-render-source.test.ts"] : [
+      ...(compiledRenderExecution ? ["dist/tests/foundation.test.js", "dist/tests/render-execution.test.js"] : renderExecution ? ["tests/foundation.test.ts", "tests/render-execution.test.ts"] : compiledRenderLane ? ["dist/tests/foundation.test.js", "dist/tests/render-lane.test.js"] : compiledRenderSource ? ["dist/tests/foundation.test.js", "dist/tests/offline-render-source.test.js"] : renderSource ? ["tests/foundation.test.ts", "tests/offline-render-source.test.ts"] : [
       "tests/policy.test.ts",
       "tests/contracts.test.ts",
       "tests/blob.test.ts",
@@ -69,6 +71,7 @@ try {
       "tests/jobs.test.ts",
       "tests/http-lane.test.ts",
       "tests/render-lane.test.ts",
+      "tests/render-execution.test.ts",
       "tests/perception-persistence.test.ts",
       "tests/site-scope.test.ts",
       "tests/render-persistence.test.ts",
@@ -96,6 +99,7 @@ try {
       stdio: "inherit",
       env: {
         ...process.env,
+        AIOS_TEST_RENDER_EXECUTION: renderExecution ? "1" : "0",
         AIOS_TEST_RENDER_SOURCE: renderSource ? "1" : "0",
         AIOS_TEST_SOCKET: socket,
         AIOS_TEST_DATA: data,
@@ -107,7 +111,7 @@ try {
   process.exitCode = result.status ?? 1;
   // This integration suite sorts before foundation.test.ts, which creates the
   // cluster runtime role. Run it after foundation in the same disposable DB.
-  if (result.status === 0 && !compiledHttp && !renderSource && !compiledRenderSource && !compiledRenderLane) {
+  if (result.status === 0 && !compiledHttp && !renderSource && !compiledRenderSource && !compiledRenderLane && !renderExecution && !compiledRenderExecution) {
     const scoped = spawnSync(process.execPath, ["--import", "tsx", "--test", "tests/api-scope.test.ts"], {
       stdio: "inherit",
       env: { ...process.env, AIOS_TEST_SOCKET: socket, AIOS_TEST_DATA: data, AIOS_TEST_PG_BIN: pg, AIOS_TEST_ROOT: root },

@@ -1,8 +1,8 @@
 # Current state
 
-<!-- Derived record/source digest: 8cbd0c215d714ad70f6a22bece840f347ef17c187176afa5a6ed9f248bad669e; regenerate with npm run vault:update. This is not a test receipt. -->
+<!-- Derived record/source digest: a67eef41f3dec0d9126f9a0005d618a4f418f21c3b33b7c927a390d0626ac554; regenerate with npm run vault:update. This is not a test receipt. -->
 
-Latest recorded execution evidence: [RENDER-TERMINAL-ACCOUNTING](milestones/RENDER-TERMINAL-ACCOUNTING.md) — **431 normal / 71 compiled / not recorded Docker** at reported baseline `parent9620e9a`. Source/report digest changes above do not establish new test results. Read the linked report for environment, failures and scope.
+Latest recorded execution evidence: [GOVERNED-OFFLINE-RENDER-EXECUTION](milestones/GOVERNED-OFFLINE-RENDER-EXECUTION.md) — **446 normal / 72 compiled / 1 Docker** at reported baseline `parentf9543a8`. Source/report digest changes above do not establish new test results. Read the linked report for environment, failures and scope.
 
 **Product incomplete.** M1–M5 local exits are reported; N0 customer activation and N1 live integration remain open. Real PostgreSQL transactions and private local blobs, loopback HTTP, persisted fixture frontiers/snapshots and isolated offline Chromium execute. Source fixtures, injected principals, test-authored evaluator records and denied external resources remain explicit limitations. Legacy publication JSON is suppressed because independent publication receipts are absent; see GAP-030 and ADR-013. No capability is real-world or production-proven by those tests.
 
@@ -33,6 +33,7 @@ The owner-approved N0 deployment/data-use profile gates customer processing. It 
 | [HTTP-FIXTURE-PROCESS](milestones/HTTP-FIXTURE-PROCESS.md) | SCOPED_LOCAL_EXIT_VERIFIED | TESTED |
 | [OFFLINE-RENDER-SOURCE](milestones/OFFLINE-RENDER-SOURCE.md) | SCOPED_LOCAL_EXIT_VERIFIED | TESTED |
 | [RENDER-TERMINAL-ACCOUNTING](milestones/RENDER-TERMINAL-ACCOUNTING.md) | SCOPED_LOCAL_EXIT_VERIFIED | TESTED |
+| [GOVERNED-OFFLINE-RENDER-EXECUTION](milestones/GOVERNED-OFFLINE-RENDER-EXECUTION.md) | SCOPED_LOCAL_EXIT_VERIFIED | TESTED |
 
 ## GitHub snapshot and authority
 

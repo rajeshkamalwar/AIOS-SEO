@@ -185,3 +185,7 @@ Reality boundary: N1 live dispatch and governed render-evidence acceptance remai
 ## Render terminal accounting — 2026-09-18, parent9620e9a
 
 [Render protocol report](../../reports/RENDER-TERMINAL-ACCOUNTING.md):431 application and71 compiled tests passed. Permanent page/request/byte charges, one-run/two-global capacity and independent terminal receipt settlement are tested, including PostgreSQL restart. GAP-036 closes only accounting; test-authored witnesses do not prove actual container execution. GAP-008 dispatch/acceptance remains open; no website-write capability.
+
+## Governed local render execution — 2026-09-18, parentf9543a8
+
+[Execution report](../../reports/GOVERNED-OFFLINE-RENDER-EXECUTION.md):446 application and72 compiled tests passed. The opt-in suite passed28 cases, including one actual persisted-source-to-Chromium execution with independently confirmed container removal;27 cases overlap protocol tests. Exact cumulative render permission, immutable source descriptor and final current gates authorize only local fixture replay. GAP-037 closes this bounded prerequisite; GAP-008 accepted artifacts and atomic job completion remain open. No website-write capability.

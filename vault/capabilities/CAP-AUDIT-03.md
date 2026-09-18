@@ -8,10 +8,10 @@ local_scope_kind: "partial_behavior"
 completion: "INCOMPLETE"
 canonical_release: "unreleased"
 specs: ["docs/14-CAPABILITY-TAXONOMY.md", "docs/15-CAPABILITY-CONTRACT.md", "docs/18-BUSINESS-ARCHETYPE-MATRIX.md"]
-implementation: ["packages/jobs/index.ts", "packages/jobs/http-lane.ts", "packages/jobs/http-fixture-supervisor.ts", "packages/perception/http-fixture-worker.ts", "packages/jobs/render-lane.ts", "packages/jobs/render-supervisor.ts", "packages/persistence/migrations/017-render-supervisor.sql"]
-tests: ["tests/jobs.test.ts", "tests/http-lane.test.ts", "tests/render-lane.test.ts"]
-reports: ["reports/HTTP-TERMINAL-AUTHORITY.md", "docs/40-POST-M5-INTEGRATION-REALITY-REVIEW.md", "docs/41-NEXT-PHASE-READINESS-PLAN.md", "docs/reports/N1-IMPLEMENTATION.md", "reports/HTTP-FIXTURE-PROCESS-SUPERVISION.md", "reports/RENDER-TERMINAL-ACCOUNTING.md"]
-gaps: ["GAP-005", "GAP-DOM-AUDIT", "GAP-015", "GAP-034", "GAP-036"]
+implementation: ["packages/jobs/index.ts", "packages/jobs/http-lane.ts", "packages/jobs/http-fixture-supervisor.ts", "packages/perception/http-fixture-worker.ts", "packages/jobs/render-lane.ts", "packages/jobs/render-supervisor.ts", "packages/persistence/migrations/017-render-supervisor.sql", "packages/jobs/offline-render-producer.ts", "packages/jobs/docker-offline-render.ts", "packages/jobs/offline-render-job.ts", "packages/skills/offline-render.ts", "packages/persistence/migrations/018-offline-render-job.sql"]
+tests: ["tests/jobs.test.ts", "tests/http-lane.test.ts", "tests/render-lane.test.ts", "tests/render-execution.test.ts"]
+reports: ["reports/HTTP-TERMINAL-AUTHORITY.md", "docs/40-POST-M5-INTEGRATION-REALITY-REVIEW.md", "docs/41-NEXT-PHASE-READINESS-PLAN.md", "docs/reports/N1-IMPLEMENTATION.md", "reports/HTTP-FIXTURE-PROCESS-SUPERVISION.md", "reports/RENDER-TERMINAL-ACCOUNTING.md", "reports/GOVERNED-OFFLINE-RENDER-EXECUTION.md"]
+gaps: ["GAP-005", "GAP-DOM-AUDIT", "GAP-015", "GAP-034", "GAP-036", "GAP-037"]
 scope: "Durable job attempts/leases/deadlines, cancellation/retry limits and conservative global HTTP slot/request/byte accounting including crash recovery tests."
 baseline: "2b6d527"
 required_stages: "Canonical15/18/28/35 applicable evidence, implementation, independent test/release, real-world and production proof; applicability and stage evidence must be explicitly reviewed before COMPLETE."
@@ -56,3 +56,5 @@ Open gaps: [GAP-DOM-AUDIT](../gaps/GAP-DOM-AUDIT.md), [GAP-015](../gaps/GAP-015.
 - 2026-09-18 after9620e9a: [GAP-036](../gaps/GAP-036.md) adds accounting-only render bounds and independent supervisor receipts. Tests/report pending; actual producer and rendered-evidence acceptance remain open.
 
 - 2026-09-18: GAP-036 accounting protocol verified with431 application and71 compiled tests. Independent supervisor fixtures protect permanent charges and once-only slot release; no actual producer or capability maturity promotion.
+
+- 2026-09-18: [GAP-037](../gaps/GAP-037.md) verified actual governed local container execution with446 application/72 compiled tests and one actual Docker scenario. No accepted rendered evidence, full capability completion or real-world maturity inferred.

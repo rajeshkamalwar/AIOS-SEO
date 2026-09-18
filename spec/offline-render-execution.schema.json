@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.aios-seo.invalid/v1/offline-render-execution.schema.json",
+  "description": "Local operational execution/accounting receipt. It is not a domain RenderSnapshot or accepted Skill assessment.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "state": {"enum": ["executed", "failed", "aborted", "timeout"]},
+    "invocationId": {"$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"},
+    "terminalReceiptId": {"$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"},
+    "containerId": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "stdoutSha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "conformance": {"enum": ["valid", "invalid", "not_evaluated"]},
+    "workerState": {"enum": ["captured", "policy_limited", "failed", "timeout", null]},
+    "evidenceAccepted": {"const": false}
+  },
+  "required": ["state", "invocationId", "terminalReceiptId", "containerId", "stdoutSha256", "conformance", "workerState", "evidenceAccepted"],
+  "allOf": [
+    {"if": {"properties": {"state": {"const": "executed"}}}, "then": {"properties": {"conformance": {"const": "valid"}, "workerState": {"enum": ["captured", "policy_limited"]}}}},
+    {"if": {"properties": {"conformance": {"enum": ["invalid", "not_evaluated"]}}}, "then": {"properties": {"workerState": {"const": null}}}}
+  ]
+}

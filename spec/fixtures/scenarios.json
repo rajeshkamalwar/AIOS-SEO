@@ -198,6 +198,66 @@
         "late_commit": "scope_denied",
         "restored_reads_before_replay": 0
       }
+    },
+    {
+      "id": "local-offline-replay-v3",
+      "artifacts": [],
+      "test_references": [
+        "tests/render-execution.test.ts: Dedicated render child pins independently prepared source without accepting new evidence",
+        "tests/render-execution.test.ts: Real governed local Docker replay confirms cleanup and terminal accounting without accepting evidence"
+      ],
+      "expected": {
+        "deployment_profile": "local-synthetic-v1",
+        "handler": "offline_render_v1",
+        "job_kind": "render",
+        "network_mode": "none",
+        "source": "persisted_same_run_raw_snapshot",
+        "source_preparation": "recomputed_and_bound",
+        "container_identity": "immutable_and_supervisor_bound",
+        "cleanup": "independently_confirmed_before_settlement",
+        "evidence_accepted": false,
+        "canonical_job_completion": false,
+        "unknown_actual_requests": null,
+        "unknown_actual_bytes": null
+      }
+    },
+    {
+      "id": "render-permission-mismatch",
+      "artifacts": [],
+      "test_references": [
+        "tests/render-execution.test.ts: Render release installation rejects missing, wrong-version or overbroad permission and unknown procedure",
+        "tests/render-execution.test.ts: Generic project lease is rejected before even a trusted fixture engine is created"
+      ],
+      "expected": {
+        "invalid_variants": [
+          "missing_render_permission",
+          "wrong_tool_version",
+          "overbroad_max_calls",
+          "unknown_procedure",
+          "generic_project_lease"
+        ],
+        "error": "handler_not_installed",
+        "container_starts": 0,
+        "evidence_accepted": false
+      }
+    },
+    {
+      "id": "render-source-changed",
+      "artifacts": [],
+      "test_references": [
+        "tests/render-execution.test.ts: A project reliability release cannot authorize a render child; existing child replay cannot change release/source",
+        "tests/render-execution.test.ts: Current rejected source cannot enter render execution",
+        "tests/render-execution.test.ts: Final metadata gate catches changed Site scope and stale robots without artifact I/O"
+      ],
+      "expected": {
+        "descriptor_mutable": false,
+        "changed_source_replay": "conflict",
+        "changed_current_context": "source_context_changed",
+        "rejected_source": "audit_input_rejected",
+        "stale_robots": "robots_unavailable",
+        "new_container_starts": 0,
+        "evidence_accepted": false
+      }
     }
   ]
 }

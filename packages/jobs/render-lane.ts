@@ -5,6 +5,8 @@ import { transaction } from '../persistence/transaction.js';
 import { DeletionLedger } from '../policy/deletion.js';
 import { lockGovernedWork,requireLease } from './lease-context.js';
 import { resolveOfflineRenderSource } from './offline-render-source.js';
+import {assertOfflineRenderRelease} from '../skills/offline-render.js';
+import {readRenderDescriptor} from './offline-render-job.js';
 import type { Lease } from './index.js';
 export interface RenderReservationInput {pageSnapshotId:string;bundleId:string;inputSha256:string;profile:'local-offline-replay-v3'}
 export interface RenderReservation extends RenderReservationInput {
@@ -20,9 +22,14 @@ export class RenderLane {
   uuid(input.pageSnapshotId);uuid(input.bundleId);
   return transaction(this.pool,'aios_scheduler',async c=>{
    await lockGovernedWork(c);const {j}=await requireLease(c,l,this.deletions);
-   if(j.kind!=='project')throw new Error('handler_not_installed');
+   if(!['project','render'].includes(j.kind))throw new Error('handler_not_installed');
+   if(j.kind==='render'){
+    await assertOfflineRenderRelease(c,j.release_digest);const d=await readRenderDescriptor(c,j);
+    if(d.pageSnapshotId!==input.pageSnapshotId||d.bundleId!==input.bundleId||d.inputSha256!==input.inputSha256||d.profile!==input.profile)throw new Error('source_context_changed');
+   }
    if(j.input_ref!==input.bundleId)throw new Error('bundle_membership_required');
    const source=await resolveOfflineRenderSource(c,l,input.bundleId,input.pageSnapshotId);
+   if(j.kind==='render'&&(await readRenderDescriptor(c,j)).sourceContextHash!==source.fingerprint)throw new Error('source_context_changed');
    const url=new URL(source.page.url),raw=source.evidence.find(row=>row.id===source.snapshot.evidence_id);
    if(source.snapshot.state!=='captured'||source.snapshot.truncated||raw?.mime_type!=='text/html'||url.protocol!=='https:'||!url.hostname.endsWith('.example'))throw new Error('snapshot_unavailable');
    const row=(await c.query('SELECT * FROM control.reserve_render_accounting($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)',[l.tenantId,l.siteId,l.runId,l.jobId,l.attempt,l.attemptId,l.token,input.pageSnapshotId,input.bundleId,input.inputSha256,input.profile,source.fingerprint,randomUUID()])).rows[0];

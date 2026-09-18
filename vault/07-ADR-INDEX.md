@@ -26,3 +26,5 @@ Acceptance is a design/authority disposition, not proof of full implementation o
 ADR-007 is the owner-accepted scoped-rejection decision. Its implementation, transition fixtures and subsequent current-input enforcement remain distinct traceable checkpoints; see [M2](milestones/M2.md) and [N1](milestones/N1.md). No accepted ADR grants website-write authority.
 
 - [ADR-016: independent offline-render accounting authority](../docs/decisions/016-render-terminal-accounting.md) — permanent bounded charges and independent terminal witnesses; no dispatch or evidence authority.
+
+- [ADR-017: governed local offline-render execution](../docs/decisions/017-governed-local-render-execution.md) — explicit child/permission, fixed isolated container and operational receipt; no accepted artifacts.
