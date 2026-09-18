@@ -8,10 +8,10 @@ local_scope_kind: "partial_behavior"
 completion: "INCOMPLETE"
 canonical_release: "unreleased"
 specs: ["docs/14-CAPABILITY-TAXONOMY.md", "docs/15-CAPABILITY-CONTRACT.md", "docs/18-BUSINESS-ARCHETYPE-MATRIX.md"]
-implementation: ["packages/jobs/index.ts", "packages/policy/input-eligibility.ts", "packages/runtime/index.ts"]
-tests: ["tests/jobs.test.ts", "tests/input-eligibility.test.ts", "tests/runtime.test.ts"]
-reports: ["docs/40-POST-M5-INTEGRATION-REALITY-REVIEW.md", "docs/41-NEXT-PHASE-READINESS-PLAN.md", "docs/reports/N1-IMPLEMENTATION.md"]
-gaps: ["GAP-DOM-AUDIT", "GAP-015"]
+implementation: ["packages/jobs/index.ts", "packages/policy/input-eligibility.ts", "packages/runtime/index.ts", "packages/jobs/isolated-http-fixture-supervisor.ts", "packages/jobs/docker-http-fixture.ts", "packages/perception/http-fixture-broker.ts"]
+tests: ["tests/jobs.test.ts", "tests/input-eligibility.test.ts", "tests/runtime.test.ts", "tests/http-isolated.test.ts", "tests/http-fixture-broker.test.ts"]
+reports: ["docs/40-POST-M5-INTEGRATION-REALITY-REVIEW.md", "docs/41-NEXT-PHASE-READINESS-PLAN.md", "docs/reports/N1-IMPLEMENTATION.md", "reports/ISOLATED-HTTP-EGRESS.md"]
+gaps: ["GAP-DOM-AUDIT", "GAP-015", "GAP-041"]
 scope: "Independent health/release/role checks and fail-closed authority boundaries on local admission/acceptance; runtime activation blocks production."
 baseline: "2b6d527"
 required_stages: "Canonical15/18/28/35 applicable evidence, implementation, independent test/release, real-world and production proof; applicability and stage evidence must be explicitly reviewed before COMPLETE."
@@ -48,3 +48,7 @@ Open gaps: [GAP-DOM-AUDIT](../gaps/GAP-DOM-AUDIT.md), [GAP-015](../gaps/GAP-015.
 ## History
 
 - 2026-09-18 baseline2b6d527: conservative inventory import; no maturity promotion from test counts or draft manifests.
+
+- 2026-09-18 after6131ee2: isolated local HTTP prerequisite under implementation; [GAP-041](../gaps/GAP-041.md) and its report track verification. Full capability maturity unchanged.
+
+- 2026-09-18: [isolated HTTP report](../../reports/ISOLATED-HTTP-EGRESS.md) verifies GAP-041 local prerequisite (509 source/97 compiled/2 actual Docker cases). No full-capability maturity promotion.

@@ -1,4 +1,4 @@
-import { request as httpRequest } from "node:http";
+import { request as httpRequest, type ClientRequest } from "node:http";
 import { request as httpsRequest } from "node:https";
 import { createGunzip, createInflate, createBrotliDecompress, type Gunzip } from "node:zlib";
 import type { Readable } from "node:stream";
@@ -17,6 +17,11 @@ export function safeHeaders(headers: Record<string, string>): Record<string, str
 // Internal transport: callers must have admitted the URL and every DNS answer.
 // Tests exercise it with loopback fixtures; not exported by the package facade.
 export function requestPinned(url: URL, address: Address, limits: TransportLimits): Promise<Response> {
+  return requestPinnedObserved(url,address,limits,()=>{});
+}
+// Trusted host lifecycle hook only. Response settlement does NOT prove socket
+// closure; a supervisor must independently observe request/socket close events.
+export function requestPinnedObserved(url: URL, address: Address, limits: TransportLimits, observe:(request:ClientRequest)=>void): Promise<Response> {
   return new Promise((resolve, reject) => {
     let settled = false;
     let response: Readable | undefined;
@@ -73,6 +78,7 @@ export function requestPinned(url: URL, address: Address, limits: TransportLimit
       socket.once(url.protocol === "https:" ? "secureConnect" : "connect", () => clearTimeout(connectTimer));
     });
     req.on("error", error => finish(error));
+    try { observe(req); } catch(error) { finish(error instanceof Error?error:new Error("transport_observer_failed")); return; }
     req.end();
   });
 }

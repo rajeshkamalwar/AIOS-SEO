@@ -1,8 +1,8 @@
 # Current state
 
-<!-- Derived record/source digest: 8697306aa3737153dfca368463a04719e5e81ce73cf3eda007a3f3fa556c76db; regenerate with npm run vault:update. This is not a test receipt. -->
+<!-- Derived record/source digest: 76290f629f4e0ce1dd65802e89007da5d8ebd01e3b8d72afface8201d712aac1; regenerate with npm run vault:update. This is not a test receipt. -->
 
-Latest recorded execution evidence: [LOCAL-RENDER-PROJECTION](milestones/LOCAL-RENDER-PROJECTION.md) — **487 normal / 85 compiled / 1 Docker** at reported baseline `parent8a86864`. Source/report digest changes above do not establish new test results. Read the linked report for environment, failures and scope.
+Latest recorded execution evidence: [ISOLATED-HTTP-EGRESS](milestones/ISOLATED-HTTP-EGRESS.md) — **509 normal / 97 compiled / 2 Docker** at reported baseline `parent6131ee2`. Source/report digest changes above do not establish new test results. Read the linked report for environment, failures and scope.
 
 **Product incomplete.** M1–M5 local exits are reported; N0 customer activation and N1 live integration remain open. Real PostgreSQL transactions and private local blobs, loopback HTTP, persisted fixture frontiers/snapshots and isolated offline Chromium execute. Source fixtures, injected principals, test-authored evaluator records and denied external resources remain explicit limitations. Legacy publication JSON is suppressed because independent publication receipts are absent; see GAP-030 and ADR-013. No capability is real-world or production-proven by those tests.
 
@@ -36,6 +36,7 @@ The owner-approved N0 deployment/data-use profile gates customer processing. It 
 | [GOVERNED-OFFLINE-RENDER-EXECUTION](milestones/GOVERNED-OFFLINE-RENDER-EXECUTION.md) | SCOPED_LOCAL_EXIT_VERIFIED | TESTED |
 | [LOCAL-RENDER-EVIDENCE-ACCEPTANCE](milestones/LOCAL-RENDER-EVIDENCE-ACCEPTANCE.md) | SCOPED_LOCAL_EXIT_VERIFIED | TESTED |
 | [LOCAL-RENDER-PROJECTION](milestones/LOCAL-RENDER-PROJECTION.md) | SCOPED_LOCAL_EXIT_VERIFIED | TESTED |
+| [ISOLATED-HTTP-EGRESS](milestones/ISOLATED-HTTP-EGRESS.md) | SCOPED_LOCAL_EXIT_VERIFIED | TESTED |
 
 ## GitHub snapshot and authority
 

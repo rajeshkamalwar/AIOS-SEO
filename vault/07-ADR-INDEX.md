@@ -32,3 +32,5 @@ ADR-007 is the owner-accepted scoped-rejection decision. Its implementation, tra
 - [ADR-018: local render evidence retention and acceptance](../docs/decisions/018-local-render-evidence-retention.md) — accepted local privacy-limited artifact/acceptance boundary; no typed projection or job completion.
 
 - [ADR-019: local typed render projection and completion](../docs/decisions/019-local-render-projection-completion.md) — accepted local projection/completion default; no fabricated resource URLs or complete-render claim.
+
+- [ADR-020: isolated local HTTP egress mediation](../docs/decisions/020-local-http-egress-mediation.md) — one pre-authorized fixture hop, OS network denial and joint termination proof; no public dispatch.
