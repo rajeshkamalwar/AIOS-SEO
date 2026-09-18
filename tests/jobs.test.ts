@@ -181,6 +181,11 @@ test('Postgres API returns current advanced replay and idempotent cancellation w
  const replay=await api.handle(request);assert.equal(replay.status,200);assert.deepEqual(replay.body,cancelled.body);
  assert.equal((await admin.query("SELECT count(*) FROM aios.work_audit WHERE crawl_id=$1 AND operation='cancel'",[id])).rows[0].count,'1');
  const conflict=await api.handle({...request,body:{...request.body,url:'https://different-replay.example/'}});assert.equal(conflict.status,409);
+ const sitesBefore=(await admin.query('SELECT count(*) FROM aios.site')).rows[0].count;
+ const restricted=await api.handle({...request,body:{url:'https://not-reviewed.example/?note=PRIVATE',idempotency_key:randomUUID()}});
+ assert.equal(restricted.status,503);assert.equal((restricted.body as any).error.code,'policy_blocked');
+ assert.equal((await admin.query('SELECT count(*) FROM aios.site')).rows[0].count,sitesBefore);
+ assert.ok(!JSON.stringify(restricted).includes('PRIVATE'));
  const hidden=await api.handle({...cancel,principal:{tenantId:randomUUID(),userId:randomUUID()}});assert.equal(hidden.status,404);
 });
 test('M5 durable run reopens but legacy fixture publication is not governed output',async(t)=>{

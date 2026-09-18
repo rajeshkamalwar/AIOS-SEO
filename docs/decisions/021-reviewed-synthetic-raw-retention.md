@@ -1,0 +1,16 @@
+# ADR-021: reviewed synthetic raw fixture retention
+
+Status: Accepted reversible local engineering default.
+Date: 2026-09-18.
+
+[34](../34-SECURITY-TENANCY-DATA.md) permits synthetic local development, not arbitrary raw payload retention. GAP-039 identifies unreviewed HTML and metadata in the legacy/local HTTP acceptance paths. A general form/credential scanner cannot certify comments, ignored attributes, JavaScript strings, JSON or opaque header/error text. Transforming raw HTML into an inert projection and then rendering it as the original would violate [26](../26-TEMPORAL-EVIDENCE-CONTRACT.md) and [30](../30-CRAWL-RENDER-CONTRACT.md).
+
+For these existing synthetic-only adapters, reject unreviewed input before uploading anything. A checked-in closed corpus contains exact reviewed literals and finite reconstructed templates. Variable slots are restricted to specified synthetic origins, UUIDs, enumerated paths and bounded integer generators. There are no arbitrary text slots, runtime digest-registration API, environment bypass or user-provided certification. Adding a fixture is a reviewable code change. This corpus supports conformance testing; it is not the public collector's future content model.
+
+Check the complete retained envelope as well as bytes: exact supported MIME/charset declarations, closed header values and failure details, normalized synthetic source/request/final identities, bounded typed metadata. Arbitrary legacy JSON is rejected. Apply canonical URL exclusion before recording fixture Site/source identities, including credential-bearing query aliases. Copy capture, principal, result and bytes before asynchronous admission so validation, idempotency and persistence use the same inputs.
+
+Accepted bytes are unchanged. Their stored SHA-256, byte locators, raw/render decoding context and `none-v1` remain truthful: catalog admission is not a redaction transformation. Empty synthetic controls may be retained for structural tests; nonempty form values and credential payloads are absent from the reviewed raw corpus. Hostile privacy fixtures remain in transient worker-output/transform tests, not retained raw source. Rejection produces no blob, Evidence, Observation or outbox event. Existing unrelated transaction failure/orphan cleanup behavior is unchanged.
+
+Do not retroactively certify existing `none-v1` records. Expert artifact reads and raw-source reuse must pass current catalog checks. Classify generated HTTP and site-scope JSON receipts through authenticated stored acceptance relations, not a self-declared JSON type. Recheck raw HTTP metadata/body before snapshot, frontier and render preparation. Unknown legacy content is withheld from those paths without deleting or rewriting history. Existing authority, freshness, audit, hash and bundle gates remain required; the catalog does not replace them.
+
+This does not define arbitrary customer raw-content redaction, legal retention or consent. The separately governed privacy-limited render projection in [ADR-018](018-local-render-evidence-retention.md) remains distinct. Real public collection/customer processing is still blocked by the canonical deployment/data-use gate; no website-write capability or authority is added.

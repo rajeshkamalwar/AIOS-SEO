@@ -8,10 +8,10 @@ local_scope_kind: "partial_behavior"
 completion: "INCOMPLETE"
 canonical_release: "unreleased"
 specs: ["docs/14-CAPABILITY-TAXONOMY.md", "docs/15-CAPABILITY-CONTRACT.md", "docs/18-BUSINESS-ARCHETYPE-MATRIX.md"]
-implementation: ["packages/policy/deletion.ts", "packages/policy/input-eligibility.ts", "packages/runtime/index.ts", "packages/evidence/index.ts"]
-tests: ["tests/jobs.test.ts", "tests/input-eligibility.test.ts", "tests/runtime.test.ts", "tests/blob.test.ts"]
-reports: ["docs/40-POST-M5-INTEGRATION-REALITY-REVIEW.md", "docs/41-NEXT-PHASE-READINESS-PLAN.md", "docs/reports/N1-IMPLEMENTATION.md"]
-gaps: ["GAP-DOM-MEM"]
+implementation: ["packages/policy/deletion.ts", "packages/policy/input-eligibility.ts", "packages/runtime/index.ts", "packages/evidence/index.ts", "packages/perception/reviewed-fixtures.ts", "packages/persistence/index.ts"]
+tests: ["tests/jobs.test.ts", "tests/input-eligibility.test.ts", "tests/runtime.test.ts", "tests/blob.test.ts", "tests/reviewed-fixtures.test.ts", "tests/http-evidence.test.ts", "tests/offline-render-source.test.ts"]
+reports: ["docs/40-POST-M5-INTEGRATION-REALITY-REVIEW.md", "docs/41-NEXT-PHASE-READINESS-PLAN.md", "docs/reports/N1-IMPLEMENTATION.md", "reports/REVIEWED-FIXTURE-RETENTION.md"]
+gaps: ["GAP-DOM-MEM", "GAP-039"]
 scope: "Independent local deletion tombstone fences, audit rejection propagation and local orphan cleanup/readiness checks."
 baseline: "2b6d527"
 required_stages: "Canonical15/18/28/35 applicable evidence, implementation, independent test/release, real-world and production proof; applicability and stage evidence must be explicitly reviewed before COMPLETE."
@@ -48,3 +48,7 @@ Open gaps: [GAP-DOM-MEM](../gaps/GAP-DOM-MEM.md).
 ## History
 
 - 2026-09-18 baseline2b6d527: conservative inventory import; no maturity promotion from test counts or draft manifests.
+
+- 2026-09-18 aftere937e79: [reviewed fixture retention](../../reports/REVIEWED-FIXTURE-RETENTION.md) progresses GAP-039 with exact retained-byte admission and legacy read/reuse checks; verification pending, full maturity unchanged.
+
+- 2026-09-18: GAP-039 local admission/reuse closure verified:533 source/130 compiled tests and three actual browser paths. Full capability remains DEFINED/INCOMPLETE; customer retention and deployment are not certified.

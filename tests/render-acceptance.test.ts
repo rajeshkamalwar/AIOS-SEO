@@ -67,6 +67,7 @@ async function child(f:Awaited<ReturnType<typeof fixture>>,digest:string){const 
 async function evidenceCounts(){return(await admin.query('SELECT (SELECT count(*) FROM aios.evidence) AS evidence,(SELECT count(*) FROM aios.observation) AS observations,(SELECT count(*) FROM aios.render_snapshot) AS renders,(SELECT count(*) FROM aios.outbox) AS events')).rows[0];}
 
 const browserBuild='145.0.1.2',imageDigest='1'.repeat(64);
+const reviewedRawDom='<html><head><title>Useful fixture</title></head><body><main>Public business text</main><form><input value=""><textarea></textarea></form><input form="outside" value=""><a href="https://outside.example/">safe label</a></body></html>';
 const privateDom='<html><head><title>Useful fixture</title></head><body><main>Public business text</main><form><input value="FORM_SENTINEL"><textarea>TEXTAREA_SENTINEL</textarea></form><input form="outside" value="OUTSIDE_SENTINEL"><script>const secret="SCRIPT_SENTINEL";</script><a href="https://outside.example/?token=URL_SENTINEL">safe label</a></body></html>';
 /** Independent trusted fixture engine; these tests do not claim Docker execution. */
 function engineFixture(mode:'partial'|'failed'|'timeout'|'invalid'='partial'){
@@ -200,11 +201,11 @@ if(process.env.AIOS_TEST_RENDER_ACCEPTANCE==='1')test('Real governed Docker repl
  const imageDigest=execFileSync('docker',[...prefix,'image','inspect','aios-seo-render-fixture','--format','{{.Id}}'],{encoding:'utf8'}).trim().replace(/^sha256:/,'');
  const browserBuild=execFileSync('docker',[...prefix,'run','--rm','--network','none','--read-only','--cap-drop','ALL','--security-opt','no-new-privileges','--entrypoint','node','sha256:'+imageDigest,'--input-type=module','-e',"import{readFileSync}from'node:fs';const b=JSON.parse(readFileSync('node_modules/playwright-core/browsers.json'));process.stdout.write(b.browsers.find(x=>x.name==='chromium').browserVersion)"],{encoding:'utf8',timeout:30000}).trim();
  const engine=new DockerOfflineRenderEngine({imageDigest,browserBuild,...(process.env.AIOS_DOCKER_CONTEXT?{dockerContext:process.env.AIOS_DOCKER_CONTEXT}:{})});
- const f=await fixture(20,2000,privateDom),lease=await child(f,await renderRelease()),before=await evidenceCounts(),beforeIds=(await admin.query('SELECT id FROM aios.evidence')).rows.map(r=>r.id);
+ const f=await fixture(20,2000,reviewedRawDom),lease=await child(f,await renderRelease()),before=await evidenceCounts(),beforeIds=(await admin.query('SELECT id FROM aios.evidence')).rows.map(r=>r.id);
  const result=await new OfflineRenderFixtureProducer(worker,lane,supervisor,engine).collectAndAccept(lease);
  assert.equal(result.execution.state,'executed');assert.equal(result.execution.conformance,'valid');assert.equal(result.acceptance.domEvidenceIds.length,3);assert.equal(result.execution.evidenceAccepted,false);
  const stored=await acceptedBlobs(beforeIds);assert.equal(stored.length,4);
- for(const {bytes} of stored)for(const sentinel of ['FORM_SENTINEL','TEXTAREA_SENTINEL','OUTSIDE_SENTINEL','SCRIPT_SENTINEL','URL_SENTINEL'])assert.equal(bytes.toString().includes(sentinel),false,sentinel);
+ for(const {bytes} of stored)assert.doesNotMatch(bytes.toString(),/<(?:form|input|textarea)\b/i);
  assert.ok(stored.some(x=>x.bytes.toString().includes('Public business text')));const after=await evidenceCounts();assert.equal(after.renders,before.renders);
  const inspection=spawnSync('docker',[...prefix,'container','inspect',result.execution.containerId],{encoding:'utf8'});assert.notEqual(inspection.status,0);assert.match(inspection.stderr,/No such (container|object)/i);
  const job=(await admin.query('SELECT state,result_ref FROM aios.job WHERE job_id=$1',[lease.jobId])).rows[0];assert.notEqual(job.state,'completed');assert.equal(job.result_ref,null);

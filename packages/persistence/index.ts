@@ -10,6 +10,7 @@ import {
 } from "../contracts/index.js";
 import { LocalBlobs } from "../evidence/index.js";
 import { normalizeUrl } from "../perception/url.js";
+import { assertReviewedRawFixture, assertReviewedHttpFixtureMetadata, assertReviewedFixtureUrl } from "../perception/reviewed-fixtures.js";
 import { DeletionLedger } from "../policy/deletion.js";
 import { transaction, scope, registryLock, workLock } from "./transaction.js";
 
@@ -68,6 +69,8 @@ function normalize(row: Row): Row {
   return result;
 }
 function fixtureUrl(value: string): URL {
+  const admission = normalizeUrl(value);
+  if (admission.excluded) throw new Error("policy_blocked");
   const u = new URL(value);
   if (
     u.protocol !== "https:" ||
@@ -242,6 +245,7 @@ export class Ledger {
   }
   async registerSite(p: Principal, url: string): Promise<string> {
     const parsed = fixtureUrl(url);
+    assertReviewedFixtureUrl(parsed.href);
     return this.tx(p, "write", null, async (c) => {
       await this.clock(c, p, false);
       const prior = await c.query(
@@ -270,6 +274,8 @@ export class Ledger {
     capture: Capture,
     bytes: Uint8Array,
   ): Promise<Receipt> {
+    p = { ...p };
+    capture = structuredClone(capture);
     validate(base + "capture.schema.json", capture);
     if (!["text/html", "application/json"].includes(capture.mimeType))
       throw new Error("schema_invalid");
@@ -285,6 +291,9 @@ export class Ledger {
       const scope = await this.get(c, "Site", site);
       if (source.origin !== scope.normalized_origin)
         throw new Error("scope_denied");
+      // The synthetic profile is not permission to persist arbitrary supplied
+      // bytes. Review the exact retained artifact before any upload or clock write.
+      assertReviewedRawFixture({mimeType:capture.mimeType,sourceUri:capture.sourceUri,bytes:data});
       await c.query("SELECT pg_advisory_xact_lock_shared($1)", [
         maintenanceLock,
       ]);
@@ -392,6 +401,7 @@ export class Ledger {
     result: HttpFixtureResult,
     bytes: Uint8Array | null,
   ): Promise<HttpFixtureReceipt> {
+    p = { ...p };
     capture = { ...capture };
     result = structuredClone(result);
     uuid(capture.attemptId);
@@ -422,6 +432,8 @@ export class Ledger {
     return this.tx(p, "write", site, async c => {
       const s = await this.get(c, "Site", site);
       if (s.normalized_origin !== requested.origin) throw new Error("scope_denied");
+      assertReviewedHttpFixtureMetadata(result);
+      if (body !== null) assertReviewedRawFixture({mimeType:mime!,sourceUri:result.final_url,bytes:body});
       await c.query("SELECT pg_advisory_xact_lock_shared($1)", [maintenanceLock]);
       // Serialization of one attempt precedes uploads; the tenant clock is not held during I/O.
       await c.query("SELECT pg_advisory_xact_lock(hashtextextended($1,0))", [p.tenantId + ":" + capture.attemptId + ":" + site]);
@@ -491,6 +503,7 @@ export class Ledger {
       if (!(await c.query("SELECT 1 FROM control.health WHERE singleton AND policy_version='discovery-v1' AND restore_ready AND verified_until>clock_timestamp()")).rowCount) throw new Error("policy_unavailable");
       const s = await this.get(c, "Site", site);
       const submitted = fixtureUrl(String(s.submitted_url)), normalized = normalizeUrl(submitted.href);
+      assertReviewedFixtureUrl(submitted.href);
       if (normalized.excluded || normalized.url !== s.submitted_url || submitted.origin !== s.normalized_origin) throw new Error("scope_denied");
       const fields = {
         receipt_type: "site_scope", schema_version: 1, tenant_id: p.tenantId, site_id: site, crawl_id: run,
@@ -562,6 +575,7 @@ export class Ledger {
     });
   }
   async artifact(p: Principal, site: string, id: string): Promise<Buffer> {
+    p = { ...p };
     return this.tx(p, "expert", site, async (c) => {
       const row = await this.get(c, "Evidence", id);
       if (row.site_id !== site) throw new Error("not_found");
@@ -570,11 +584,46 @@ export class Ledger {
         Date.parse(String(row.expires_at)) <= Date.now()
       )
         throw new Error("artifact_unavailable");
-      return this.blobs.read(
+      const bytes = await this.blobs.read(
         String(row.artifact_key),
         String(row.sha256),
         Number(row.bytes),
       );
+      if (row.redaction_version === "none-v1") {
+        // Legacy rows were not necessarily admitted by the current catalog.
+        // Authenticate generated receipts through stored acceptance relations;
+        // JSON content cannot classify itself as trusted policy output.
+        const accepted = (await c.query(
+          "SELECT * FROM http_fixture_acceptance WHERE tenant_id=$1 AND site_id=$2 AND (body_evidence_id=$3 OR receipt_evidence_id=$3)",
+          [p.tenantId,site,id],
+        )).rows[0];
+        if (accepted) {
+          const context = accepted.receipt_evidence_id === id ? row : await this.get(c,"Evidence",accepted.receipt_evidence_id);
+          if (context.site_id !== site || context.state !== "available" || context.mime_type !== "application/json" || Date.parse(String(context.expires_at)) <= Date.now()) throw new Error("artifact_unavailable");
+          const contextBytes = accepted.receipt_evidence_id === id ? bytes : await this.blobs.read(String(context.artifact_key),String(context.sha256),Number(context.bytes));
+          const receipt = JSON.parse(new TextDecoder("utf-8",{fatal:true}).decode(contextBytes));
+          validate(base+"http-receipt.schema.json",receipt);
+          if (!contextBytes.equals(Buffer.from(canonical(receipt)))) throw new Error("unreviewed_fixture");
+          const {body_evidence_id,...metadata} = receipt;
+          if (body_evidence_id !== accepted.body_evidence_id || receipt.final_url !== row.source_uri || receipt.final_url !== context.source_uri) throw new Error("unreviewed_fixture");
+          assertReviewedHttpFixtureMetadata(metadata);
+          if (accepted.body_evidence_id === id) assertReviewedRawFixture({mimeType:String(row.mime_type),sourceUri:String(row.source_uri),bytes});
+        } else {
+          const generated = (await c.query("SELECT crawl_id FROM site_scope_acceptance WHERE tenant_id=$1 AND site_id=$2 AND evidence_id=$3",[p.tenantId,site,id])).rows[0];
+          if (generated) {
+            const receipt = JSON.parse(new TextDecoder("utf-8",{fatal:true}).decode(bytes));
+            validate(base+"scope-receipt.schema.json",receipt);
+            if (!bytes.equals(Buffer.from(canonical(receipt)))) throw new Error("unreviewed_fixture");
+            assertReviewedFixtureUrl(receipt.submitted_url);
+            assertReviewedFixtureUrl(receipt.normalized_origin+"/");
+            if (row.mime_type !== "application/json" || row.source_class !== "internal_policy" || receipt.tenant_id !== p.tenantId || receipt.site_id !== site || receipt.crawl_id !== generated.crawl_id || fixtureUrl(receipt.submitted_url).origin !== receipt.normalized_origin) throw new Error("unreviewed_fixture");
+          } else {
+            if (!(await c.query("SELECT 1 FROM acceptance WHERE tenant_id=$1 AND site_id=$2 AND evidence_id=$3",[p.tenantId,site,id])).rowCount) throw new Error("unreviewed_fixture");
+            assertReviewedRawFixture({mimeType:String(row.mime_type),sourceUri:String(row.source_uri),bytes});
+          }
+        }
+      }
+      return bytes;
     });
   }
   async freeze(

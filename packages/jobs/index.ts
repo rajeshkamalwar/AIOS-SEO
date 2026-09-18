@@ -1,7 +1,8 @@
+import {assertReviewedRawFixture,assertReviewedHttpFixtureMetadata} from '../perception/reviewed-fixtures.js';
 import {projectOfflineRenderFixture,type OfflineRenderProjection} from './offline-render-projection.js';
 import type { Pool, PoolClient } from 'pg';
 import { randomUUID, randomInt } from 'node:crypto';
-import { base, validate, uuid, manifestHash, hash } from '../contracts/index.js';
+import { base, validate, uuid, manifestHash, hash, canonical } from '../contracts/index.js';
 import {acceptOfflineRenderFixture,type OfflineRenderAcceptanceInput,type OfflineRenderAcceptance,type RenderArtifacts} from './offline-render-acceptance.js';
 import type { Principal } from '../persistence/index.js';
 import { transaction, scope, tick, insertDomain, event, registryLock, workLock } from '../persistence/transaction.js';
@@ -240,6 +241,9 @@ export class Jobs {
    const bytes=await this.artifacts!.read(receiptEvidence.artifact_key,receiptEvidence.sha256,Number(receiptEvidence.bytes));
    if(hash(body)!==evidence.sha256 || body.length!==Number(evidence.bytes) || hash(bytes)!==receiptEvidence.sha256 || bytes.length!==Number(receiptEvidence.bytes) || observation.context_hash!==hash(bytes))throw new Error('artifact_integrity_failed');
    const receipt=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(bytes));validate(base+'http-receipt.schema.json',receipt);
+   if(!bytes.equals(Buffer.from(canonical(receipt))))throw new Error('unreviewed_fixture');
+   const {body_evidence_id:_body,...metadata}=receipt;assertReviewedHttpFixtureMetadata(metadata);
+   assertReviewedRawFixture({mimeType:evidence.mime_type,sourceUri:evidence.source_uri,bytes:body});
    if(receipt.body_evidence_id!==evidence.id || receipt.status_code===null || receipt.status_code>=300&&receipt.status_code<400 || receipt.method!=='GET' || receipt.url!==receipt.final_url || receipt.final_url!==evidence.source_uri || receiptEvidence.source_uri!==evidence.source_uri)throw new Error('snapshot_unavailable');
    // File reads precede the database knowledge-clock lock. Recheck the lease after I/O.
    await this.leased(c,l);

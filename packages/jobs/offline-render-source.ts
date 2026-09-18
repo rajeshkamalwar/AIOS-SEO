@@ -1,5 +1,6 @@
+import {assertReviewedRawFixture,assertReviewedHttpFixtureMetadata} from '../perception/reviewed-fixtures.js';
 import type { PoolClient } from 'pg';
-import { base,validate,hash,manifestHash } from '../contracts/index.js';
+import { base,validate,hash,manifestHash,canonical } from '../contracts/index.js';
 import { assertInputsEligible } from '../policy/input-eligibility.js';
 import { prepareOfflineRenderInput,type PreparedOfflineRenderInput } from '../perception/render-input.js';
 import { pageAllowed } from '../perception/robots-admission.js';
@@ -113,6 +114,9 @@ export function prepareOfflineRenderSource(l:Lease,source:OfflineRenderSource,ar
  let receipt:any;
  try{receipt=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(artifacts.get(context.id)!));}catch{throw new Error('artifact_integrity_failed');}
  validate(base+'http-receipt.schema.json',receipt);
+ if(!artifacts.get(context.id)!.equals(Buffer.from(canonical(receipt))))throw new Error('unreviewed_fixture');
+ const {body_evidence_id:_body,...metadata}=receipt;assertReviewedHttpFixtureMetadata(metadata);
+ assertReviewedRawFixture({mimeType:raw.mime_type,sourceUri:raw.source_uri,bytes:artifacts.get(raw.id)!});
  const snap=source.snapshot;
  if(obs.sensor_id!=='http-fixture'||obs.subject_id!==l.siteId||context.mime_type!=='application/json'||obs.context_hash!==context.sha256||receipt.body_evidence_id!==raw.id||receipt.method!=='GET'||receipt.status_code===null||receipt.status_code>=300&&receipt.status_code<400||receipt.status_code!==Number(snap.status_code)||receipt.truncated!==snap.truncated||receipt.url!==receipt.final_url||receipt.final_url!==source.page.url||raw.source_uri!==receipt.final_url||context.source_uri!==raw.source_uri||raw.sha256!==snap.content_hash||+new Date(snap.observed_at)!==+new Date(obs.observed_at)||+new Date(raw.captured_at)!==+new Date(obs.observed_at)||+new Date(context.captured_at)!==+new Date(obs.observed_at))throw new Error('snapshot_context_invalid');
  const contentTypes=receipt.headers.filter((h:{name:string})=>h.name.toLowerCase()==='content-type');

@@ -2,7 +2,7 @@ import {test,before,after,afterEach} from 'node:test';
 import assert from 'node:assert/strict';
 import pg from 'pg';
 import {randomUUID,generateKeyPairSync,sign} from 'node:crypto';
-import {readFile} from 'node:fs/promises';
+import {readFile,writeFile} from 'node:fs/promises';
 import {join} from 'node:path';
 import {spawnSync} from 'node:child_process';
 import {migrate} from '../packages/persistence/migrate.js';
@@ -168,4 +168,46 @@ test('Rejected ancestor-index admission bundle blocks its descendant without rej
  const f=await setup(Buffer.from('<title>Descendant service</title>'),'text/html',{},'services',true);assert.notEqual(f.admission,f.leafAdmission);
  assert.equal((await worker.prepareOfflineRenderFixture(f.lease,f.snapshot)).prepared.state,'prepared');
  await rejectSource(f,f.admission);await assert.rejects(worker.prepareOfflineRenderFixture(f.lease,f.snapshot),/audit_input_rejected/);
+});
+
+// Migration-owner reseeding simulates historically accepted bytes. Runtime APIs
+// cannot rewrite immutable Evidence; this fixture deliberately bypasses triggers.
+async function legacyBytes(id:string,bytes:Buffer){
+ const row=(await admin.query('SELECT * FROM aios.evidence WHERE id=$1',[id])).rows[0];
+ await writeFile(join(process.env.AIOS_TEST_ROOT!,'render-source-blobs',row.artifact_key.replaceAll('/','_')),bytes);
+ const c=await admin.connect();try{await c.query('BEGIN');await c.query("SET LOCAL session_replication_role='replica'");
+  await c.query('UPDATE aios.evidence SET sha256=$2,bytes=$3 WHERE id=$1',[id,hash(bytes),bytes.length]);
+  await c.query('UPDATE aios.page_snapshot SET content_hash=$2 WHERE evidence_id=$1',[id,hash(bytes)]);
+  await c.query('UPDATE aios.observation SET context_hash=$2 WHERE id IN (SELECT observation_id FROM aios.http_fixture_acceptance WHERE receipt_evidence_id=$1)',[id,hash(bytes)]);
+  await c.query('COMMIT');
+ }catch(error){await c.query('ROLLBACK');throw error;}finally{c.release();}
+}
+test('Legacy unsafe HTML cannot be projected or prepared even with matching retained hashes',async()=>{
+ const f=await setup(),unsafe=Buffer.from('<form><input value="HISTORICAL_SECRET"></form>');
+ await legacyBytes(f.receipt.bodyEvidenceId!,unsafe);const before=await counts();
+ await assert.rejects(worker.prepareOfflineRenderFixture(f.lease,f.snapshot),/unreviewed_fixture/);
+ await assert.rejects(worker.projectHttpFixture(f.lease,f.receipt.observationId),/unreviewed_fixture/);
+ assert.deepEqual(await counts(),before);
+ const row=(await admin.query('SELECT sha256,redaction_version,state FROM aios.evidence WHERE id=$1',[f.receipt.bodyEvidenceId])).rows[0];
+ assert.deepEqual(row,{sha256:hash(unsafe),redaction_version:'none-v1',state:'available'});
+});
+test('Legacy unsafe robots and sitemap bytes cannot enter a frontier or render preparation',async()=>{
+ for(const kind of ['robots','sitemap'] as const){
+  const f=await setup(),selected=f[kind],unsafe=Buffer.from(kind==='robots'?'# HISTORICAL_SECRET\nUser-agent: *\nAllow: /\n':'<!-- HISTORICAL_SECRET --><urlset/>');
+  await legacyBytes(selected.bodyEvidenceId!,unsafe);
+  await assert.rejects(new FixtureFrontier(runtime,deletions,blobs).discoverSitemap(p,f.site,f.run,f.bundle,f.sitemap.observationId,f.robots.observationId),/unreviewed_fixture/);
+  if(kind==='robots')await assert.rejects(worker.prepareOfflineRenderFixture(f.lease,f.snapshot),/unreviewed_fixture/);
+  await jobs.cancel(p,f.site,f.run);
+ }
+});
+test('Legacy receipt metadata and duplicate-key bytes cannot be laundered by source reuse',async()=>{
+ for(const mode of ['header','duplicate'] as const){
+  const f=await setup(),row=(await admin.query('SELECT * FROM aios.evidence WHERE id=$1',[f.receipt.receiptEvidenceId])).rows[0];
+  const bytes=await blobs.read(row.artifact_key,row.sha256,Number(row.bytes)),receipt=JSON.parse(bytes.toString());
+  const changed=mode==='duplicate'?Buffer.from('{"url":"HISTORICAL_SECRET",'+bytes.toString().slice(1)):Buffer.from(canonical({...receipt,headers:[...receipt.headers,{name:'etag',value:'HISTORICAL_SECRET'}]}));
+  await legacyBytes(row.id,changed);
+  await assert.rejects(worker.prepareOfflineRenderFixture(f.lease,f.snapshot),/unreviewed_fixture/);
+  await assert.rejects(worker.projectHttpFixture(f.lease,f.receipt.observationId),/unreviewed_fixture/);
+  await jobs.cancel(p,f.site,f.run);
+ }
 });

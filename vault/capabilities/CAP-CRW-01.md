@@ -8,10 +8,10 @@ local_scope_kind: "partial_behavior"
 completion: "INCOMPLETE"
 canonical_release: "unreleased"
 specs: ["docs/14-CAPABILITY-TAXONOMY.md", "docs/15-CAPABILITY-CONTRACT.md", "docs/18-BUSINESS-ARCHETYPE-MATRIX.md", "spec/examples/skill-public-discovery.json"]
-implementation: ["packages/perception/url.ts", "packages/perception/robots-admission.ts", "packages/jobs/frontier.ts", "packages/jobs/frontier-links.ts", "packages/jobs/frontier-context.ts", "packages/persistence/index.ts", "packages/jobs/isolated-http-fixture-supervisor.ts", "packages/jobs/docker-http-fixture.ts", "packages/perception/http-fixture-broker.ts"]
-tests: ["tests/site-scope.test.ts", "tests/frontier-persistence.test.ts", "tests/frontier-links.test.ts", "tests/sitemap-index-persistence.test.ts", "tests/jobs.test.ts", "tests/http-isolated.test.ts", "tests/http-fixture-broker.test.ts"]
-reports: ["docs/40-POST-M5-INTEGRATION-REALITY-REVIEW.md", "docs/41-NEXT-PHASE-READINESS-PLAN.md", "docs/reports/N1-IMPLEMENTATION.md", "reports/ISOLATED-HTTP-EGRESS.md"]
-gaps: ["GAP-DOM-CRW", "GAP-004", "GAP-007", "GAP-041"]
+implementation: ["packages/perception/url.ts", "packages/perception/robots-admission.ts", "packages/jobs/frontier.ts", "packages/jobs/frontier-links.ts", "packages/jobs/frontier-context.ts", "packages/persistence/index.ts", "packages/jobs/isolated-http-fixture-supervisor.ts", "packages/jobs/docker-http-fixture.ts", "packages/perception/http-fixture-broker.ts", "packages/perception/reviewed-fixtures.ts"]
+tests: ["tests/site-scope.test.ts", "tests/frontier-persistence.test.ts", "tests/frontier-links.test.ts", "tests/sitemap-index-persistence.test.ts", "tests/jobs.test.ts", "tests/http-isolated.test.ts", "tests/http-fixture-broker.test.ts", "tests/reviewed-fixtures.test.ts", "tests/http-evidence.test.ts", "tests/offline-render-source.test.ts"]
+reports: ["docs/40-POST-M5-INTEGRATION-REALITY-REVIEW.md", "docs/41-NEXT-PHASE-READINESS-PLAN.md", "docs/reports/N1-IMPLEMENTATION.md", "reports/ISOLATED-HTTP-EGRESS.md", "reports/REVIEWED-FIXTURE-RETENTION.md"]
+gaps: ["GAP-DOM-CRW", "GAP-004", "GAP-007", "GAP-041", "GAP-039"]
 scope: "Synthetic scope receipts, robots-pinned durable sitemap/index/link frontier admission and loopback HTTP-to-PageSnapshot composition."
 baseline: "2b6d527"
 required_stages: "Canonical15/18/28/35 applicable evidence, implementation, independent test/release, real-world and production proof; applicability and stage evidence must be explicitly reviewed before COMPLETE."
@@ -52,3 +52,7 @@ Open gaps: [GAP-DOM-CRW](../gaps/GAP-DOM-CRW.md), [GAP-004](../gaps/GAP-004.md),
 - 2026-09-18 after6131ee2: isolated local HTTP prerequisite under implementation; [GAP-041](../gaps/GAP-041.md) and its report track verification. Full capability maturity unchanged.
 
 - 2026-09-18: [isolated HTTP report](../../reports/ISOLATED-HTTP-EGRESS.md) verifies GAP-041 local prerequisite (509 source/97 compiled/2 actual Docker cases). No full-capability maturity promotion.
+
+- 2026-09-18 aftere937e79: [reviewed fixture retention](../../reports/REVIEWED-FIXTURE-RETENTION.md) progresses GAP-039 with exact retained-byte admission and legacy read/reuse checks; verification pending, full maturity unchanged.
+
+- 2026-09-18: GAP-039 local admission/reuse closure verified:533 source/130 compiled tests and three actual browser paths. Full capability remains DEFINED/INCOMPLETE; customer retention and deployment are not certified.

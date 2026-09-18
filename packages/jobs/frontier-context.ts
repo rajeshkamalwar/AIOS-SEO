@@ -1,5 +1,6 @@
+import {assertReviewedFixtureUrl,assertReviewedRawFixture,assertReviewedHttpFixtureMetadata} from '../perception/reviewed-fixtures.js';
 import type { PoolClient } from 'pg';
-import { base,validate,hash } from '../contracts/index.js';
+import { base,validate,hash,canonical } from '../contracts/index.js';
 import type { Principal } from '../persistence/index.js';
 import { scope,registryLock,workLock } from '../persistence/transaction.js';
 import type { LocalBlobs } from '../evidence/index.js';
@@ -53,13 +54,18 @@ export async function frontierContext(c:PoolClient,p:Principal,site:string,run:s
    if(!acceptedScope)throw new Error('scope_receipt_required');
    const scopeObservation=await observation(acceptedScope.observation_id),scopeEvidence=await evidence(acceptedScope.evidence_id);
    const receipt=JSON.parse(scopeEvidence.bytes.toString('utf8'));validate(base+'scope-receipt.schema.json',receipt);
+   if(!scopeEvidence.bytes.equals(Buffer.from(canonical(receipt))))throw new Error('unreviewed_fixture');
+   assertReviewedFixtureUrl(receipt.submitted_url);assertReviewedFixtureUrl(receipt.normalized_origin+'/');
    if(scopeEvidence.row.source_class!=='internal_policy'||scopeObservation.sensor_id!=='site-scope'||scopeObservation.subject_id!==run||scopeObservation.context_hash!==hash(scopeEvidence.bytes)||receipt.tenant_id!==p.tenantId||receipt.site_id!==site||receipt.crawl_id!==run||receipt.submitted_by!==p.userId||receipt.submitted_url!==r.submitted_url||receipt.normalized_origin!==r.normalized_origin||receipt.site_version!==Number(r.site_version)||receipt.deletion_epoch!==Number(r.deletion_epoch)||Date.parse(receipt.expires_at)!==Date.parse(r.budget.deadline))throw new Error('scope_receipt_invalid');
    const http=async(id:string)=>{
     const obs=await observation(id);if(obs.sensor_id!=='http-fixture')throw new Error('source_unavailable');
     const accepted=(await c.query('SELECT * FROM http_fixture_acceptance WHERE tenant_id=$1 AND site_id=$2 AND observation_id=$3',[p.tenantId,site,id])).rows[0];
     if(!accepted)throw new Error('source_unavailable');
     const context=await evidence(accepted.receipt_evidence_id),value=JSON.parse(context.bytes.toString('utf8'));validate(base+'http-receipt.schema.json',value);
+    if(!context.bytes.equals(Buffer.from(canonical(value))))throw new Error('unreviewed_fixture');
+    const {body_evidence_id:_body,...metadata}=value;assertReviewedHttpFixtureMetadata(metadata);
     const body=accepted.body_evidence_id?await evidence(accepted.body_evidence_id):null;
+    if(body)assertReviewedRawFixture({mimeType:body.row.mime_type,sourceUri:body.row.source_uri,bytes:body.bytes});
     if(context.row.mime_type!=='application/json'||obs.context_hash!==hash(context.bytes)||value.body_evidence_id!==accepted.body_evidence_id||value.error!==null||value.truncated||value.method!=='GET'||value.url!==value.final_url||value.final_url!==context.row.source_uri||new URL(value.final_url).origin!==r.normalized_origin||body&&body.row.source_uri!==value.final_url)throw new Error('source_unavailable');
     const provenance=(await c.query("SELECT target_id FROM record_link WHERE tenant_id=$1 AND owner_id=$2 AND field_name='evidence_ids'",[p.tenantId,id])).rows.map(x=>x.target_id);
     if(!provenance.includes(accepted.receipt_evidence_id)||body&&!provenance.includes(accepted.body_evidence_id))throw new Error('source_unavailable');

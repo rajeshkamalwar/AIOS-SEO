@@ -2,7 +2,7 @@ import { test,before,after,afterEach } from 'node:test';
 import assert from 'node:assert/strict';
 import pg from 'pg';
 import { randomUUID } from 'node:crypto';
-import { readFile } from 'node:fs/promises';
+import { readFile,writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { Ledger,type Principal,sweepOrphans } from '../packages/persistence/index.js';
 import { LocalBlobs } from '../packages/evidence/index.js';
@@ -93,4 +93,26 @@ test('scope relation is RLS protected and immutable; tombstone fences a stale da
  assert.equal((await runtime.query('SELECT * FROM aios.site_scope_acceptance')).rowCount,0);await assert.rejects(runtime.query('DELETE FROM aios.site_scope_acceptance'),/permission denied/);
  await deletions.record(p.tenantId,freshSite);await assert.rejects(ledger.acceptSiteScopeFixture(p,freshSite,crawl,deletions),/deleted_scope/);
  assert.equal((await admin.query('SELECT deletion_epoch FROM aios.tenant WHERE id=$1',[p.tenantId])).rows[0].deletion_epoch,'0');
+});
+
+test('Legacy unreviewed scope URLs fail before receipt upload or evidence retention',async()=>{
+ const crawl=await run(),before=(await admin.query('SELECT count(*) AS n FROM aios.evidence')).rows[0].n,put=blobs.put.bind(blobs);let uploads=0;
+ blobs.put=async(key,bytes)=>{uploads++;await put(key,bytes);};
+ try{
+  for(const url of ['https://scope.example/?note=PRIVATE','https://scope.example/PRIVATE']){
+   await admin.query('UPDATE aios.site SET submitted_url=$2 WHERE id=$1',[site,url]);
+   await assert.rejects(ledger.acceptSiteScopeFixture(p,site,crawl,deletions),/unreviewed_fixture/);
+  }
+  assert.equal(uploads,0);assert.equal((await admin.query('SELECT count(*) AS n FROM aios.evidence')).rows[0].n,before);
+ }finally{blobs.put=put;await admin.query("UPDATE aios.site SET submitted_url='https://scope.example/' WHERE id=$1",[site]);}
+});
+test('Legacy generated scope receipt cannot expose arbitrary query metadata despite matching digest',async()=>{
+ const crawl=await run(),a=await ledger.acceptSiteScopeFixture(p,site,crawl,deletions),row=(await admin.query('SELECT * FROM aios.evidence WHERE id=$1',[a.evidenceId])).rows[0];
+ const receipt=JSON.parse((await blobs.read(row.artifact_key,row.sha256,Number(row.bytes))).toString());
+ const bytes=Buffer.from(canonical({...receipt,submitted_url:'https://scope.example/?note=PRIVATE'}));
+ await writeFile(join(process.env.AIOS_TEST_ROOT!,'site-scope-blobs',row.artifact_key.replaceAll('/','_')),bytes);
+ const c=await admin.connect();try{await c.query('BEGIN');await c.query("SET LOCAL session_replication_role='replica'");await c.query('UPDATE aios.evidence SET sha256=$2,bytes=$3 WHERE id=$1',[a.evidenceId,hash(bytes),bytes.length]);await c.query('UPDATE aios.observation SET context_hash=$2 WHERE id=$1',[a.observationId,hash(bytes)]);await c.query('COMMIT');}catch(error){await c.query('ROLLBACK');throw error;}finally{c.release();}
+ await assert.rejects(ledger.artifact(p,site,a.evidenceId),/unreviewed_fixture/);
+ assert.deepEqual(await blobs.read(row.artifact_key,hash(bytes),bytes.length),bytes);
+ assert.equal((await admin.query('SELECT redaction_version FROM aios.evidence WHERE id=$1',[a.evidenceId])).rows[0].redaction_version,'none-v1');
 });

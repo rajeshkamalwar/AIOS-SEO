@@ -1,6 +1,6 @@
 # Coverage matrix
 
-<!-- Derived record/source digest: 76290f629f4e0ce1dd65802e89007da5d8ebd01e3b8d72afface8201d712aac1; regenerate with npm run vault:update. This is not a test receipt. -->
+<!-- Derived record/source digest: 39b8ce1af956df32793d711c55d3d1808a10ff6d653f3b967cadb758898ac4cd; regenerate with npm run vault:update. This is not a test receipt. -->
 
 All 36 domains / 195 canonical rows are indexed. Full-capability maturity and local prerequisite maturity are separate. **No full-capability completion is asserted.** Names are navigation labels; definitions remain in [14](../docs/14-CAPABILITY-TAXONOMY.md) and inherited contracts15/18.
 
@@ -43,7 +43,7 @@ All 36 domains / 195 canonical rows are indexed. Full-capability maturity and lo
 | [CAP-AUDIT-02](capabilities/CAP-AUDIT-02.md) Skill and evidence readiness | DEFINED | partial_behavior / TESTED | INCOMPLETE | [GAP-DOM-AUDIT](gaps/GAP-DOM-AUDIT.md), [GAP-015](gaps/GAP-015.md) |
 | [CAP-AUDIT-03](capabilities/CAP-AUDIT-03.md) Work and cost control | DEFINED | partial_behavior / TESTED | INCOMPLETE | [GAP-005](gaps/GAP-005.md), [GAP-DOM-AUDIT](gaps/GAP-DOM-AUDIT.md), [GAP-015](gaps/GAP-015.md), [GAP-034](gaps/GAP-034.md), [GAP-036](gaps/GAP-036.md), [GAP-037](gaps/GAP-037.md), [GAP-038](gaps/GAP-038.md), [GAP-039](gaps/GAP-039.md), [GAP-040](gaps/GAP-040.md), [GAP-041](gaps/GAP-041.md) |
 | [CAP-AUDIT-04](capabilities/CAP-AUDIT-04.md) Decision and evaluation reliability | DEFINED | foundation_only / TESTED | INCOMPLETE | [GAP-DOM-AUDIT](gaps/GAP-DOM-AUDIT.md), [GAP-015](gaps/GAP-015.md) |
-| [CAP-AUDIT-05](capabilities/CAP-AUDIT-05.md) Enforcement and deployment integrity | DEFINED | partial_behavior / TESTED | INCOMPLETE | [GAP-DOM-AUDIT](gaps/GAP-DOM-AUDIT.md), [GAP-015](gaps/GAP-015.md), [GAP-041](gaps/GAP-041.md) |
+| [CAP-AUDIT-05](capabilities/CAP-AUDIT-05.md) Enforcement and deployment integrity | DEFINED | partial_behavior / TESTED | INCOMPLETE | [GAP-DOM-AUDIT](gaps/GAP-DOM-AUDIT.md), [GAP-015](gaps/GAP-015.md), [GAP-041](gaps/GAP-041.md), [GAP-039](gaps/GAP-039.md) |
 
 ## AUTH — 9 capabilities
 
@@ -138,7 +138,7 @@ All 36 domains / 195 canonical rows are indexed. Full-capability maturity and lo
 
 | Capability | Full maturity | Local evidence scope | Completion | Persistent gaps |
 | --- | --- | --- | --- | --- |
-| [CAP-CRW-01](capabilities/CAP-CRW-01.md) Scoped discovery | DEFINED | partial_behavior / TESTED | INCOMPLETE | [GAP-DOM-CRW](gaps/GAP-DOM-CRW.md), [GAP-004](gaps/GAP-004.md), [GAP-007](gaps/GAP-007.md), [GAP-041](gaps/GAP-041.md) |
+| [CAP-CRW-01](capabilities/CAP-CRW-01.md) Scoped discovery | DEFINED | partial_behavior / TESTED | INCOMPLETE | [GAP-DOM-CRW](gaps/GAP-DOM-CRW.md), [GAP-004](gaps/GAP-004.md), [GAP-007](gaps/GAP-007.md), [GAP-041](gaps/GAP-041.md), [GAP-039](gaps/GAP-039.md) |
 | [CAP-CRW-02](capabilities/CAP-CRW-02.md) Crawl prioritization | DEFINED | partial_behavior / TESTED | INCOMPLETE | [GAP-DOM-CRW](gaps/GAP-DOM-CRW.md), [GAP-004](gaps/GAP-004.md), [GAP-007](gaps/GAP-007.md) |
 | [CAP-CRW-03](capabilities/CAP-CRW-03.md) Trap and duplicate-work control | DEFINED | partial_behavior / TESTED | INCOMPLETE | [GAP-DOM-CRW](gaps/GAP-DOM-CRW.md), [GAP-004](gaps/GAP-004.md), [GAP-007](gaps/GAP-007.md) |
 | [CAP-CRW-04](capabilities/CAP-CRW-04.md) Coverage reconciliation | DEFINED | foundation_only / TESTED | INCOMPLETE | [GAP-DOM-CRW](gaps/GAP-DOM-CRW.md), [GAP-004](gaps/GAP-004.md), [GAP-007](gaps/GAP-007.md) |
@@ -278,7 +278,7 @@ All 36 domains / 195 canonical rows are indexed. Full-capability maturity and lo
 | [CAP-MEM-01](capabilities/CAP-MEM-01.md) As-known-then retrieval | DEFINED | partial_behavior / TESTED | INCOMPLETE | [GAP-DOM-MEM](gaps/GAP-DOM-MEM.md) |
 | [CAP-MEM-02](capabilities/CAP-MEM-02.md) Contradiction preservation | DEFINED | specification_only / NOT_DEFINED | INCOMPLETE | [GAP-DOM-MEM](gaps/GAP-DOM-MEM.md) |
 | [CAP-MEM-03](capabilities/CAP-MEM-03.md) Graph projection integrity | DEFINED | partial_behavior / TESTED | INCOMPLETE | [GAP-DOM-MEM](gaps/GAP-DOM-MEM.md), [GAP-026](gaps/GAP-026.md), [GAP-016](gaps/GAP-016.md) |
-| [CAP-MEM-04](capabilities/CAP-MEM-04.md) Retention and correction propagation | DEFINED | partial_behavior / TESTED | INCOMPLETE | [GAP-DOM-MEM](gaps/GAP-DOM-MEM.md) |
+| [CAP-MEM-04](capabilities/CAP-MEM-04.md) Retention and correction propagation | DEFINED | partial_behavior / TESTED | INCOMPLETE | [GAP-DOM-MEM](gaps/GAP-DOM-MEM.md), [GAP-039](gaps/GAP-039.md) |
 
 ## PAGE — 5 capabilities
 

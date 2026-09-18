@@ -66,6 +66,7 @@ export class ReadOnlyApi {
       if(code==='projection_pending')return failure(503,code,true);
       if(code==='policy_unavailable')return failure(503,'policy_blocked',true);
       if(code==='policy_blocked')return failure(503,code);
+      if(code==='unreviewed_fixture')return failure(503,'policy_blocked');
       if(code==='forbidden_destination')return failure(422,code);
       if(code==='admission_limited'||code==='budget_exhausted')return failure(429,'budget_exhausted',true);
       if(code==='invalid_input')return failure(400,code);
