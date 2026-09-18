@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { parseOfflineRenderResult } from '../packages/perception/render-result.ts';
 import { extractHtmlIsolated } from '../packages/perception/dom-isolated.ts';
 import { hash } from '../packages/contracts/index.ts';
+import { prepareOfflineRenderInput } from '../packages/perception/render-input.ts';
 
 const directory=fileURLToPath(new URL('../workers/render-fixture/',import.meta.url));
 const seccomp=fileURLToPath(new URL('../workers/render-fixture/seccomp.json',import.meta.url));
@@ -19,7 +20,7 @@ function docker(args,{input='',timeoutMs=35000,allowFailure=false}={}){
   const child=spawn('docker',[...prefix,...args],{stdio:['pipe','pipe','pipe']});
   const out=[],err=[];let bytes=0,failure;
   const fail=(error)=>{failure??=error;child.kill('SIGKILL');};
-  const timer=setTimeout(()=>fail(new Error('docker_host_timeout')),timeoutMs);
+  const timer=setTimeout(()=>fail(new Error(`docker_host_timeout:${args[0]}:${timeoutMs}ms`)),timeoutMs);
   const collect=(parts)=>(chunk)=>{bytes+=chunk.length;if(bytes>maxOutput){fail(new Error('docker_output_limit'));return;}parts.push(chunk);};
   child.stdout.on('data',collect(out));child.stderr.on('data',collect(err));
   child.on('error',(error)=>{failure??=error;});
@@ -109,6 +110,14 @@ for(const input of [JSON.stringify({url,html:'\ud800'}),Buffer.concat([Buffer.fr
 }
 console.log('PASS exact input-byte binding includes empty HTML and rejects malformed input encoding');
 
+const legacyRaw=Buffer.concat([Buffer.from('<!doctype html><title>caf'),Buffer.from([0xe9]),Buffer.from('</title><main>fixture</main>')]);
+const prepared=prepareOfflineRenderInput(legacyRaw,{evidenceId:randomUUID(),sha256:hash(legacyRaw),bytes:legacyRaw.length,sourceUri:url,contentType:'text/html; charset=windows-1252',truncated:false});
+assert.equal(prepared.state,'prepared');assert.equal(prepared.source.rawSha256,hash(legacyRaw));assert.notEqual(prepared.inputSha256,prepared.source.rawSha256);
+const transcoded=await render({url:prepared.url,html:prepared.html});
+assert.equal(transcoded.inputSha256,prepared.inputSha256);
+assert.ok(transcoded.samples.every(sample=>sample.dom.includes('<title>café</title>')));
+console.log('PASS declared-charset replay preserves distinct raw and UTF-8 input provenance');
+
 const invalidEncoding={...positive,samples:positive.samples.map(s=>({...s,dom:'INVALID_UTF8_MARKER'}))};
 const invalidBytes=Buffer.from(JSON.stringify(invalidEncoding));
 invalidBytes[invalidBytes.indexOf('INVALID_UTF8_MARKER')]=0xff;
@@ -168,5 +177,5 @@ const hung=await render({url,html:'<!doctype html><script>while(true){}</script>
 assert.ok(['timeout','failed'].includes(hung.state));assert.deepEqual(hung.samples,[]);
 console.log('PASS hung page terminates without fabricated DOM');
 
-await assert.rejects(render({url,html:'<!doctype html><script>while(true){}</script>'},{timeoutMs:500}),/docker_host_timeout/);
+await assert.rejects(render({url,html:'<!doctype html><script>while(true){}</script>'},{timeoutMs:500}),/docker_host_timeout:run:500ms/);
 console.log('PASS host deadline kills and removes the named worker container');
