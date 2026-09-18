@@ -10,7 +10,7 @@ canonical_release: "unreleased"
 specs: ["docs/14-CAPABILITY-TAXONOMY.md", "docs/15-CAPABILITY-CONTRACT.md", "docs/18-BUSINESS-ARCHETYPE-MATRIX.md"]
 implementation: ["packages/skills/index.ts", "packages/jobs/index.ts", "packages/policy/input-eligibility.ts", "packages/runtime/index.ts", "packages/persistence/transaction.ts"]
 tests: ["tests/jobs.test.ts", "tests/input-eligibility.test.ts", "tests/foundation.test.ts", "tests/runtime.test.ts"]
-reports: ["docs/40-POST-M5-INTEGRATION-REALITY-REVIEW.md", "docs/41-NEXT-PHASE-READINESS-PLAN.md", "docs/reports/N1-IMPLEMENTATION.md"]
+reports: ["reports/PUBLICATION-AND-READ-SCOPE-HARDENING.md", "docs/40-POST-M5-INTEGRATION-REALITY-REVIEW.md", "docs/41-NEXT-PHASE-READINESS-PLAN.md", "docs/reports/N1-IMPLEMENTATION.md"]
 gaps: ["GAP-DOM-POL"]
 scope: "Current local tenant/role/lease/release/deletion/input-eligibility fences and fail-closed production activation."
 baseline: "2b6d527"
@@ -29,7 +29,7 @@ Implementation: [index.ts](../../packages/skills/index.ts), [index.ts](../../pac
 
 Tests: [jobs.test.ts](../../tests/jobs.test.ts), [input-eligibility.test.ts](../../tests/input-eligibility.test.ts), [foundation.test.ts](../../tests/foundation.test.ts), [runtime.test.ts](../../tests/runtime.test.ts)
 
-Evidence/reports: [40-POST-M5-INTEGRATION-REALITY-REVIEW.md](../../docs/40-POST-M5-INTEGRATION-REALITY-REVIEW.md), [41-NEXT-PHASE-READINESS-PLAN.md](../../docs/41-NEXT-PHASE-READINESS-PLAN.md), [N1-IMPLEMENTATION.md](../../docs/reports/N1-IMPLEMENTATION.md)
+Evidence/reports: ["reports/PUBLICATION-AND-READ-SCOPE-HARDENING.md", 40-POST-M5-INTEGRATION-REALITY-REVIEW.md](../../docs/40-POST-M5-INTEGRATION-REALITY-REVIEW.md), [41-NEXT-PHASE-READINESS-PLAN.md](../../docs/41-NEXT-PHASE-READINESS-PLAN.md), [N1-IMPLEMENTATION.md](../../docs/reports/N1-IMPLEMENTATION.md)
 
 Remaining: No full live capability dispatch surface, production OIDC/operator deployment or external tool authority activation.
 
@@ -48,3 +48,5 @@ Open gaps: [GAP-DOM-POL](../gaps/GAP-DOM-POL.md).
 ## History
 
 - 2026-09-18 baseline2b6d527: conservative inventory import; no maturity promotion from test counts or draft manifests.
+
+- 2026-09-18: [publication/access hardening](../../reports/PUBLICATION-AND-READ-SCOPE-HARDENING.md) withholds unverifiable persistent legacy projections. Injected fixture projections are not governed publication. [GAP-030](../gaps/GAP-030.md)/[GAP-015](../gaps/GAP-015.md) remain delivery dependencies; full maturity unchanged.

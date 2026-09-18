@@ -17,4 +17,6 @@ Acceptance is a design/authority disposition, not proof of full implementation o
 | ADR-011: Bounded discovery parsing | Accepted reversible engineering default. | [011-discovery-parser-conformance](../docs/decisions/011-discovery-parser-conformance.md) |
 | ADR-012: isolated offline render conformance | Accepted reversible local engineering decision. | [012-offline-render-conformance](../docs/decisions/012-offline-render-conformance.md) |
 
+| ADR-013: suppress unverifiable legacy publications | Accepted reversible engineering default | [013-unverified-publication-suppression](../docs/decisions/013-unverified-publication-suppression.md) |
+
 ADR-007 is the owner-accepted scoped-rejection decision. Its implementation, transition fixtures and subsequent current-input enforcement remain distinct traceable checkpoints; see [M2](milestones/M2.md) and [N1](milestones/N1.md). No accepted ADR grants website-write authority.

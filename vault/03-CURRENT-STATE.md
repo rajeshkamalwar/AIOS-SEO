@@ -1,10 +1,10 @@
 # Current state
 
-<!-- Derived record/source digest: b11b3e27ad9ed28c601fc952549f0afffb03e2f3d38d734b85e9318da1ecc197; regenerate with npm run vault:update. This is not a test receipt. -->
+<!-- Derived record/source digest: 6316432eef9c1dd7bd6099b247c57fbfb53284974648c55d992317e37a6d94b0; regenerate with npm run vault:update. This is not a test receipt. -->
 
-Latest recorded execution evidence: [API-CONTRACT-CORRECTIONS](milestones/API-CONTRACT-CORRECTIONS.md) — **369 normal / 33 compiled / not recorded Docker** at reported baseline `parent d7b721b`. Source/report digest changes above do not establish new test results. Read the linked report for environment, failures and scope.
+Latest recorded execution evidence: [PUBLICATION-SCOPE-HARDENING](milestones/PUBLICATION-SCOPE-HARDENING.md) — **389 normal / 45 compiled / not recorded Docker** at reported baseline `parent cd4a9d3`. Source/report digest changes above do not establish new test results. Read the linked report for environment, failures and scope.
 
-**Product incomplete.** M1–M5 local exits are reported; N0 customer activation and N1 live integration remain open. Real PostgreSQL transactions and private local blobs, loopback HTTP, persisted fixture frontiers/snapshots and isolated offline Chromium execute. Source fixtures, injected principals, test-authored publication/evaluator records and denied external resources remain explicit limitations. No capability is real-world or production-proven by those tests.
+**Product incomplete.** M1–M5 local exits are reported; N0 customer activation and N1 live integration remain open. Real PostgreSQL transactions and private local blobs, loopback HTTP, persisted fixture frontiers/snapshots and isolated offline Chromium execute. Source fixtures, injected principals, test-authored evaluator records and denied external resources remain explicit limitations. Legacy publication JSON is suppressed because independent publication receipts are absent; see GAP-030 and ADR-013. No capability is real-world or production-proven by those tests.
 
 The owner-approved N0 deployment/data-use profile gates customer processing. It does not block reversible local implementation. [Submission deadline](gaps/GAP-025.md), [graph integrity](gaps/GAP-026.md) and [remaining API parity](gaps/GAP-028.md) retain their own lifecycle histories; none grants website-write authority.
 
@@ -28,6 +28,7 @@ The owner-approved N0 deployment/data-use profile gates customer processing. It 
 | [VAULT-BASELINE](milestones/VAULT-BASELINE.md) | BASELINE_VERIFIED | TESTED |
 | [READONLY-CORRECTIONS](milestones/READONLY-CORRECTIONS.md) | SCOPED_LOCAL_EXIT_VERIFIED | TESTED |
 | [API-CONTRACT-CORRECTIONS](milestones/API-CONTRACT-CORRECTIONS.md) | PARTIAL_GAP_CHECKPOINT | TESTED |
+| [PUBLICATION-SCOPE-HARDENING](milestones/PUBLICATION-SCOPE-HARDENING.md) | SCOPED_LOCAL_EXIT_VERIFIED | TESTED |
 
 ## GitHub snapshot and authority
 

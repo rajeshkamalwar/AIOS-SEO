@@ -183,7 +183,8 @@ test('Postgres API returns current advanced replay and idempotent cancellation w
  const conflict=await api.handle({...request,body:{...request.body,url:'https://different-replay.example/'}});assert.equal(conflict.status,409);
  const hidden=await api.handle({...cancel,principal:{tenantId:randomUUID(),userId:randomUUID()}});assert.equal(hidden.status,404);
 });
-test('M5 durable API adapter submits and reopens a persisted run',async()=>{
+test('M5 durable run reopens but legacy fixture publication is not governed output',async(t)=>{
+ t.after(()=>stopAll());
  await loadFixtures();
  const robots=parseRobots('User-agent: *\nDisallow: /private\nSitemap: https://jobs.example/sitemap.xml');
  assert.equal(robots.rules.length,1); const sitemap=parseSitemap('<urlset><url><loc>https://jobs.example/</loc></url><url><loc>https://jobs.example/services</loc></url></urlset>','https://jobs.example/');assert.equal(sitemap.urls.length,2);
@@ -196,8 +197,41 @@ test('M5 durable API adapter submits and reopens a persisted run',async()=>{
  const claims=literalClaims('<title>Jobs Plumbing</title><p>Services: pipe repair. Serving Nagpur.</p>',evidenceId);
  const graph=graphProjection(site,1,now,[],[]);assert.equal(claims.length,3);assert.equal(graph.edges.length,0);
  await admin.query("INSERT INTO aios.publication(tenant_id,site_id,watermark,twin_revision_id,cards,graph,coverage,missing_sources) VALUES($1,$2,1,NULL,'[]',$3,$4,$5)",[p.tenantId,site,JSON.stringify({site_id:site,watermark:1,known_at:now,valid_at:now,view:'client',nodes:[],edges:[],truncated:false,next_cursor:null},),JSON.stringify({status:'unknown',requested:0,observed:0,failed:0,excluded:0,deferred:0,denominator:'unknown_population',reason:'not_connected'}),['gsc','analytics','bing','serp','rankings','ai_answers']]);
- const reopened=await api.handle({method:'GET',path:`/v1/sites/${site}/understanding`,principal:p});assert.equal(reopened.status,200);assert.equal((reopened.body as any).watermark,1);
+ for(const endpoint of ['understanding','graph']){
+  const reopened=await api.handle({method:'GET',path:`/v1/sites/${site}/${endpoint}`,principal:p});assert.equal(reopened.status,503);assert.equal((reopened.body as any).error.code,'policy_blocked');
+ }
  await stopAll();
+});
+test('Publication writes are denied for every non-owner service role',async(t)=>{
+ for(const [name,pool] of [['runtime',runtime],['operator',operator],['scheduler',scheduler],['evaluator',evaluator]] as const){
+  for(const operation of ['INSERT','UPDATE','DELETE'])await t.test(`${name} ${operation}`,async()=>{
+   const c=await pool.connect();
+   try {
+    await c.query('BEGIN');await c.query("SELECT set_config('app.tenant_id',$1,true),set_config('app.user_id',$2,true)",[p.tenantId,p.userId]);
+    const sql=operation==='INSERT'?"INSERT INTO aios.publication(tenant_id,site_id,watermark,cards,graph,coverage,missing_sources) VALUES($1,$2,999,'[]','{}','{}','{}')":operation==='UPDATE'?"UPDATE aios.publication SET cards='[]' WHERE tenant_id=$1 AND site_id=$2":"DELETE FROM aios.publication WHERE tenant_id=$1 AND site_id=$2";
+    await assert.rejects(c.query(sql,[p.tenantId,site]),/permission denied for table publication/);
+   } finally {await c.query('ROLLBACK');c.release();}
+  });
+ }
+});
+test('Arbitrary legacy publication content stays private and missing scope stays indistinguishable',async()=>{
+ const hostileSite=await ledger.registerSite(p,'https://hostile-publication.example/');
+ const api=new ReadOnlyApi(new PostgresReadOnlyStore(runtime,ledger,deletions),'csrf');
+ for(const endpoint of ['understanding','graph']){
+  const empty=await api.handle({method:'GET',path:`/v1/sites/${hostileSite}/${endpoint}`,principal:p});
+  assert.equal(empty.status,503);assert.equal((empty.body as any).error.code,'projection_pending');
+ }
+ const marker='NEVER_PUBLISH_UNVERIFIED_TENANT_CONTENT';
+ await admin.query("INSERT INTO aios.publication(tenant_id,site_id,watermark,cards,graph,coverage,missing_sources) VALUES($1,$2,1,$3,$4,'{}','{}')",[p.tenantId,hostileSite,JSON.stringify([{headline:marker}]),JSON.stringify({nodes:[{label:marker}],arbitrary:true})]);
+ const reopened=new pg.Pool({...cfg,user:'aios_runtime'});
+ try {
+  const fresh=new ReadOnlyApi(new PostgresReadOnlyStore(reopened,new Ledger(reopened,blobs,'local-synthetic-v1'),deletions),'csrf');
+  for(const endpoint of ['understanding','graph']){
+   const request={method:'GET',path:`/v1/sites/${hostileSite}/${endpoint}`,principal:p};
+   const blocked=await fresh.handle(request);assert.equal(blocked.status,503);assert.equal((blocked.body as any).error.code,'policy_blocked');assert.ok(!JSON.stringify(blocked).includes(marker));
+   const denied=await fresh.handle({...request,principal:{tenantId:randomUUID(),userId:randomUUID()}});assert.equal(denied.status,404);assert.ok(!JSON.stringify(denied).includes(marker));
+  }
+ } finally {await reopened.end();}
 });
 test('N1 submission creates one durable unadmitted seed atomically and idempotently', async()=>{
  const key=randomUUID(),b=budget();const id=await commands.submit(p,site,key,b);

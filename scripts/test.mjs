@@ -96,6 +96,15 @@ try {
     },
   );
   process.exitCode = result.status ?? 1;
+  // This integration suite sorts before foundation.test.ts, which creates the
+  // cluster runtime role. Run it after foundation in the same disposable DB.
+  if (result.status === 0) {
+    const scoped = spawnSync(process.execPath, ["--import", "tsx", "--test", "tests/api-scope.test.ts"], {
+      stdio: "inherit",
+      env: { ...process.env, AIOS_TEST_SOCKET: socket, AIOS_TEST_DATA: data, AIOS_TEST_PG_BIN: pg, AIOS_TEST_ROOT: root },
+    });
+    process.exitCode = scoped.status ?? 1;
+  }
 } finally {
   if (started)
     spawnSync(

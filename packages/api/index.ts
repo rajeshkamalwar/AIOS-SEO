@@ -84,10 +84,33 @@ export const requestId=()=>randomUUID();
 /** Durable local-profile adapter. Authentication is supplied by the caller; it is never inferred from request data. */
 export class PostgresReadOnlyStore implements ReadOnlyStore {
   private jobs: Jobs;
-  constructor(private pool:Pool, private ledger:Ledger, deletion:DeletionLedger) { this.jobs=new Jobs(pool,deletion); }
+  constructor(private pool:Pool, private ledger:Ledger, private deletion:DeletionLedger) { this.jobs=new Jobs(pool,deletion); }
   async submit(p:Principal,url:string,key:string) { const site=await this.ledger.registerSite(p,url); const run=await this.jobs.submitDiscoveryReceipt(p,site,key); return {run_id:run.runId,site_id:site,replayed:run.replayed}; }
-  async run(p:Principal,id:string):Promise<Run> { return transaction(this.pool,"aios_runtime",async c=>{await scope(c,p,null,"read");const r=(await c.query("SELECT * FROM crawl WHERE tenant_id=$1 AND id=$2",[p.tenantId,id])).rows[0];if(!r)throw new Error("not_found");return {run_id:r.id,site_id:r.site_id,state:r.state,stage:r.stage,coverage:{status:r.state==='complete_in_scope'?"complete_in_scope":"unknown",requested:0,observed:0,failed:0,excluded:0,deferred:0,denominator:"unknown_population",reason:r.completion_reason},watermark:null,error:null};}); }
-  async understanding(p:Principal,site:string):Promise<Understanding> { return transaction(this.pool,"aios_runtime",async c=>{await scope(c,p,site,"read");const r=(await c.query("SELECT * FROM publication WHERE tenant_id=$1 AND site_id=$2 ORDER BY watermark DESC LIMIT 1",[p.tenantId,site])).rows[0];if(!r)throw new Error("projection_pending");return {site_id:site,twin_revision_id:r.twin_revision_id,watermark:Number(r.watermark),cards:r.cards,coverage:r.coverage,missing_sources:r.missing_sources};}); }
-  async graph(p:Principal,site:string):Promise<unknown> { return transaction(this.pool,"aios_runtime",async c=>{await scope(c,p,site,"read");const r=(await c.query("SELECT graph FROM publication WHERE tenant_id=$1 AND site_id=$2 ORDER BY watermark DESC LIMIT 1",[p.tenantId,site])).rows[0];if(!r)throw new Error("projection_pending");return r.graph;}); }
+  async run(p:Principal,id:string):Promise<Run> {
+    uuid(p.tenantId);uuid(p.userId);uuid(id);
+    return transaction(this.pool,"aios_runtime",async c=>{
+      // Resolve only under tenant RLS; a null-site authorization incorrectly
+      // rejects every site-limited membership. Never expose the row before
+      // authorizing the resolved site itself.
+      await c.query("SELECT set_config('app.tenant_id',$1,true),set_config('app.user_id',$2,true)",[p.tenantId,p.userId]);
+      const r=(await c.query("SELECT * FROM crawl WHERE tenant_id=$1 AND id=$2",[p.tenantId,id])).rows[0];
+      if(!r)throw new Error("not_found");
+      await scope(c,p,r.site_id,"read");
+      if(await this.deletion.contains(p.tenantId,r.site_id))throw new Error("deleted_scope");
+      return {run_id:r.id,site_id:r.site_id,state:r.state,stage:r.stage,
+        coverage:{status:r.state==='complete_in_scope'?"complete_in_scope":"unknown",requested:0,observed:0,failed:0,excluded:0,deferred:0,denominator:"unknown_population",reason:r.completion_reason},watermark:null,error:null};
+    });
+  }
+  /** No legacy JSON is a governed projection. Missing gates never count as pass. */
+  private async requireGovernedPublication(p:Principal,site:string):Promise<never> {
+    return transaction(this.pool,"aios_runtime",async c=>{
+      await scope(c,p,site,"read");
+      if(await this.deletion.contains(p.tenantId,site))throw new Error("deleted_scope");
+      const exists=await c.query("SELECT 1 FROM publication WHERE tenant_id=$1 AND site_id=$2 LIMIT 1",[p.tenantId,site]);
+      throw new Error(exists.rowCount?"policy_blocked":"projection_pending");
+    });
+  }
+  async understanding(p:Principal,site:string):Promise<Understanding> {return this.requireGovernedPublication(p,site);}
+  async graph(p:Principal,site:string):Promise<unknown> {return this.requireGovernedPublication(p,site);}
   async cancel(p:Principal,id:string) { const r=await this.run(p,id); return this.jobs.cancel(p,r.site_id,id); }
 }
