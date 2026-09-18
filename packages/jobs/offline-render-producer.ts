@@ -26,6 +26,11 @@ export class OfflineRenderFixtureProducer {
   if(!acceptance)throw new Error('render_result_not_acceptable');
   return {execution,acceptance};
  }
+ async collectAcceptAndProject(lease:Lease,options:{signal?:AbortSignal;wallTimeoutMs?:number}={}){
+  const accepted=await this.collectAndAccept(lease,options);
+  const projection=await this.jobs.projectOfflineRenderFixture(lease,accepted.acceptance.observationId);
+  return {...accepted,projection};
+ }
  private async execute(lease:Lease,options:{signal?:AbortSignal;wallTimeoutMs?:number},accept?:(input:OfflineRenderAcceptanceInput)=>Promise<void>):Promise<OfflineRenderExecutionReceipt>{
   const wall=options.wallTimeoutMs??25000;
   if(Object.keys(options).some(k=>!['signal','wallTimeoutMs'].includes(k))||!Number.isSafeInteger(wall)||wall<1||wall>25000)throw new Error('invalid_input');

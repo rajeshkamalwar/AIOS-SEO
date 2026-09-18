@@ -2,7 +2,10 @@ import { mkdtempSync, mkdirSync, rmSync, existsSync } from "node:fs";
 import { execFileSync, spawnSync } from "node:child_process";
 import { join } from "node:path";
 const compiledHttp = process.argv.includes("--compiled-http");
-if (process.argv.slice(2).length > 1 || process.argv.slice(2).some(arg => !["--render-acceptance-docker", "--render-acceptance", "--compiled-render-acceptance", "--compiled-http", "--render-source", "--compiled-render-source", "--compiled-render-lane", "--render-execution", "--compiled-render-execution"].includes(arg))) throw new Error("Unknown or combined test mode");
+if (process.argv.slice(2).length > 1 || process.argv.slice(2).some(arg => !["--render-projection", "--compiled-render-projection", "--render-projection-docker", "--render-acceptance-docker", "--render-acceptance", "--compiled-render-acceptance", "--compiled-http", "--render-source", "--compiled-render-source", "--compiled-render-lane", "--render-execution", "--compiled-render-execution"].includes(arg))) throw new Error("Unknown or combined test mode");
+const renderProjectionDocker = process.argv.includes("--render-projection-docker");
+const renderProjection = process.argv.includes("--render-projection") || renderProjectionDocker;
+const compiledRenderProjection = process.argv.includes("--compiled-render-projection");
 const renderAcceptanceDocker = process.argv.includes("--render-acceptance-docker");
 const renderAcceptance = process.argv.includes("--render-acceptance") || renderAcceptanceDocker;
 const compiledRenderAcceptance = process.argv.includes("--compiled-render-acceptance");
@@ -62,10 +65,10 @@ try {
   const result = spawnSync(
     process.execPath,
     compiledHttp ? ["--test", "--test-concurrency=1", "dist/tests/foundation.test.js", "dist/tests/http-lane.test.js"] : [
-      ...(compiledRenderAcceptance || compiledRenderSource || compiledRenderLane || compiledRenderExecution ? [] : ["--import", "tsx"]),
+      ...(compiledRenderProjection || compiledRenderAcceptance || compiledRenderSource || compiledRenderLane || compiledRenderExecution ? [] : ["--import", "tsx"]),
       "--test",
       "--test-concurrency=1",
-      ...(compiledRenderAcceptance ? ["dist/tests/foundation.test.js", "dist/tests/render-acceptance.test.js"] : renderAcceptance ? ["tests/foundation.test.ts", "tests/render-acceptance.test.ts"] : compiledRenderExecution ? ["dist/tests/foundation.test.js", "dist/tests/render-execution.test.js"] : renderExecution ? ["tests/foundation.test.ts", "tests/render-execution.test.ts"] : compiledRenderLane ? ["dist/tests/foundation.test.js", "dist/tests/render-lane.test.js"] : compiledRenderSource ? ["dist/tests/foundation.test.js", "dist/tests/offline-render-source.test.js"] : renderSource ? ["tests/foundation.test.ts", "tests/offline-render-source.test.ts"] : [
+      ...(compiledRenderProjection ? ["dist/tests/foundation.test.js", "dist/tests/render-projection.test.js"] : renderProjection ? ["tests/foundation.test.ts", "tests/render-projection.test.ts"] : compiledRenderAcceptance ? ["dist/tests/foundation.test.js", "dist/tests/render-acceptance.test.js"] : renderAcceptance ? ["tests/foundation.test.ts", "tests/render-acceptance.test.ts"] : compiledRenderExecution ? ["dist/tests/foundation.test.js", "dist/tests/render-execution.test.js"] : renderExecution ? ["tests/foundation.test.ts", "tests/render-execution.test.ts"] : compiledRenderLane ? ["dist/tests/foundation.test.js", "dist/tests/render-lane.test.js"] : compiledRenderSource ? ["dist/tests/foundation.test.js", "dist/tests/offline-render-source.test.js"] : renderSource ? ["tests/foundation.test.ts", "tests/offline-render-source.test.ts"] : [
       "tests/policy.test.ts",
       "tests/contracts.test.ts",
       "tests/blob.test.ts",
@@ -76,6 +79,7 @@ try {
       "tests/render-lane.test.ts",
       "tests/render-execution.test.ts",
       "tests/render-acceptance.test.ts",
+      "tests/render-projection.test.ts",
       "tests/render-privacy.test.ts",
       "tests/render-retention.test.ts",
       "tests/perception-persistence.test.ts",
@@ -105,6 +109,7 @@ try {
       stdio: "inherit",
       env: {
         ...process.env,
+        AIOS_TEST_RENDER_PROJECTION: renderProjectionDocker ? "1" : "0",
         AIOS_TEST_RENDER_ACCEPTANCE: renderAcceptanceDocker ? "1" : "0",
         AIOS_TEST_RENDER_EXECUTION: renderExecution ? "1" : "0",
         AIOS_TEST_RENDER_SOURCE: renderSource ? "1" : "0",
@@ -118,7 +123,7 @@ try {
   process.exitCode = result.status ?? 1;
   // This integration suite sorts before foundation.test.ts, which creates the
   // cluster runtime role. Run it after foundation in the same disposable DB.
-  if (result.status === 0 && !compiledHttp && !renderSource && !compiledRenderSource && !compiledRenderLane && !renderExecution && !compiledRenderExecution && !renderAcceptance && !compiledRenderAcceptance) {
+  if (result.status === 0 && !compiledHttp && !renderSource && !compiledRenderSource && !compiledRenderLane && !renderExecution && !compiledRenderExecution && !renderAcceptance && !compiledRenderAcceptance && !renderProjection && !compiledRenderProjection) {
     const scoped = spawnSync(process.execPath, ["--import", "tsx", "--test", "tests/api-scope.test.ts"], {
       stdio: "inherit",
       env: { ...process.env, AIOS_TEST_SOCKET: socket, AIOS_TEST_DATA: data, AIOS_TEST_PG_BIN: pg, AIOS_TEST_ROOT: root },

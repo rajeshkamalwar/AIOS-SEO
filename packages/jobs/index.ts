@@ -1,3 +1,4 @@
+import {projectOfflineRenderFixture,type OfflineRenderProjection} from './offline-render-projection.js';
 import type { Pool, PoolClient } from 'pg';
 import { randomUUID, randomInt } from 'node:crypto';
 import { base, validate, uuid, manifestHash, hash } from '../contracts/index.js';
@@ -169,6 +170,9 @@ export class Jobs {
    await validateOfflineRenderScope(c,l,r.submitted_by,current,bytes,this.deletions);
    await this.leased(c,l);return {result:prepared,sourceContextHash:current.fingerprint};
   });
+ }
+ async projectOfflineRenderFixture(l:Lease,observationId:string):Promise<OfflineRenderProjection>{
+  return projectOfflineRenderFixture(this.pool,this.deletions,this.artifacts,l,observationId);
  }
  async acceptOfflineRenderFixture(l:Lease,input:OfflineRenderAcceptanceInput):Promise<OfflineRenderAcceptance>{
   if(!this.renderAcceptorPool)throw new Error('render_acceptor_required');

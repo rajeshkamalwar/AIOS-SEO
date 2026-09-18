@@ -8,10 +8,10 @@ local_scope_kind: "foundation_only"
 completion: "INCOMPLETE"
 canonical_release: "unreleased"
 specs: ["docs/14-CAPABILITY-TAXONOMY.md", "docs/15-CAPABILITY-CONTRACT.md", "docs/18-BUSINESS-ARCHETYPE-MATRIX.md"]
-implementation: ["workers/render-fixture/worker.mjs", "workers/render-fixture/Dockerfile", "packages/perception/render-input.ts", "packages/perception/render-result.ts", "packages/perception/render-manifest.ts", "packages/persistence/migrations/010-render-records.sql", "packages/perception/dom.ts", "packages/jobs/offline-render-source.ts", "packages/jobs/offline-render-producer.ts", "packages/jobs/docker-offline-render.ts", "packages/jobs/offline-render-job.ts", "packages/skills/offline-render.ts", "packages/persistence/migrations/018-offline-render-job.sql", "packages/jobs/offline-render-acceptance.ts", "packages/perception/render-retention.ts", "packages/perception/render-privacy.ts", "packages/perception/render-privacy-isolated.ts", "packages/persistence/migrations/019-offline-render-acceptance.sql"]
-tests: ["scripts/test-render.mjs", "tests/render-input.test.ts", "tests/render-result.test.ts", "tests/render-manifest.test.ts", "tests/render-persistence.test.ts", "tests/dom.test.ts", "tests/offline-render-source.test.ts", "tests/render-execution.test.ts", "tests/render-acceptance.test.ts", "tests/render-privacy.test.ts", "tests/render-retention.test.ts"]
-reports: ["docs/40-POST-M5-INTEGRATION-REALITY-REVIEW.md", "docs/41-NEXT-PHASE-READINESS-PLAN.md", "docs/reports/N1-IMPLEMENTATION.md", "reports/OFFLINE-RENDER-SOURCE-PREPARATION.md", "reports/GOVERNED-OFFLINE-RENDER-EXECUTION.md", "reports/LOCAL-RENDER-EVIDENCE-ACCEPTANCE.md"]
-gaps: ["GAP-DOM-JS", "GAP-008", "GAP-009", "GAP-035", "GAP-037", "GAP-038", "GAP-039"]
+implementation: ["workers/render-fixture/worker.mjs", "workers/render-fixture/Dockerfile", "packages/perception/render-input.ts", "packages/perception/render-result.ts", "packages/perception/render-manifest.ts", "packages/persistence/migrations/010-render-records.sql", "packages/perception/dom.ts", "packages/jobs/offline-render-source.ts", "packages/jobs/offline-render-producer.ts", "packages/jobs/docker-offline-render.ts", "packages/jobs/offline-render-job.ts", "packages/skills/offline-render.ts", "packages/persistence/migrations/018-offline-render-job.sql", "packages/jobs/offline-render-acceptance.ts", "packages/perception/render-retention.ts", "packages/perception/render-privacy.ts", "packages/perception/render-privacy-isolated.ts", "packages/persistence/migrations/019-offline-render-acceptance.sql", "packages/jobs/offline-render-projection.ts", "packages/persistence/migrations/020-offline-render-projection.sql"]
+tests: ["scripts/test-render.mjs", "tests/render-input.test.ts", "tests/render-result.test.ts", "tests/render-manifest.test.ts", "tests/render-persistence.test.ts", "tests/dom.test.ts", "tests/offline-render-source.test.ts", "tests/render-execution.test.ts", "tests/render-acceptance.test.ts", "tests/render-privacy.test.ts", "tests/render-retention.test.ts", "tests/render-projection.test.ts"]
+reports: ["docs/40-POST-M5-INTEGRATION-REALITY-REVIEW.md", "docs/41-NEXT-PHASE-READINESS-PLAN.md", "docs/reports/N1-IMPLEMENTATION.md", "reports/OFFLINE-RENDER-SOURCE-PREPARATION.md", "reports/GOVERNED-OFFLINE-RENDER-EXECUTION.md", "reports/LOCAL-RENDER-EVIDENCE-ACCEPTANCE.md", "reports/LOCAL-RENDER-PROJECTION.md"]
+gaps: ["GAP-DOM-JS", "GAP-008", "GAP-009", "GAP-035", "GAP-037", "GAP-038", "GAP-039", "GAP-040"]
 scope: "Real isolated offline synthetic Chromium 0/2/5-second DOM sampling, measured timing/pending counts, raw-input hash binding, pure receipt/manifests and storage schema."
 baseline: "2b6d527"
 required_stages: "Canonical15/18/28/35 applicable evidence, implementation, independent test/release, real-world and production proof; applicability and stage evidence must be explicitly reviewed before COMPLETE."
@@ -31,7 +31,7 @@ Tests: [test-render.mjs](../../scripts/test-render.mjs), [render-input.test.ts](
 
 Evidence/reports: [40-POST-M5-INTEGRATION-REALITY-REVIEW.md](../../docs/40-POST-M5-INTEGRATION-REALITY-REVIEW.md), [41-NEXT-PHASE-READINESS-PLAN.md](../../docs/41-NEXT-PHASE-READINESS-PLAN.md), [N1-IMPLEMENTATION.md](../../docs/reports/N1-IMPLEMENTATION.md)
 
-Remaining: No governed persisted rendered-result acceptance, matched raw/render parity evaluator, hydration defect diagnosis or repeated dynamic-metadata assessment. Storage tests are owner-seeded, not accepted renderer output.
+Remaining: Local privacy-limited rendered Evidence/Observation acceptance is verified in GAP-038. Local typed projection and job completion are verified in GAP-040; matched raw/render parity evaluation, hydration diagnosis, repeated dynamic-metadata assessment and real-world capability evidence remain absent.
 
 Open gaps: [GAP-DOM-JS](../gaps/GAP-DOM-JS.md), [GAP-008](../gaps/GAP-008.md), [GAP-009](../gaps/GAP-009.md).
 
@@ -58,3 +58,7 @@ Open gaps: [GAP-DOM-JS](../gaps/GAP-DOM-JS.md), [GAP-008](../gaps/GAP-008.md), [
 - 2026-09-18 afterd04ebff: GAP-038 implements privacy-limited collection acceptance; verification pending. GAP-039 separately tracks upstream raw retention. No full capability or real-world maturity promotion.
 
 - 2026-09-18: GAP-038 scoped acceptance verified with477 application/88 compiled tests plus actual Docker artifact acceptance. Typed render projections, completed jobs and upstream raw privacy remain open; full capability status unchanged.
+
+- 2026-09-18 after8a86864: GAP-040 adds typed projection/completion for already accepted local privacy-limited collections; verification pending. No resource URLs are reconstructed or SEO parity conclusions inferred.
+
+- 2026-09-18: GAP-040 verified with487 application/85 compiled tests plus actual Docker-to-completed-job proof. Typed snapshots remain privacy-limited; no resource URLs, critical-text values or SEO conclusions are invented. Full capability maturity unchanged.

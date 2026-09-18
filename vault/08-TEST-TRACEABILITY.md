@@ -1,6 +1,6 @@
 # Test traceability
 
-<!-- Derived record/source digest: f96b32e802589e7898df9e649eb1b248735f95b83e41e24e087228475d501f7e; regenerate with npm run vault:update. This is not a test receipt. -->
+<!-- Derived record/source digest: 8697306aa3737153dfca368463a04719e5e81ce73cf3eda007a3f3fa556c76db; regenerate with npm run vault:update. This is not a test receipt. -->
 
 Counts below are successive snapshots, **never added together**. A referenced test is not proof of full capability acceptance. Fixture/loopback/offline browser results stay TESTED. Spec validation, production dependency audit and runtime execution establish different things.
 
@@ -31,6 +31,7 @@ Counts below are successive snapshots, **never added together**. A referenced te
 | [RENDER-TERMINAL-ACCOUNTING](milestones/RENDER-TERMINAL-ACCOUNTING.md) | [render-lane.ts](../packages/jobs/render-lane.ts), [render-supervisor.ts](../packages/jobs/render-supervisor.ts), [lease-context.ts](../packages/jobs/lease-context.ts), [017-render-supervisor.sql](../packages/persistence/migrations/017-render-supervisor.sql) | [render-lane.test.ts](../tests/render-lane.test.ts), [test.mjs](../scripts/test.mjs) | [RENDER-TERMINAL-ACCOUNTING.md](../reports/RENDER-TERMINAL-ACCOUNTING.md) / parent9620e9a |
 | [GOVERNED-OFFLINE-RENDER-EXECUTION](milestones/GOVERNED-OFFLINE-RENDER-EXECUTION.md) | [offline-render-producer.ts](../packages/jobs/offline-render-producer.ts), [docker-offline-render.ts](../packages/jobs/docker-offline-render.ts), [offline-render-job.ts](../packages/jobs/offline-render-job.ts), [offline-render.ts](../packages/skills/offline-render.ts), [018-offline-render-job.sql](../packages/persistence/migrations/018-offline-render-job.sql) | [render-execution.test.ts](../tests/render-execution.test.ts), [test.mjs](../scripts/test.mjs) | [GOVERNED-OFFLINE-RENDER-EXECUTION.md](../reports/GOVERNED-OFFLINE-RENDER-EXECUTION.md) / parentf9543a8 |
 | [LOCAL-RENDER-EVIDENCE-ACCEPTANCE](milestones/LOCAL-RENDER-EVIDENCE-ACCEPTANCE.md) | [offline-render-acceptance.ts](../packages/jobs/offline-render-acceptance.ts), [render-retention.ts](../packages/perception/render-retention.ts), [render-privacy.ts](../packages/perception/render-privacy.ts), [render-privacy-isolated.ts](../packages/perception/render-privacy-isolated.ts), [019-offline-render-acceptance.sql](../packages/persistence/migrations/019-offline-render-acceptance.sql) | [render-acceptance.test.ts](../tests/render-acceptance.test.ts), [render-privacy.test.ts](../tests/render-privacy.test.ts), [render-retention.test.ts](../tests/render-retention.test.ts) | [LOCAL-RENDER-EVIDENCE-ACCEPTANCE.md](../reports/LOCAL-RENDER-EVIDENCE-ACCEPTANCE.md) / parentd04ebff |
+| [LOCAL-RENDER-PROJECTION](milestones/LOCAL-RENDER-PROJECTION.md) | [offline-render-projection.ts](../packages/jobs/offline-render-projection.ts), [offline-render-producer.ts](../packages/jobs/offline-render-producer.ts), [020-offline-render-projection.sql](../packages/persistence/migrations/020-offline-render-projection.sql) | [render-projection.test.ts](../tests/render-projection.test.ts), [test.mjs](../scripts/test.mjs) | [LOCAL-RENDER-PROJECTION.md](../reports/LOCAL-RENDER-PROJECTION.md) / parent8a86864 |
 
 ## Capability and defect trace
 
@@ -64,6 +65,7 @@ Every [capability note](04-COVERAGE-MATRIX.md) maps its exact CAP requirement â†
 - [render-manifest.test.ts](../tests/render-manifest.test.ts)
 - [render-persistence.test.ts](../tests/render-persistence.test.ts)
 - [render-privacy.test.ts](../tests/render-privacy.test.ts)
+- [render-projection.test.ts](../tests/render-projection.test.ts)
 - [render-result.test.ts](../tests/render-result.test.ts)
 - [render-retention.test.ts](../tests/render-retention.test.ts)
 - [robots.test.ts](../tests/robots.test.ts)
