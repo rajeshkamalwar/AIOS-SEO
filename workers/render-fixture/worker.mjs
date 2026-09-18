@@ -24,6 +24,9 @@ function denied(url, method, resourceType, reason) {
     void browser?.close().catch(() => {});
   }
 }
+function assertRunning() {
+  if (halted) throw new Error(budgetExceeded ? 'attempt_budget_exhausted' : 'timeout');
+}
 function assertIsolation() {
   if (process.platform !== 'linux' || process.getuid() === 0) throw new Error('linux_nonroot_required');
   const status = readFileSync('/proc/self/status', 'utf8');
@@ -62,6 +65,7 @@ async function render(value) {
   if (!Object.values(checks).every(Boolean)) throw new Error('browser_sandbox_required');
   result.sandbox = checks;
   await diagnostic.close();
+  assertRunning();
   const context = await browser.newContext({ viewport: { width: 390, height: 844 }, locale: 'en-US',
     serviceWorkers: 'block', acceptDownloads: false, permissions: [], userAgent: 'AIOSSEOResearchBot/0.1' });
   let initial = true; let page;
@@ -84,17 +88,22 @@ async function render(value) {
   });
   page.on('download', download => { denied(download.url(), 'GET', 'download', 'offline_policy'); void download.cancel(); });
   page.on('dialog', dialog => void dialog.dismiss());
+  assertRunning();
   await page.goto(value.url, { waitUntil: 'domcontentloaded', timeout: 15000 });
+  assertRunning();
   const start = performance.now();
   for (const offsetMs of [0, 2000, 5000]) {
     while (performance.now() - start < offsetMs)
       await new Promise(resolve => setTimeout(resolve, Math.max(1, offsetMs - (performance.now() - start))));
+    assertRunning();
     if (page.url() !== value.url) { denied(page.url(), 'GET', 'navigation', 'context_changed'); break; }
     const dom = await page.content();
+    assertRunning();
     if (page.url() !== value.url) { denied(page.url(), 'GET', 'navigation', 'context_changed'); break; }
     if (Buffer.byteLength(dom) > maxBytes) { limited = true; break; }
     result.samples.push({ offsetMs, actualOffsetMs: Math.round(performance.now() - start), dom });
   }
+  assertRunning();
   result.state = limited ? 'policy_limited' : 'captured';
 }
 let deadline;
