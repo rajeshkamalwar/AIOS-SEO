@@ -1,6 +1,7 @@
 import type { Pool, PoolClient } from 'pg';
 import { randomUUID, randomInt } from 'node:crypto';
-import { base, validate, uuid, manifestHash } from '../contracts/index.js';
+import { base, validate, uuid, manifestHash, hash } from '../contracts/index.js';
+import type { LocalBlobs } from '../evidence/index.js';
 import type { Principal } from '../persistence/index.js';
 import { transaction, scope, tick, insertDomain, event, registryLock, workLock } from '../persistence/transaction.js';
 import { eligible } from '../skills/index.js';
@@ -11,7 +12,7 @@ export type BudgetKind=Exclude<keyof Budget,'deadline'>;
 export interface Lease { tenantId:string; siteId:string; runId:string; jobId:string; token:string; attempt:number; attemptId:string }
 const moneyKinds:BudgetKind[]=['http_requests','render_requests','render_pages','model_calls','tokens','cost_microusd'];
 export class Jobs {
- constructor(private pool:Pool, private deletions:DeletionLedger){}
+ constructor(private pool:Pool, private deletions:DeletionLedger, private artifacts?:Pick<LocalBlobs,'read'>){}
  private async locks(c:PoolClient){
   await c.query('SELECT pg_advisory_xact_lock_shared($1)',[registryLock]);
   await c.query('SELECT pg_advisory_xact_lock($1)',[workLock]);
@@ -137,6 +138,39 @@ export class Jobs {
    if(!r||actual>Number(r.amount))throw new Error('invalid_receipt');
    const digest=manifestHash({id,actual});if(r.state==='settled'){if(r.receipt_hash!==digest)throw new Error('conflict');return;}
    await c.query("UPDATE budget_reservation SET state='settled',actual=$3,receipt_hash=$4 WHERE tenant_id=$1 AND reservation_id=$2",[l.tenantId,id,actual,digest]);
+  });
+ }
+ /** Deterministic persistence projection; never a discovery/network or SEO inference handler. */
+ async projectHttpFixture(l:Lease,observationId:string):Promise<string>{
+  uuid(observationId);
+  if(!this.artifacts)throw new Error('artifact_adapter_required');
+  return transaction(this.pool,'aios_scheduler',async c=>{
+   await this.locks(c);const {j}=await this.leased(c,l);
+   if(j.kind!=='project')throw new Error('handler_not_installed');
+   const accepted=(await c.query('SELECT * FROM http_fixture_acceptance WHERE tenant_id=$1 AND site_id=$2 AND observation_id=$3',[l.tenantId,l.siteId,observationId])).rows[0];
+   if(!accepted?.body_evidence_id)throw new Error('snapshot_unavailable');
+   const rows=(await c.query("SELECT * FROM evidence WHERE tenant_id=$1 AND site_id=$2 AND id=ANY($3::uuid[]) AND state='available' AND expires_at>clock_timestamp()",[l.tenantId,l.siteId,[accepted.body_evidence_id,accepted.receipt_evidence_id]])).rows;
+   if(rows.length!==2)throw new Error('snapshot_unavailable');
+   const evidence=rows.find(r=>r.id===accepted.body_evidence_id)!,receiptEvidence=rows.find(r=>r.id===accepted.receipt_evidence_id)!;
+   const observation=(await c.query("SELECT * FROM observation WHERE tenant_id=$1 AND site_id=$2 AND id=$3 AND state IN ('observed','partial') AND fresh_until>clock_timestamp()",[l.tenantId,l.siteId,observationId])).rows[0];
+   if(!observation || receiptEvidence.mime_type!=='application/json' || !['text/html','application/xhtml+xml'].includes(evidence.mime_type))throw new Error('snapshot_unavailable');
+   const bundle=(await c.query("SELECT * FROM evidence_bundle WHERE tenant_id=$1 AND site_id=$2 AND id=$3 AND state='frozen'",[l.tenantId,l.siteId,j.input_ref])).rows[0];
+   const links=(await c.query('SELECT field_name,target_id FROM record_link WHERE tenant_id=$1 AND owner_id=$2',[l.tenantId,j.input_ref])).rows;
+   if(!bundle || Number(bundle.known_seq)<Math.max(Number(observation.knowledge_seq),Number(evidence.knowledge_seq),Number(receiptEvidence.knowledge_seq)) ||
+    !links.some(r=>r.field_name==='observation_ids'&&r.target_id===observationId) ||
+    ![evidence.id,receiptEvidence.id].every(id=>links.some(r=>r.field_name==='evidence_ids'&&r.target_id===id)))throw new Error('bundle_membership_required');
+   const body=await this.artifacts!.read(evidence.artifact_key,evidence.sha256,Number(evidence.bytes));
+   const bytes=await this.artifacts!.read(receiptEvidence.artifact_key,receiptEvidence.sha256,Number(receiptEvidence.bytes));
+   if(hash(body)!==evidence.sha256 || body.length!==Number(evidence.bytes) || hash(bytes)!==receiptEvidence.sha256 || bytes.length!==Number(receiptEvidence.bytes) || observation.context_hash!==hash(bytes))throw new Error('artifact_integrity_failed');
+   const receipt=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(bytes));validate(base+'http-receipt.schema.json',receipt);
+   if(receipt.body_evidence_id!==evidence.id || receipt.status_code===null || receipt.status_code>=300&&receipt.status_code<400 || receipt.method!=='GET' || receipt.url!==receipt.final_url || receipt.final_url!==evidence.source_uri || receiptEvidence.source_uri!==evidence.source_uri)throw new Error('snapshot_unavailable');
+   // File reads precede the database knowledge-clock lock. Recheck the lease after I/O.
+   await this.leased(c,l);
+   const snapshot=(await c.query('SELECT control.project_http_fixture($1,$2,$3,$4,$5,$6) AS id',[l.jobId,l.token,l.attempt,l.attemptId,observationId,bytes.toString('utf8')])).rows[0].id;
+   await c.query("UPDATE job SET state='completed',lease_token=NULL,lease_until=NULL,result_ref=$3 WHERE tenant_id=$1 AND job_id=$2",[l.tenantId,l.jobId,snapshot]);
+   await c.query("UPDATE job_attempt SET ended_at=clock_timestamp(),outcome='completed' WHERE tenant_id=$1 AND job_id=$2 AND attempt_no=$3",[l.tenantId,l.jobId,l.attempt]);
+   await event(c,l.tenantId,l.siteId,l.runId,l.runId,'job.completed',{job_id:l.jobId,result_ref:snapshot},2);
+   return snapshot;
   });
  }
  async complete(l:Lease,result:string){uuid(result);return transaction(this.pool,'aios_scheduler',async c=>{

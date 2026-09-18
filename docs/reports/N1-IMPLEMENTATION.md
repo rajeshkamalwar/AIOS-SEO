@@ -14,7 +14,7 @@ These are local conformance tests, not production firewall/sandbox certification
 
 ## Remaining N1 acceptance
 
-Robots conformance/admission, durable CrawlTarget/PageSnapshot acceptance, persistent run budgets, separately charged redirect hops, retries/fairness, failure receipt persistence, charset extraction and isolated rendering remain required. The collector is not integrated as a customer-facing live execution path. N0 deployment/privacy approval and independent network enforcement still gate customer URLs. No inference or website-write behavior was added.
+Governed live dispatch, complete durable frontier transitions, integrated per-hop accounting, retries/fairness and isolated rendering remain required. Subsequent checkpoints below record completed prerequisites; storage and synthetic fixture acceptance do not establish live-worker acceptance. The collector is not integrated as a customer-facing live execution path. N0 deployment/privacy approval and independent network enforcement still gate customer URLs. No inference or website-write behavior was added.
 
 ## Collector safety checkpoint verification
 
@@ -53,3 +53,13 @@ The integration fixture runs a real loopback server, observes robots first, pars
 HTML decoding now uses pinned `html-encoding-sniffer` 6.0.0 for the standard bounded meta/BOM prescan and Node's fatal decoder. This workload needs browser-compatible encoding detection rather than a hand-written meta regex. Unsupported/ambiguous declarations and undecodable bytes stay `parse_failed`; unsupported MIME stays `not_applicable`. Transcoded text does not replace original artifact bytes/hashes/locators. [Library behavior](https://github.com/jsdom/html-encoding-sniffer).
 
 Verification: 234 tests pass; typecheck/build and compiled imports pass; specification validation passes; production dependency audit has zero vulnerabilities. No new production profile or external authority was activated.
+
+## Fenced projection and persistent HTTP accounting checkpoint
+
+`Jobs.projectHttpFixture` derives a Page and PageSnapshot only from accepted synthetic HTTP artifacts in the leased project's frozen bundle. It checks exact membership, temporal cutoff, retained body/receipt digests, source linkage and lease/release/deletion/health gates again after artifact I/O. A narrow scheduler-only database function rechecks persisted authority; snapshot, provenance, job completion and outbox commit atomically. Page classification remains unknown. Both Page and snapshot provenance reject later runtime additions. Duplicate delivery, corruption, missing or foreign artifacts, cancellation/revocation, expired leases and outbox rollback have regressions.
+
+`HttpLane` reserves an HTTP attempt and worst-case decoded bytes durably before a future dispatch. Shared scheduler counters enforce two active attempts and one-second spacing across tenants/runs; dotted/undotted DNS names and HTTP/HTTPS variants share the conservative hostname lane without changing Site identity or receipt URLs; run caps are 750 attempts and 250MiB decoded, with a 5MiB maximum reservation. Generic budget accounting includes each attempt so its API cannot independently overspend or refund it. Reconnect preserves reservations and idempotent settlement. Unknown crash slots remain occupied until trusted settlement; cancellation is not evidence that a remote request stopped. These receipts grant no network authority, and no live dispatcher is installed.
+
+A combined integration test now follows real loopback HTTP robots admission through retained body/receipt evidence, a frozen bundle, signed fixture job, leased projection and snapshot readback through a fresh runtime pool. It proves a denied URL is never dispatched and preserves the actual HTTP status rather than inventing success. This does not establish a complete crawl runner, production egress or customer-domain execution.
+
+Verification: 248 tests pass; typecheck/build/specification validation pass; production dependency audit has zero vulnerabilities; diff hygiene passes.

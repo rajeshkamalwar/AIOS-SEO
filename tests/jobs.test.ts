@@ -5,7 +5,7 @@ import { randomUUID,generateKeyPairSync,sign } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { migrate } from '../packages/persistence/migrate.js';
-import { Ledger,type Principal } from '../packages/persistence/index.js';
+import { Ledger,type Principal,type HttpFixtureResult } from '../packages/persistence/index.js';
 import { LocalBlobs } from '../packages/evidence/index.js';
 import { Registry } from '../packages/skills/index.js';
 import { Jobs,type Budget,type Lease } from '../packages/jobs/index.js';
@@ -14,10 +14,14 @@ import { canonical,manifestHash } from '../packages/contracts/index.js';
 import { PostgresReadOnlyStore, ReadOnlyApi } from '../packages/api/index.js';
 import { parseRobots, parseSitemap, loadFixtures } from '../packages/perception/index.js';
 import { literalClaims, graphProjection } from '../packages/understanding/index.js';
+import { createServer } from 'node:http';
+import { collectPublicHop } from '../packages/perception/collector.js';
+import { requestPinned } from '../packages/perception/transport.js';
+import { robotsState, pageAllowed } from '../packages/perception/robots-admission.js';
 const cfg={host:process.env.AIOS_TEST_SOCKET!,port:55439,database:'aios_jobs_test'};
 const root=process.env.AIOS_TEST_ROOT!;
 let admin:pg.Pool,runtime:pg.Pool,scheduler:pg.Pool,operator:pg.Pool,evaluator:pg.Pool;
-let ledger:Ledger,commands:Jobs,worker:Jobs,registry:Registry,deletions:DeletionLedger;
+let ledger:Ledger,commands:Jobs,worker:Jobs,registry:Registry,deletions:DeletionLedger,blobs:LocalBlobs;
 let p:Principal,site:string,bundle:string,digest:string,evidenceId:string;
 const keys=generateKeyPairSync('ed25519'),reviewer=randomUUID(),author=randomUUID();
 const budget=():Budget=>({http_requests:10,render_requests:0,render_pages:0,model_calls:2,tokens:100,cost_microusd:1000,deadline:new Date(Date.now()+600000).toISOString()});
@@ -43,7 +47,7 @@ before(async()=>{
  for(const role of ['aios_scheduler','aios_operator','aios_evaluator'])await admin.query(`ALTER ROLE ${role} LOGIN`);
  runtime=new pg.Pool({...cfg,user:'aios_runtime'});scheduler=new pg.Pool({...cfg,user:'aios_scheduler'});operator=new pg.Pool({...cfg,user:'aios_operator'});evaluator=new pg.Pool({...cfg,user:'aios_evaluator'});
  p={tenantId:randomUUID(),userId:randomUUID()};await fixture('Tenant',{id:p.tenantId});await fixture('User',{id:p.userId,subject:p.userId});await fixture('Membership',{id:randomUUID(),tenant_id:p.tenantId,user_id:p.userId});
- ledger=new Ledger(runtime,await LocalBlobs.create(join(root,'jobs-blobs'),'local-synthetic-v1'),'local-synthetic-v1');
+ blobs=await LocalBlobs.create(join(root,'jobs-blobs'),'local-synthetic-v1');ledger=new Ledger(runtime,blobs,'local-synthetic-v1');
  site=await ledger.registerSite(p,'https://jobs.example/');
  const receipt=await ledger.accept(p,site,{attemptId:randomUUID(),sourceUri:'https://jobs.example/',capturedAt:new Date(Date.now()-1000).toISOString(),mimeType:'text/html',contextHash:manifestHash({fixture:true})},Buffer.from('fixture')); evidenceId=receipt.evidenceId;
  bundle=await ledger.freeze(p,site,await ledger.cutoff(p,site),[receipt.evidenceId],[receipt.observationId]);
@@ -147,8 +151,115 @@ test('N1 seed authority rejects missing scope and foreign URLs; event failure ro
  assert.equal((await admin.query('SELECT 1 FROM aios.crawl WHERE idempotency_key=$1',[key])).rowCount,0);
  assert.equal((await admin.query('SELECT count(*) FROM aios.crawl_target')).rows[0].count,before);
 });
+async function projectionFixture(changes:Partial<HttpFixtureResult>={},body:Buffer|null=Buffer.from('<title>Fixture</title>'),release=digest,pinned=true,kind='project'){
+ const receipt=await ledger.acceptHttpFixture(p,site,{attemptId:randomUUID(),capturedAt:new Date(Date.now()-1000).toISOString()},
+  {url:'https://jobs.example/',method:'GET',status_code:404,headers:[{name:'content-type',value:'text/html'}],final_url:'https://jobs.example/',truncated:false,error:null,...changes},body);
+ const input=pinned?await ledger.freeze(p,site,await ledger.cutoff(p,site),[...(receipt.bodyEvidenceId?[receipt.bodyEvidenceId]:[]),receipt.receiptEvidenceId],[receipt.observationId]):bundle;
+ const runId=await commands.submit(p,site,randomUUID(),budget());await commands.enqueue(p,site,runId,input,release,randomUUID(),kind);
+ const lease=(await worker.claim())!;assert.ok(lease);return {receipt,lease,input};
+}
+test('N1 project job derives persisted snapshot from exact pinned body and receipt',async()=>{
+ const f=await projectionFixture(),projector=new Jobs(scheduler,deletions,blobs),id=await projector.projectHttpFixture(f.lease,f.receipt.observationId);
+ const snapshot=(await admin.query('SELECT * FROM aios.page_snapshot WHERE id=$1',[id])).rows[0];
+ assert.equal(snapshot.status_code,'404');assert.equal(snapshot.truncated,false);assert.equal(snapshot.evidence_id,f.receipt.bodyEvidenceId);
+ assert.equal(snapshot.content_hash,(await admin.query('SELECT sha256 FROM aios.evidence WHERE id=$1',[f.receipt.bodyEvidenceId])).rows[0].sha256);
+ assert.equal(snapshot.main_text_hash,null);assert.equal(snapshot.valid_from,null);
+ const page=(await admin.query('SELECT * FROM aios.page WHERE id=$1',[snapshot.page_id])).rows[0];assert.equal(page.page_type,'unknown');assert.equal(page.url_key,'https://jobs.example/');
+ assert.equal((await admin.query('SELECT * FROM aios.record_link WHERE owner_id=$1',[id])).rowCount,4);
+ assert.equal((await admin.query('SELECT state,result_ref FROM aios.job WHERE job_id=$1',[f.lease.jobId])).rows[0].result_ref,id);
+ const client=await runtime.connect();
+ try{for(const owner of [id,page.id]){await client.query('BEGIN');await client.query("SELECT set_config('app.tenant_id',$1,true)",[p.tenantId]);await assert.rejects(client.query("INSERT INTO aios.record_link VALUES($1,$2,'provenance_ids',4,$3,'Evidence')",[p.tenantId,owner,evidenceId]),/immutable_reference_set/);await client.query('ROLLBACK');}}finally{await client.query('ROLLBACK');client.release();}
+ await assert.rejects(runtime.query('SELECT control.project_http_fixture($1,$2,$3,$4,$5,$6)',[f.lease.jobId,f.lease.token,f.lease.attempt,f.lease.attemptId,f.receipt.observationId,'{}']),/permission denied/);
+ await assert.rejects(projector.projectHttpFixture(f.lease,f.receipt.observationId),/lease_lost/);
+ assert.equal((await admin.query('SELECT * FROM aios.page_snapshot WHERE observation_id=$1',[f.receipt.observationId])).rowCount,1);await stopAll();
+});
+test('N1 projection requires project kind, pinned membership and retained body',async()=>{
+ const projector=new Jobs(scheduler,deletions,blobs);
+ const wrong=await projectionFixture({},undefined,digest,true,'audit');await assert.rejects(projector.projectHttpFixture(wrong.lease,wrong.receipt.observationId),/handler_not_installed/);await stopAll();
+ const unpinned=await projectionFixture({},undefined,digest,false);await assert.rejects(projector.projectHttpFixture(unpinned.lease,unpinned.receipt.observationId),/bundle_membership_required/);await stopAll();
+ const failed=await projectionFixture({status_code:null,error:{code:'timeout',retryable:true,detail:'fixture timeout',evidence_ids:[]}},null);await assert.rejects(projector.projectHttpFixture(failed.lease,failed.receipt.observationId),/snapshot_unavailable/);await stopAll();
+ const redirect=await projectionFixture({status_code:302});await assert.rejects(projector.projectHttpFixture(redirect.lease,redirect.receipt.observationId),/snapshot_unavailable/);await stopAll();
+});
+test('N1 projection verifies body hashes and rejects modified receipt bytes',async()=>{
+ const f=await projectionFixture();
+ await assert.rejects(new Jobs(scheduler,deletions).projectHttpFixture(f.lease,f.receipt.observationId),/artifact_adapter_required/);
+ const foreignSite=await ledger.registerSite(p,'https://foreign-jobs.example/');
+ const foreignReceipt=await ledger.acceptHttpFixture(p,foreignSite,{attemptId:randomUUID(),capturedAt:new Date(Date.now()-1000).toISOString()},
+  {url:'https://foreign-jobs.example/',method:'GET',status_code:200,headers:[{name:'content-type',value:'text/html'}],final_url:'https://foreign-jobs.example/',truncated:false,error:null},Buffer.from('foreign'));
+ await assert.rejects(new Jobs(scheduler,deletions,blobs).projectHttpFixture(f.lease,foreignReceipt.observationId),/snapshot_unavailable/);
+ const forged=new Jobs(scheduler,deletions,{read:async()=>Buffer.from('forged')});await assert.rejects(forged.projectHttpFixture(f.lease,f.receipt.observationId),/artifact_integrity_failed/);
+ const corruptReceipt=new Jobs(scheduler,deletions,{read:async(key,sha,size)=>key.endsWith(f.receipt.receiptEvidenceId)?Buffer.from('{}'):blobs.read(key,sha,size)});
+ await assert.rejects(corruptReceipt.projectHttpFixture(f.lease,f.receipt.observationId),/artifact_integrity_failed/);
+ assert.equal((await admin.query('SELECT * FROM aios.page_snapshot WHERE observation_id=$1',[f.receipt.observationId])).rowCount,0);await stopAll();
+});
+test('N1 projection rejects expired, revoked and cancelled leases',async()=>{
+ const projector=new Jobs(scheduler,deletions,blobs);
+ const expired=await projectionFixture();await admin.query("UPDATE aios.job SET lease_until=clock_timestamp()-interval '1 second' WHERE job_id=$1",[expired.lease.jobId]);await assert.rejects(projector.projectHttpFixture(expired.lease,expired.receipt.observationId),/lease_lost/);await stopAll();
+ const release=await approve(),revoked=await projectionFixture({},undefined,release);await registry.change(release,'revoked','projection fixture');await assert.rejects(projector.projectHttpFixture(revoked.lease,revoked.receipt.observationId),/skill_revoked/);await stopAll();
+ const cancelled=await projectionFixture();await commands.cancel(p,site,cancelled.lease.runId);await assert.rejects(projector.projectHttpFixture(cancelled.lease,cancelled.receipt.observationId),/run_fenced/);
+});
+test('N1 projection preserves partial status and rolls back domain writes if completion event fails',async()=>{
+ const f=await projectionFixture({truncated:true}),projector=new Jobs(scheduler,deletions,blobs);
+ await admin.query("CREATE FUNCTION aios.test_projection_failure() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'projection_event_failure'; END $$; CREATE TRIGGER test_projection_failure BEFORE INSERT ON aios.outbox FOR EACH ROW EXECUTE FUNCTION aios.test_projection_failure()");
+ try{await assert.rejects(projector.projectHttpFixture(f.lease,f.receipt.observationId),/projection_event_failure/);}finally{await admin.query('DROP TRIGGER test_projection_failure ON aios.outbox; DROP FUNCTION aios.test_projection_failure()');}
+ assert.equal((await admin.query('SELECT * FROM aios.page_snapshot WHERE observation_id=$1',[f.receipt.observationId])).rowCount,0);
+ assert.equal((await admin.query('SELECT state FROM aios.job WHERE job_id=$1',[f.lease.jobId])).rows[0].state,'leased');
+ const id=await projector.projectHttpFixture(f.lease,f.receipt.observationId);const r=(await admin.query('SELECT state,truncated FROM aios.page_snapshot WHERE id=$1',[id])).rows[0];assert.deepEqual(r,{state:'partial',truncated:true});await stopAll();
+});
+test('N1 actual loopback HTTP composes robots admission, evidence, frozen input and durable leased snapshot',async t=>{
+ const requests:string[]=[],pageBytes=Buffer.from('<title>Fixture service unavailable</title>');
+ const server=createServer((req,res)=>{
+  requests.push(req.url!);
+  if(req.url==='/robots.txt'){res.writeHead(200,{'content-type':'text/plain'});res.end('User-agent: *\nDisallow: /private\n');}
+  else if(req.url==='/services'){res.writeHead(404,{'content-type':'text/html; charset=utf-8'});res.end(pageBytes);}
+  else{res.writeHead(500);res.end('unexpected fixture request');}
+ });
+ await new Promise<void>(resolve=>server.listen(0,'127.0.0.1',resolve));
+ t.after(()=>new Promise<void>((resolve,reject)=>server.close(error=>error?reject(error):resolve())));
+ const address=server.address();assert.ok(address&&typeof address!=='string');
+ const evidence:string[]=[],observations:string[]=[];
+ const fetchFixture=async(path:string)=>{
+  const url='https://jobs.example'+path;
+  const response=await collectPublicHop(url,{
+   lookupAll:async()=>[{address:'93.184.216.34',family:4}],
+   // Explicit local test binding only. No external request or production adapter.
+   transport:async(source,_ip,limits)=>requestPinned(new URL(`http://fixture.invalid:${address.port}${source.pathname}`),{address:'127.0.0.1',family:4},limits),
+  });
+  const accepted=await ledger.acceptHttpFixture(p,site,{attemptId:randomUUID(),capturedAt:new Date().toISOString()},
+   {url,method:'GET',status_code:response.status,headers:Object.entries(response.headers).map(([name,value])=>({name,value})),final_url:response.finalUrl,truncated:response.truncated,error:null},response.body);
+  evidence.push(accepted.receiptEvidenceId);if(accepted.bodyEvidenceId)evidence.push(accepted.bodyEvidenceId);observations.push(accepted.observationId);
+  return {response,accepted};
+ };
+ const robots=await fetchFixture('/robots.txt'),policy=robotsState(robots.response);
+ assert.equal(policy.state,'known');
+ const admitted:string[]=[];
+ for(const path of ['/private','/services'])if(pageAllowed(policy,'https://jobs.example'+path))admitted.push(path);
+ assert.deepEqual(admitted,['/services']);
+ const page=await fetchFixture(admitted[0]!);assert.equal(page.response.status,404);assert.deepEqual(page.response.body,pageBytes);
+ assert.deepEqual(requests,['/robots.txt','/services']);
+ const frozen=await ledger.freeze(p,site,await ledger.cutoff(p,site),evidence,observations);
+ const runId=await commands.submit(p,site,randomUUID(),budget());await commands.enqueue(p,site,runId,frozen,digest,randomUUID(),'project');
+ const lease=(await worker.claim())!;assert.ok(lease);
+ const snapshotId=await new Jobs(scheduler,deletions,blobs).projectHttpFixture(lease,page.accepted.observationId);
+ const reopened=new pg.Pool({...cfg,user:'aios_runtime'});t.after(()=>reopened.end());
+ const persisted=new Ledger(reopened,blobs,'local-synthetic-v1');
+ assert.deepEqual(await persisted.artifact(p,site,page.accepted.bodyEvidenceId!),pageBytes);
+ const receipt=JSON.parse((await persisted.artifact(p,site,page.accepted.receiptEvidenceId)).toString());
+ assert.equal(receipt.status_code,page.response.status);assert.equal(receipt.body_evidence_id,page.accepted.bodyEvidenceId);
+ const c=await reopened.connect();
+ try{
+  await c.query('BEGIN');await c.query("SELECT set_config('app.tenant_id',$1,true),set_config('app.user_id',$2,true)",[p.tenantId,p.userId]);await c.query("SELECT aios.authorize('read',$1)",[site]);
+  const stored=(await c.query('SELECT * FROM aios.page_snapshot WHERE id=$1',[snapshotId])).rows[0];
+  assert.equal(stored.observation_id,page.accepted.observationId);assert.equal(stored.status_code,String(receipt.status_code));assert.equal(stored.crawl_id,runId);assert.equal(stored.truncated,false);
+  assert.equal((await c.query('SELECT state,result_ref FROM aios.job WHERE job_id=$1',[lease.jobId])).rows[0].result_ref,snapshotId);
+  await c.query('COMMIT');
+ }finally{await c.query('ROLLBACK');c.release();}
+ await stopAll();
+});
 test('M2 deletion tombstone survives a stale database epoch and blocks acceptance',async()=>{
+ const projected=await projectionFixture();await commands.cancel(p,site,projected.lease.runId);
  await run();const l=(await worker.claim())!;await deletions.record(p.tenantId,site);
+ await assert.rejects(new Jobs(scheduler,deletions,blobs).projectHttpFixture(projected.lease,projected.receipt.observationId),/deleted_scope/);
  await assert.rejects(worker.complete(l,bundle),/deleted_scope/);await assert.rejects(commands.submit(p,site,randomUUID(),budget()),/deleted_scope/);
  // No database deletion/epoch update happened: independently retained tombstone alone fences an older DB.
  assert.equal((await admin.query('SELECT deletion_epoch FROM aios.tenant WHERE id=$1',[p.tenantId])).rows[0].deletion_epoch,'0');await stopAll();

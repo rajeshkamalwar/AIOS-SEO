@@ -62,6 +62,7 @@ try {
       "tests/foundation.test.ts",
       "tests/http-evidence.test.ts",
       "tests/jobs.test.ts",
+      "tests/http-lane.test.ts",
       "tests/perception-persistence.test.ts",
       "tests/perception.test.ts",
       "tests/robots.test.ts",
