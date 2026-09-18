@@ -1,6 +1,16 @@
 {
   "examples": [
     {
+      "path": "examples/site-scope.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/scope-receipt.schema.json",
+      "valid": true
+    },
+    {
+      "path": "examples/invalid-site-scope.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/scope-receipt.schema.json",
+      "valid": false
+    },
+    {
       "path": "examples/tenant.json",
       "schema": "https://schemas.aios-seo.invalid/v1/domain.schema.json#/$defs/Tenant",
       "valid": true

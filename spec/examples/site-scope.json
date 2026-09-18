@@ -1,0 +1,20 @@
+{
+  "receipt_type": "site_scope",
+  "schema_version": 1,
+  "tenant_id": "2ba1e8ea-3ea6-5c40-9676-bf7200063cd1",
+  "site_id": "9bfdbbf9-3da6-525e-800d-9def08c4d573",
+  "crawl_id": "563b9fde-7774-4fe4-ad53-baeef0f1cead",
+  "submitted_by": "8790d01a-16ce-4869-a1cd-47000e78b5e4",
+  "submitted_url": "https://orange.example/",
+  "normalized_origin": "https://orange.example",
+  "site_version": 1,
+  "deletion_epoch": 0,
+  "policy_version": "discovery-v1",
+  "deployment_profile": "local-synthetic-v1",
+  "authority": "fixture_only",
+  "ownership": "not_established",
+  "live_dispatch": false,
+  "website_write": false,
+  "issued_at": "2026-09-18T00:00:00.000Z",
+  "expires_at": "2026-09-18T00:20:00.000Z"
+}

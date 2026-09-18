@@ -10,6 +10,8 @@ import {
 } from "../contracts/index.js";
 import { LocalBlobs } from "../evidence/index.js";
 import { normalizeUrl } from "../perception/url.js";
+import { DeletionLedger } from "../policy/deletion.js";
+import { transaction, scope, registryLock, workLock } from "./transaction.js";
 
 type Row = Record<string, unknown>;
 export interface Principal {
@@ -468,6 +470,76 @@ export class Ledger {
       validate(base + "event.schema.json", event);
       await c.query("INSERT INTO outbox VALUES($1,$2,$3,$4,$5,$6,$7,NULL)", [p.tenantId, site, event.event_id, observationId, event.event_type, event, time.known_at]);
       return { bodyEvidenceId: bodyId, receiptEvidenceId: receiptId, observationId };
+    });
+  }
+  /** Records existing fixture scope, never creates a Site or grants tool authority. */
+  async acceptSiteScopeFixture(p: Principal, site: string, run: string, deletions: DeletionLedger): Promise<Receipt> {
+    uuid(run);
+    if (!(deletions instanceof DeletionLedger)) throw new Error("deletion_adapter_required");
+    return transaction(this.pool, "aios_runtime", async c => {
+      // Match governed-work lock ordering before authorization takes identity locks.
+      await c.query("SELECT pg_advisory_xact_lock_shared($1)", [registryLock]);
+      await c.query("SELECT pg_advisory_xact_lock($1)", [workLock]);
+      await scope(c, p, site);
+      if (await deletions.contains(p.tenantId, site)) throw new Error("deleted_scope");
+      const r = (await c.query(`SELECT r.*, f.deletion_epoch AS pinned_epoch, f.quarantined, t.deletion_epoch, t.policy_profile_id
+        FROM crawl r JOIN work_fence f ON f.tenant_id=r.tenant_id AND f.site_id=r.site_id AND f.crawl_id=r.id
+        JOIN tenant t ON t.id=r.tenant_id WHERE r.tenant_id=$1 AND r.site_id=$2 AND r.id=$3 FOR UPDATE OF r`, [p.tenantId, site, run])).rows[0];
+      if (!r || r.submitted_by !== p.userId) throw new Error("scope_denied");
+      if (!["queued", "running"].includes(r.state) || r.quarantined || r.pinned_epoch !== r.deletion_epoch) throw new Error("run_fenced");
+      if (r.policy_profile_id !== "local-synthetic-v1" || r.policy_version !== "discovery-v1") throw new Error("policy_blocked");
+      if (!(await c.query("SELECT 1 FROM control.health WHERE singleton AND policy_version='discovery-v1' AND restore_ready AND verified_until>clock_timestamp()")).rowCount) throw new Error("policy_unavailable");
+      const s = await this.get(c, "Site", site);
+      const submitted = fixtureUrl(String(s.submitted_url)), normalized = normalizeUrl(submitted.href);
+      if (normalized.excluded || normalized.url !== s.submitted_url || submitted.origin !== s.normalized_origin) throw new Error("scope_denied");
+      const fields = {
+        receipt_type: "site_scope", schema_version: 1, tenant_id: p.tenantId, site_id: site, crawl_id: run,
+        submitted_by: r.submitted_by, submitted_url: normalized.url, normalized_origin: submitted.origin,
+        site_version: Number(s.version), deletion_epoch: Number(r.deletion_epoch), policy_version: r.policy_version,
+        deployment_profile: r.policy_profile_id, authority: "fixture_only", ownership: "not_established",
+        live_dispatch: false, website_write: false, expires_at: new Date(r.budget.deadline).toISOString(),
+      };
+      const now = (await c.query("SELECT clock_timestamp() AS now,clock_timestamp()>=$1::timestamptz AS expired", [fields.expires_at])).rows[0];
+      if (now.expired) throw new Error("deadline");
+      const inputHash = manifestHash(fields);
+      const prior = (await c.query("SELECT * FROM site_scope_acceptance WHERE tenant_id=$1 AND crawl_id=$2", [p.tenantId, run])).rows[0];
+      if (prior) {
+        if (prior.input_hash !== inputHash) throw new Error("conflict");
+        return { evidenceId: prior.evidence_id, observationId: prior.observation_id };
+      }
+      const receipt = { ...fields, issued_at: new Date(now.now).toISOString() };
+      validate(base + "scope-receipt.schema.json", receipt);
+      const data = Buffer.from(canonical(receipt)), evidenceId = randomUUID(), observationId = randomUUID(), attemptId = randomUUID();
+      const artifactKey = this.blobs.key(p.tenantId, site, evidenceId);
+      await c.query("SELECT pg_advisory_xact_lock_shared($1)", [maintenanceLock]);
+      await this.blobs.put(artifactKey, data);
+      if (await deletions.contains(p.tenantId, site)) throw new Error("deleted_scope");
+      if (!(await c.query("SELECT 1 FROM control.health WHERE singleton AND policy_version='discovery-v1' AND restore_ready AND verified_until>clock_timestamp()")).rowCount) throw new Error("policy_unavailable");
+      const time = await this.clock(c, p, true);
+      if (Date.parse(time.known_at) >= Date.parse(fields.expires_at)) throw new Error("deadline");
+      await this.insert(c, {
+        ...this.common("Evidence", p, site, time, evidenceId), state: "available", retention_class: "raw",
+        artifact_key: artifactKey, sha256: hash(data), mime_type: "application/json", bytes: data.length,
+        captured_at: receipt.issued_at, source_uri: fields.submitted_url, source_class: "internal_policy",
+        locator: `bytes:0:${data.length}`, redaction_version: "none-v1", expires_at: new Date(Date.parse(receipt.issued_at) + 7 * 86400000).toISOString(),
+      });
+      await this.insert(c, {
+        ...this.common("Observation", p, site, time, observationId), state: "observed", retention_class: "raw",
+        sensor_id: "site-scope", sensor_version: "1.0.0", subject_id: run, evidence_ids: [evidenceId],
+        observed_at: receipt.issued_at, window_start: null, window_end: null, source_timezone: "UTC",
+        context_hash: hash(data), fresh_until: fields.expires_at, attempt_id: attemptId, error: null,
+      });
+      await c.query("INSERT INTO site_scope_acceptance VALUES($1,$2,$3,$4,$5,$6)", [p.tenantId, site, run, inputHash, evidenceId, observationId]);
+      await c.query("INSERT INTO acceptance VALUES($1,$2,$3,$4,$5,$6,$7)", [p.tenantId, site, attemptId, run, inputHash, evidenceId, observationId]);
+      const event = { event_id: randomUUID(), tenant_id: p.tenantId, site_id: site, schema_version: 1,
+        aggregate_id: observationId, aggregate_version: 1, causation_id: null, correlation_id: run,
+        occurred_at: receipt.issued_at, recorded_at: time.known_at, knowledge_seq: time.known_seq,
+        idempotency_key: run, producer: "site-scope-fixture@1.0.0", event_type: "evidence.recorded",
+        payload: { evidence_id: evidenceId, observation_id: observationId } };
+      validate(base + "event.schema.json", event);
+      await c.query("INSERT INTO outbox VALUES($1,$2,$3,$4,$5,$6,$7,NULL)", [p.tenantId, site, event.event_id, observationId, event.event_type, event, time.known_at]);
+      if (await deletions.contains(p.tenantId, site)) throw new Error("deleted_scope");
+      return { evidenceId, observationId };
     });
   }
   async cutoff(p: Principal, site: string): Promise<Cutoff> {

@@ -24,6 +24,8 @@ First handler registry:
 
 These handlers may orchestrate several listed tool calls. Null tool_id means deterministic internal transformation only. Discovery uses a scope evidence receipt before any remote collection; thus it does not need crawl evidence to bootstrap. Retry/partial behavior is declared per step and bounded by 33. A first-site observation cannot be admitted by a model-invented Site record.
 
+The local prerequisite [scope-receipt.schema.json](../spec/scope-receipt.schema.json) records server-derived Site/Crawl/submitter identity, normalized submitted scope, policy/profile, deletion epoch and expiry. Its JSON is retained as internal-policy Evidence with a `site-scope` Observation; it is not an HTTP observation. This receipt is explicitly fixture-only, establishes no ownership and grants no live dispatch or website-write authority. It is idempotent per run only while current authorization, work/deletion fences, deadline and policy checks still pass. Freezing it into a bundle supplies a traceable bootstrap input; it never replaces current dispatch authorization, independently approved releases, robots eligibility, budgets or deployment approval.
+
 ## Immutable release and mutable eligibility
 
 Release key is (skill_id,version,digest). Never overwrite bytes. Manifest status is its creation snapshot; release_state journal supplies current eligibility with monotonically increasing generation. Admission, each tool dispatch and publication recheck current status, transitive rule validity, policy and scope. Revoked releases have no grace period. Deprecated releases stop new admissions; existing bounded reads may finish only before deadline under unchanged authority. A replacement starts a new mission and revalidates inputs.

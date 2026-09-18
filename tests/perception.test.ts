@@ -3,6 +3,19 @@ import assert from "node:assert/strict";
 import { loadFixtures, normalizeUrl, parseRobots, robotsAllows, parseSitemap, Frontier, renderLocal } from "../packages/perception/index.js";
 
 await loadFixtures();
+test("URL admission rejects known credential aliases and array keys", () => {
+  for (const key of ["access_token", "refresh-token", "id_token", "api_key", "client_secret", "Authorization", "X-Amz-Credential", "X-Amz-Signature", "X-Amz-Security-Token", "X-Goog-Credential", "X-Goog-Signature", "sig", "token[0]", "api_key[]"]) {
+    assert.throws(() => normalizeUrl(`https://orange.example/a?${encodeURIComponent(key)}=secret`), /credential/, key);
+  }
+  assert.equal(normalizeUrl("https://orange.example/a?action%5B%5D=delete").excluded, "action_like");
+});
+test("URL admission preserves ordinary array queries while rejecting IP literals", () => {
+  const url = "https://orange.example/a?filter[]=one&filter[]=two";
+  assert.equal(normalizeUrl(url).url, url);
+  for (const host of ["[::1]", "[::ffff:127.0.0.1]", "[2606:4700:4700::1111]", "127.1", "2130706433"]) {
+    assert.throws(() => normalizeUrl(`https://${host}/`), /forbidden/);
+  }
+});
 test("URL identity preserves query order and blocks credentials/action paths", () => {
   assert.equal(normalizeUrl("https://orange.example/a?b=2&a=1#x").url, "https://orange.example/a?b=2&a=1");
   assert.throws(() => normalizeUrl("https://orange.example/a?token=x"), /credential/);

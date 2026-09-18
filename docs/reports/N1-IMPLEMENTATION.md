@@ -95,3 +95,13 @@ This is a CPU/heap budget, not an OS boundary or permission to execute page Java
 The offline browser worker also checks cancellation after asynchronous capture boundaries so a timed-out coroutine cannot append a later sample or overwrite terminal state. Its existing seven Docker regressions continue to pass.
 
 Verification: 272 normal tests, eight compiled parser-worker tests and seven Docker regressions pass. Typecheck/build/specification validation pass; production dependency audit reports zero vulnerabilities; diff checks pass. Live customer URLs remain blocked by the canonical N0 deployment/data-use approval gate; complete frontier dispatch, independent live egress and governed render-evidence acceptance remain N1 integration work.
+
+## Scope bootstrap and render storage checkpoint
+
+`Ledger.acceptSiteScopeFixture` derives an internal-policy scope receipt from an existing authorized Site/Crawl and submitter. It checks current membership, run/deletion fences, deadline and policy health, including after artifact upload. Immutable retained bytes, Observation, relationship, clock and outbox commit together; retries are idempotent only under current gates. Its frozen bundle supplies traceable bootstrap input without asserting ownership, live dispatch or website-write authority. Migration 009 and positive/negative schema fixtures make this distinction explicit. Tests cover cross-scope/submitter denial, concurrent retries, fresh-pool readback, tombstones, cancellation, delayed policy expiry and rollback with orphan cleanup.
+
+Migration 010 persists canonical RenderSnapshot and ResourceObservation records with tenant/site references, same-run render linkage, temporal fields, immutable payload/provenance and forced RLS. Service roles receive SELECT only. Migration-owner fixtures test contract roundtrip, denied writes, cross-scope/run references, pooled scope and actual PostgreSQL crash/restart. No worker-result acceptance or rendering authority is installed by these tables.
+
+URL admission now rejects known credential aliases and array-key variants, including common signed URLs, before collection. Ordinary array query parameters retain their exact order and values; IPv4 and IPv6 literals remain rejected explicitly. This conservative key guard cannot establish that arbitrary query values contain no secrets.
+
+Verification: 289 normal tests, eight compiled parser-worker tests and seven Docker regressions pass. Typecheck/build/specification validation pass; root and isolated-worker production dependency audits report zero vulnerabilities. Live customer activation remains gated by N0; next work is validated offline render results and governed discovery integration.
