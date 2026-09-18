@@ -1,7 +1,7 @@
 import {normalizeUrl} from './url.js';
 
 export interface OfflineRenderResult {
- profile:'local-offline-replay-v1'; url:string|null; browserBuild:string|null;
+ profile:'local-offline-replay-v2'; url:string|null; inputSha256:string|null; browserBuild:string|null;
  state:'captured'|'policy_limited'|'failed'|'timeout';
  samples:{offsetMs:0|2000|5000;actualOffsetMs:number;dom:string}[];
  deniedCount:number;deniedRequests:{url:string;method:string;resourceType:string;reason:'offline_policy'|'context_changed'}[];
@@ -20,17 +20,19 @@ const resourceTypes=new Set(['document','stylesheet','image','media','font','scr
 /** Pure untrusted-receipt validation, not authentication, evidence acceptance or
  * dispatch authority. The supervisor must independently establish worker/image
  * identity and OS isolation. No Evidence ID or invented sample is created here.
- * Expected build is pinned by the caller's trusted deployment context.
+ * V2 binds the exact supplied UTF-8 HTML bytes. V1/unbound receipts are rejected.
+ * Expected build and input digest come from the trusted host, never this receipt.
  */
-export function parseOfflineRenderResult(bytes:Uint8Array,expected:{url:string;browserBuild:string}):OfflineRenderResult {
+export function parseOfflineRenderResult(bytes:Uint8Array,expected:{url:string;browserBuild:string;inputSha256:string}):OfflineRenderResult {
  try {
-  if(!(bytes instanceof Uint8Array)||bytes.byteLength>20*1024*1024||!bounded(expected.browserBuild))invalid();
+  if(!(bytes instanceof Uint8Array)||bytes.byteLength>20*1024*1024||!bounded(expected.browserBuild)||typeof expected.inputSha256!=='string'||!/^[a-f0-9]{64}$/.test(expected.inputSha256))invalid();
   const normalized=normalizeUrl(expected.url),url=new URL(normalized.url);
   if(normalized.excluded||url.protocol!=='https:'||!url.hostname.endsWith('.example')||url.href!==expected.url)invalid();
   const value:unknown=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(bytes));
-  object(value,['profile','url','browserBuild','state','samples','deniedCount','deniedRequests','sandbox'],['error']);
-  if(value.profile!=='local-offline-replay-v1'||!['captured','policy_limited','failed','timeout'].includes(value.state))invalid();
+  object(value,['profile','url','inputSha256','browserBuild','state','samples','deniedCount','deniedRequests','sandbox'],['error']);
+  if(value.profile!=='local-offline-replay-v2'||!['captured','policy_limited','failed','timeout'].includes(value.state))invalid();
   if(value.url!==null&&value.url!==expected.url)invalid();
+  if(value.url===null?value.inputSha256!==null:value.inputSha256!==expected.inputSha256)invalid();
   if(value.browserBuild!==null&&value.browserBuild!==expected.browserBuild)invalid();
   if(value.sandbox!==null){object(value.sandbox,['namespace','pid','network','seccomp']);if(Object.values(value.sandbox).some(v=>v!==true))invalid();}
   if(!Array.isArray(value.samples)||value.samples.length>3||!Array.isArray(value.deniedRequests)||!Number.isSafeInteger(value.deniedCount)||value.deniedCount<0||value.deniedCount>99||value.deniedCount!==value.deniedRequests.length)invalid();

@@ -125,3 +125,9 @@ The combined real-loopback integration now submits a run, retains scope, observe
 Review corrected the durable document ceiling, source eligibility, missing seed provenance and SQL NULL validation. Eleven frontier regressions include those cases, actual PostgreSQL crash/restart, cumulative budgets, delayed policy/source expiry, future-observation rejection and outbox rollback.
 
 Verification: 308 normal tests pass; typecheck/build, 14 compiled parser/validator tests, specification validation and diff checks pass. Both production dependency audits report zero vulnerabilities. The unchanged offline renderer retains its ten passing Docker regressions. No customer URL or website-write authority was enabled.
+
+## Exact offline render input binding checkpoint
+
+The offline worker receipt advances to `local-offline-replay-v2` with a required input digest. The worker strict-decodes stdin, rejects non-roundtrippable input strings, hashes the exact UTF-8 HTML Buffer and supplies that same Buffer to Chromium. Host validation supplies its independently calculated digest; a matching URL/build cannot substitute changed HTML, and old/unbound outputs fail closed. Pre-admission failures retain null URL/digest and no invented samples. Digest matching is local conformance, not worker attestation or evidence-acceptance authority.
+
+Verification: 309 normal tests, 15 compiled parser/validator tests and 11 Docker regressions pass, including changed HTML at the same URL, empty HTML, malformed UTF-8 and lone surrogates. Typecheck/build/specification validation and diff checks pass; production dependency audits remain clean. Next local integration work derives durable links from retained page snapshots under the same frontier budgets.

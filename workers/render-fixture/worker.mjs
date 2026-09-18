@@ -3,11 +3,12 @@ import { chromium } from 'playwright';
 import { readFileSync } from 'node:fs';
 import { networkInterfaces } from 'node:os';
 import { performance } from 'node:perf_hooks';
+import { createHash } from 'node:crypto';
 
 const maxBytes = 5 * 1024 * 1024;
 let browser;
 const result = {
-  profile: 'local-offline-replay-v1', url: null, browserBuild: null,
+  profile: 'local-offline-replay-v2', url: null, inputSha256: null, browserBuild: null,
   state: 'failed', samples: [], deniedCount: 0, deniedRequests: [], sandbox: null,
 };
 let limited = false, halted = false, budgetExceeded = false;
@@ -42,14 +43,19 @@ async function input() {
     if (size > maxBytes + 65536) throw new Error('input_limit');
     chunks.push(chunk);
   }
-  const value = JSON.parse(Buffer.concat(chunks).toString('utf8'));
+  const value = JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(Buffer.concat(chunks)));
   if (!value || Object.keys(value).sort().join(',') !== 'html,url' ||
       typeof value.html !== 'string' || Buffer.byteLength(value.html) > maxBytes ||
       typeof value.url !== 'string' || value.url.length > 4096) throw new Error('invalid_fixture');
+  // JSON escape syntax can carry lone UTF-16 surrogates. Never silently replace
+  // those code units when computing a digest or fulfilling the fixture body.
+  const htmlBytes = Buffer.from(value.html, 'utf8');
+  if (htmlBytes.toString('utf8') !== value.html || Buffer.from(value.url, 'utf8').toString('utf8') !== value.url)
+    throw new Error('invalid_fixture');
   const url = new URL(value.url);
   if (url.protocol !== 'https:' || !url.hostname.endsWith('.example') || url.username || url.password || url.port || url.hash)
     throw new Error('synthetic_scope_required');
-  return { url: url.href, html: value.html };
+  return { url: url.href, htmlBytes, inputSha256: createHash('sha256').update(htmlBytes).digest('hex') };
 }
 async function render(value) {
   assertIsolation();
@@ -76,7 +82,7 @@ async function render(value) {
     const request = route.request();
     if (initial && request.url() === value.url && request.method() === 'GET' && request.isNavigationRequest() && request.frame() === page.mainFrame()) {
       initial = false;
-      await route.fulfill({ status: 200, contentType: 'text/html; charset=utf-8', body: value.html });
+      await route.fulfill({ status: 200, contentType: 'text/html; charset=utf-8', body: value.htmlBytes });
     } else {
       denied(request.url(), request.method(), request.resourceType(), 'offline_policy');
       await route.abort('blockedbyclient');
@@ -109,7 +115,7 @@ async function render(value) {
 let deadline;
 try {
   // Includes stdin admission; the supervisor also kills the entire container on timeout.
-  await Promise.race([(async () => { const value = await input(); result.url = value.url; await render(value); })(),
+  await Promise.race([(async () => { const value = await input(); result.url = value.url; result.inputSha256 = value.inputSha256; await render(value); })(),
     new Promise((_, reject) => { deadline = setTimeout(() => { halted = true; reject(new Error('timeout')); }, 20000); })]);
 } catch (error) {
   result.state = budgetExceeded ? 'policy_limited' : error?.message === 'timeout' ? 'timeout' : 'failed';

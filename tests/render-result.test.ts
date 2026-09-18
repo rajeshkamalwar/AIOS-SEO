@@ -1,9 +1,11 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
+import {createHash} from 'node:crypto';
 import {parseOfflineRenderResult} from '../packages/perception/render-result.js';
-const expected={url:'https://render.example/',browserBuild:'145.0.1.2'};
+const digest=(html:string)=>createHash('sha256').update(Buffer.from(html,'utf8')).digest('hex');
+const expected={url:'https://render.example/',browserBuild:'145.0.1.2',inputSha256:digest('<main>fixture</main>')};
 const isolation={namespace:true,pid:true,network:true,seccomp:true};
-const receipt=()=>({profile:'local-offline-replay-v1',url:expected.url,browserBuild:expected.browserBuild,state:'captured',samples:[0,2000,5000].map(offsetMs=>({offsetMs,actualOffsetMs:offsetMs+1,dom:'<main>'+offsetMs+'</main>'})),deniedCount:0,deniedRequests:[],sandbox:isolation});
+const receipt=()=>({profile:'local-offline-replay-v2',url:expected.url,inputSha256:expected.inputSha256,browserBuild:expected.browserBuild,state:'captured',samples:[0,2000,5000].map(offsetMs=>({offsetMs,actualOffsetMs:offsetMs+1,dom:'<main>'+offsetMs+'</main>'})),deniedCount:0,deniedRequests:[],sandbox:isolation});
 const parse=(value:unknown)=>parseOfflineRenderResult(Buffer.from(JSON.stringify(value)),expected);
 test('Offline render-result validation preserves exact DOM and actual sample timing without creating evidence',()=>{
  const input=receipt();input.samples[0]!.dom='<main>é &amp; literal</main>';
@@ -24,11 +26,22 @@ test('Offline render-result preserves partial and failed receipts without invent
  const input=receipt();
  const partial=parse({...input,state:'policy_limited',samples:input.samples.slice(0,1)});assert.equal(partial.samples.length,1);
  for(const [state,error] of [['failed','render_failed'],['timeout','timeout']]){
-  const failed={...input,url:null,browserBuild:null,sandbox:null,state,error,samples:[]};assert.deepEqual(parse(failed),failed);
+  const failed={...input,url:null,inputSha256:null,browserBuild:null,sandbox:null,state,error,samples:[]};assert.deepEqual(parse(failed),failed);
   assert.throws(()=>parse({...failed,samples:input.samples}),/render_result_invalid/);
  }
  const failedAfterCapture={...input,state:'failed',error:'render_failed',samples:input.samples.slice(0,2)};assert.deepEqual(parse(failedAfterCapture),failedAfterCapture);
  assert.throws(()=>parse({...input,state:'timeout',error:'render_failed'}),/render_result_invalid/);
+});
+test('Offline render-result v2 requires host-supplied exact input binding including empty HTML',()=>{
+ const value=receipt();
+ for(const change of [{profile:'local-offline-replay-v1'},{inputSha256:undefined},{inputSha256:null},{inputSha256:'0'.repeat(64)},{inputSha256:value.inputSha256.toUpperCase()}])assert.throws(()=>parse({...value,...change}),/render_result_invalid/);
+ assert.throws(()=>parseOfflineRenderResult(Buffer.from(JSON.stringify(value)),{...expected,inputSha256:digest('<main>changed same URL</main>')}),/render_result_invalid/);
+ assert.throws(()=>parseOfflineRenderResult(Buffer.from(JSON.stringify(value)),{...expected,inputSha256:''}),/render_result_invalid/);
+ const empty=digest('');assert.equal(empty,'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855');
+ const emptyResult={...value,inputSha256:empty};assert.deepEqual(parseOfflineRenderResult(Buffer.from(JSON.stringify(emptyResult)),{...expected,inputSha256:empty}),emptyResult);
+ const earlyFailure={...value,url:null,inputSha256:null,browserBuild:null,sandbox:null,state:'failed',error:'render_failed',samples:[]};assert.deepEqual(parse(earlyFailure),earlyFailure);
+ assert.throws(()=>parse({...earlyFailure,inputSha256:value.inputSha256}),/render_result_invalid/);
+ assert.throws(()=>parse({...earlyFailure,url:expected.url}),/render_result_invalid/);
 });
 test('Offline render-result retains denied attempts as untrusted diagnostics and enforces attempt cap',()=>{
  const deniedRequests=[{url:'http://127.0.0.1/private',method:'POST',resourceType:'fetch',reason:'offline_policy'}];

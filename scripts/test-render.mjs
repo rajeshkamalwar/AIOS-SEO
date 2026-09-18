@@ -64,8 +64,10 @@ async function runContainer({input='',timeoutMs=35000,buildProbe=false,echoProbe
 
 let expectedBuild;
 async function render(input,{timeoutMs=35000,expectedUrl=input.url}={}){
+ if(typeof input.html!=='string'||Buffer.from(input.html,'utf8').toString('utf8')!==input.html)throw new Error('fixture_input_encoding');
+ const inputSha256=hash(Buffer.from(input.html,'utf8'));
  const result=await runContainer({input:JSON.stringify(input),timeoutMs});
- return parseOfflineRenderResult(result.stdoutBytes,{url:expectedUrl,browserBuild:expectedBuild});
+ return parseOfflineRenderResult(result.stdoutBytes,{url:expectedUrl,browserBuild:expectedBuild,inputSha256});
 }
 
 await docker(['build','--tag',image,directory],{timeoutMs:120000});
@@ -75,10 +77,15 @@ expectedBuild=(await runContainer({buildProbe:true})).stdout.trim();
 assert.match(expectedBuild,/^\d+\.\d+\.\d+\.\d+$/);
 
 const url='https://render.example/';
-const positive=await render({url,html:`<!doctype html><html><head><title>Fixture</title></head><body><main id="state">initial</main><script>
+const positiveHtml=`<!doctype html><html><head><title>Fixture</title></head><body><main id="state">initial</main><script>
  setTimeout(()=>document.getElementById('state').textContent='second',500);
  setTimeout(()=>document.getElementById('state').textContent='third',3000);
-</script></body></html>`});
+</script></body></html>`;
+const positive=await render({url,html:positiveHtml});
+const positiveInputHash=hash(Buffer.from(positiveHtml));
+assert.equal(positive.inputSha256,positiveInputHash);
+assert.throws(()=>parseOfflineRenderResult(Buffer.from(JSON.stringify(positive)),{url,browserBuild:expectedBuild,inputSha256:hash(Buffer.from(positiveHtml+'changed'))}),/render_result_invalid/);
+await assert.rejects(render({url,html:'\ud800'}),/fixture_input_encoding/);
 assert.equal(positive.url,url);
 assert.equal(positive.state,'captured');
 assert.equal(positive.deniedCount,0);
@@ -93,12 +100,21 @@ for(let i=0;i<3;i++){
 }
 console.log('PASS isolated Chromium captures real inline JS at 0/2/5 seconds');
 
+const empty=await render({url,html:''});
+assert.equal(empty.state,'captured');assert.equal(empty.inputSha256,hash(Buffer.alloc(0)));
+for(const input of [JSON.stringify({url,html:'\ud800'}),Buffer.concat([Buffer.from('{"url":"'+url+'","html":"'),Buffer.from([0xff]),Buffer.from('"}')])]){
+ const failed=await runContainer({input});
+ const parsed=parseOfflineRenderResult(failed.stdoutBytes,{url,browserBuild:expectedBuild,inputSha256:hash(Buffer.alloc(0))});
+ assert.equal(parsed.state,'failed');assert.equal(parsed.url,null);assert.equal(parsed.inputSha256,null);assert.deepEqual(parsed.samples,[]);
+}
+console.log('PASS exact input-byte binding includes empty HTML and rejects malformed input encoding');
+
 const invalidEncoding={...positive,samples:positive.samples.map(s=>({...s,dom:'INVALID_UTF8_MARKER'}))};
 const invalidBytes=Buffer.from(JSON.stringify(invalidEncoding));
 invalidBytes[invalidBytes.indexOf('INVALID_UTF8_MARKER')]=0xff;
 const echoed=await runContainer({input:invalidBytes,echoProbe:true});
 assert.deepEqual(echoed.stdoutBytes,invalidBytes);
-assert.throws(()=>parseOfflineRenderResult(echoed.stdoutBytes,{url,browserBuild:expectedBuild}),/render_result_invalid/);
+assert.throws(()=>parseOfflineRenderResult(echoed.stdoutBytes,{url,browserBuild:expectedBuild,inputSha256:positiveInputHash}),/render_result_invalid/);
 console.log('PASS host preserves and rejects invalid UTF-8 worker output');
 
 for(const sample of positive.samples){
