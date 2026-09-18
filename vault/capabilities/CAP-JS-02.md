@@ -8,10 +8,10 @@ local_scope_kind: "foundation_only"
 completion: "INCOMPLETE"
 canonical_release: "unreleased"
 specs: ["docs/14-CAPABILITY-TAXONOMY.md", "docs/15-CAPABILITY-CONTRACT.md", "docs/18-BUSINESS-ARCHETYPE-MATRIX.md", "spec/examples/skill-render-parity.json"]
-implementation: ["workers/render-fixture/worker.mjs", "workers/render-fixture/Dockerfile", "packages/perception/render-input.ts", "packages/perception/render-result.ts", "packages/perception/render-manifest.ts", "packages/persistence/migrations/010-render-records.sql", "packages/perception/dom.ts", "packages/jobs/offline-render-source.ts"]
-tests: ["scripts/test-render.mjs", "tests/render-input.test.ts", "tests/render-result.test.ts", "tests/render-manifest.test.ts", "tests/render-persistence.test.ts", "tests/dom.test.ts", "tests/offline-render-source.test.ts"]
-reports: ["docs/40-POST-M5-INTEGRATION-REALITY-REVIEW.md", "docs/41-NEXT-PHASE-READINESS-PLAN.md", "docs/reports/N1-IMPLEMENTATION.md", "reports/OFFLINE-RENDER-SOURCE-PREPARATION.md"]
-gaps: ["GAP-DOM-JS", "GAP-008", "GAP-009", "GAP-035"]
+implementation: ["workers/render-fixture/worker.mjs", "workers/render-fixture/Dockerfile", "packages/perception/render-input.ts", "packages/perception/render-result.ts", "packages/perception/render-manifest.ts", "packages/persistence/migrations/010-render-records.sql", "packages/perception/dom.ts", "packages/jobs/offline-render-source.ts", "packages/jobs/render-lane.ts", "packages/jobs/render-supervisor.ts", "packages/persistence/migrations/017-render-supervisor.sql"]
+tests: ["scripts/test-render.mjs", "tests/render-input.test.ts", "tests/render-result.test.ts", "tests/render-manifest.test.ts", "tests/render-persistence.test.ts", "tests/dom.test.ts", "tests/offline-render-source.test.ts", "tests/render-lane.test.ts"]
+reports: ["docs/40-POST-M5-INTEGRATION-REALITY-REVIEW.md", "docs/41-NEXT-PHASE-READINESS-PLAN.md", "docs/reports/N1-IMPLEMENTATION.md", "reports/OFFLINE-RENDER-SOURCE-PREPARATION.md", "reports/RENDER-TERMINAL-ACCOUNTING.md"]
+gaps: ["GAP-DOM-JS", "GAP-008", "GAP-009", "GAP-035", "GAP-036"]
 scope: "Real isolated offline synthetic Chromium 0/2/5-second DOM sampling, measured timing/pending counts, raw-input hash binding, pure receipt/manifests and storage schema."
 baseline: "2b6d527"
 required_stages: "Canonical15/18/28/35 applicable evidence, implementation, independent test/release, real-world and production proof; applicability and stage evidence must be explicitly reviewed before COMPLETE."
@@ -52,3 +52,7 @@ Open gaps: [GAP-DOM-JS](../gaps/GAP-DOM-JS.md), [GAP-008](../gaps/GAP-008.md), [
 - 2026-09-18 after359a01d: persisted-source preparation integration tracked by [GAP-035](../gaps/GAP-035.md). Verification pending in its [report](../../reports/OFFLINE-RENDER-SOURCE-PREPARATION.md); no maturity promotion or render authority.
 
 - 2026-09-18: GAP-035 scoped preparation verified through419 application tests,73 compiled tests and14 browser scenarios; [report](../../reports/OFFLINE-RENDER-SOURCE-PREPARATION.md) distinguishes overlapping suites and local proof. Full capability maturity and completion unchanged.
+
+- 2026-09-18 after9620e9a: [GAP-036](../gaps/GAP-036.md) adds accounting-only render bounds and independent supervisor receipts. Tests/report pending; actual producer and rendered-evidence acceptance remain open.
+
+- 2026-09-18: GAP-036 accounting protocol verified with431 application and71 compiled tests. Independent supervisor fixtures protect permanent charges and once-only slot release; no actual producer or capability maturity promotion.

@@ -8,10 +8,10 @@ local_scope_kind: "partial_behavior"
 completion: "INCOMPLETE"
 canonical_release: "unreleased"
 specs: ["docs/14-CAPABILITY-TAXONOMY.md", "docs/15-CAPABILITY-CONTRACT.md", "docs/18-BUSINESS-ARCHETYPE-MATRIX.md"]
-implementation: ["packages/jobs/index.ts", "packages/jobs/http-lane.ts", "packages/jobs/http-fixture-supervisor.ts", "packages/perception/http-fixture-worker.ts"]
-tests: ["tests/jobs.test.ts", "tests/http-lane.test.ts"]
-reports: ["reports/HTTP-TERMINAL-AUTHORITY.md", "docs/40-POST-M5-INTEGRATION-REALITY-REVIEW.md", "docs/41-NEXT-PHASE-READINESS-PLAN.md", "docs/reports/N1-IMPLEMENTATION.md", "reports/HTTP-FIXTURE-PROCESS-SUPERVISION.md"]
-gaps: ["GAP-005", "GAP-DOM-AUDIT", "GAP-015", "GAP-034"]
+implementation: ["packages/jobs/index.ts", "packages/jobs/http-lane.ts", "packages/jobs/http-fixture-supervisor.ts", "packages/perception/http-fixture-worker.ts", "packages/jobs/render-lane.ts", "packages/jobs/render-supervisor.ts", "packages/persistence/migrations/017-render-supervisor.sql"]
+tests: ["tests/jobs.test.ts", "tests/http-lane.test.ts", "tests/render-lane.test.ts"]
+reports: ["reports/HTTP-TERMINAL-AUTHORITY.md", "docs/40-POST-M5-INTEGRATION-REALITY-REVIEW.md", "docs/41-NEXT-PHASE-READINESS-PLAN.md", "docs/reports/N1-IMPLEMENTATION.md", "reports/HTTP-FIXTURE-PROCESS-SUPERVISION.md", "reports/RENDER-TERMINAL-ACCOUNTING.md"]
+gaps: ["GAP-005", "GAP-DOM-AUDIT", "GAP-015", "GAP-034", "GAP-036"]
 scope: "Durable job attempts/leases/deadlines, cancellation/retry limits and conservative global HTTP slot/request/byte accounting including crash recovery tests."
 baseline: "2b6d527"
 required_stages: "Canonical15/18/28/35 applicable evidence, implementation, independent test/release, real-world and production proof; applicability and stage evidence must be explicitly reviewed before COMPLETE."
@@ -52,3 +52,7 @@ Open gaps: [GAP-DOM-AUDIT](../gaps/GAP-DOM-AUDIT.md), [GAP-015](../gaps/GAP-015.
 - 2026-09-18: [HTTP terminal protocol](../../reports/HTTP-TERMINAL-AUTHORITY.md) requires independently authenticated invocation and terminal accounting. Actual process/egress producer remains [GAP-005](../gaps/GAP-005.md); full capability maturity unchanged.
 
 - 2026-09-18: actual fixed local child and loopback socket lifecycle tested in [process-supervision report](../../reports/HTTP-FIXTURE-PROCESS-SUPERVISION.md). No public dispatch, general process-tree sandbox or real-world maturity claim.
+
+- 2026-09-18 after9620e9a: [GAP-036](../gaps/GAP-036.md) adds accounting-only render bounds and independent supervisor receipts. Tests/report pending; actual producer and rendered-evidence acceptance remain open.
+
+- 2026-09-18: GAP-036 accounting protocol verified with431 application and71 compiled tests. Independent supervisor fixtures protect permanent charges and once-only slot release; no actual producer or capability maturity promotion.

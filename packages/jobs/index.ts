@@ -4,6 +4,7 @@ import { base, validate, uuid, manifestHash, hash } from '../contracts/index.js'
 import type { LocalBlobs } from '../evidence/index.js';
 import type { Principal } from '../persistence/index.js';
 import { transaction, scope, tick, insertDomain, event, registryLock, workLock } from '../persistence/transaction.js';
+import { lockGovernedWork,assertWorkHealth,requireLiveRun,requireLease } from './lease-context.js';
 import { eligible } from '../skills/index.js';
 import { normalizeUrl } from '../perception/url.js';
 import { DeletionLedger } from '../policy/deletion.js';
@@ -17,22 +18,9 @@ export interface Lease { tenantId:string; siteId:string; runId:string; jobId:str
 const moneyKinds:BudgetKind[]=['http_requests','render_requests','render_pages','model_calls','tokens','cost_microusd'];
 export class Jobs {
  constructor(private pool:Pool, private deletions:DeletionLedger, private artifacts?:Pick<LocalBlobs,'read'>){}
- private async locks(c:PoolClient){
-  await c.query('SELECT pg_advisory_xact_lock_shared($1)',[registryLock]);
-  await c.query('SELECT pg_advisory_xact_lock($1)',[workLock]);
- }
- private async health(c:PoolClient){
-  if(!(await c.query("SELECT 1 FROM control.health WHERE singleton AND policy_version='discovery-v1' AND verified_until>clock_timestamp() AND restore_ready")).rowCount)throw new Error('policy_unavailable');
- }
- private async live(c:PoolClient,tenant:string,site:string,run:string){
-  if(await this.deletions.contains(tenant,site))throw new Error('deleted_scope');
-  const r=(await c.query(`SELECT r.*,t.deletion_epoch,f.deletion_epoch AS pinned_epoch,f.quarantined FROM crawl r JOIN tenant t ON t.id=r.tenant_id
-    JOIN work_fence f ON f.tenant_id=r.tenant_id AND f.crawl_id=r.id WHERE r.tenant_id=$1 AND r.site_id=$2 AND r.id=$3 FOR UPDATE OF r`,[tenant,site,run])).rows[0];
-  if(!r || r.state!=='running' || r.quarantined || r.pinned_epoch!==r.deletion_epoch)throw new Error('run_fenced');
-  await scope(c,{tenantId:tenant,userId:r.submitted_by},site);
-  if((await c.query('SELECT clock_timestamp()>=$1::timestamptz AS expired',[r.budget.deadline])).rows[0].expired)throw new Error('deadline');
-  await this.health(c);return r;
- }
+ private async locks(c:PoolClient){return lockGovernedWork(c);}
+ private async health(c:PoolClient){return assertWorkHealth(c);}
+ private async live(c:PoolClient,tenant:string,site:string,run:string){return requireLiveRun(c,tenant,site,run,this.deletions);}
  async submit(p:Principal,site:string,key:string,budget:Budget):Promise<string>{
   validate(base+'common.schema.json#/$defs/budget',budget);
   return (await this.submitBudget(p,site,key,budget,budget.deadline)).runId;
@@ -128,14 +116,7 @@ export class Jobs {
    return null;
   });
  }
- private async leased(c:PoolClient,l:Lease){
-  for(const id of [l.tenantId,l.siteId,l.runId,l.jobId,l.token,l.attemptId])uuid(id);
-  await c.query("SELECT set_config('app.tenant_id',$1,true)",[l.tenantId]);
-  const r=await this.live(c,l.tenantId,l.siteId,l.runId);
-  const j=(await c.query("SELECT * FROM job WHERE tenant_id=$1 AND site_id=$2 AND crawl_id=$3 AND job_id=$4 AND state='leased' AND lease_token=$5 AND lease_until>clock_timestamp() AND deadline>clock_timestamp() AND attempt=$6 FOR UPDATE",[l.tenantId,l.siteId,l.runId,l.jobId,l.token,l.attempt])).rows[0];
-  if(!j || !(await c.query('SELECT 1 FROM job_attempt WHERE tenant_id=$1 AND job_id=$2 AND attempt_no=$3 AND attempt_id=$4',[l.tenantId,l.jobId,l.attempt,l.attemptId])).rowCount)throw new Error('lease_lost');
-  await eligible(c,j.release_digest,false);return {r,j};
- }
+ private async leased(c:PoolClient,l:Lease){return requireLease(c,l,this.deletions);}
  async heartbeat(l:Lease){return transaction(this.pool,'aios_scheduler',async c=>{await this.locks(c);await this.leased(c,l);await c.query("UPDATE job SET lease_until=least(clock_timestamp()+interval '30 seconds',deadline) WHERE tenant_id=$1 AND job_id=$2",[l.tenantId,l.jobId]);});}
  async reserve(l:Lease,kind:BudgetKind,amount:number):Promise<string>{
   if(!moneyKinds.includes(kind)||!Number.isSafeInteger(amount)||amount<0)throw new Error('invalid_input');

@@ -1,6 +1,6 @@
 # Test traceability
 
-<!-- Derived record/source digest: 178f3b9ce3e0d013422247ffda2f31f4dd8bb6c3a3db853f22ea58c4e339bc2d; regenerate with npm run vault:update. This is not a test receipt. -->
+<!-- Derived record/source digest: 8cbd0c215d714ad70f6a22bece840f347ef17c187176afa5a6ed9f248bad669e; regenerate with npm run vault:update. This is not a test receipt. -->
 
 Counts below are successive snapshots, **never added together**. A referenced test is not proof of full capability acceptance. Fixture/loopback/offline browser results stay TESTED. Spec validation, production dependency audit and runtime execution establish different things.
 
@@ -28,6 +28,7 @@ Counts below are successive snapshots, **never added together**. A referenced te
 | [HTTP-TERMINAL-AUTHORITY](milestones/HTTP-TERMINAL-AUTHORITY.md) | [http-lane.ts](../packages/jobs/http-lane.ts), [http-supervisor.ts](../packages/jobs/http-supervisor.ts), [016-http-supervisor.sql](../packages/persistence/migrations/016-http-supervisor.sql) | [http-lane.test.ts](../tests/http-lane.test.ts) | [HTTP-TERMINAL-AUTHORITY.md](../reports/HTTP-TERMINAL-AUTHORITY.md) / parent dc7ce96 |
 | [HTTP-FIXTURE-PROCESS](milestones/HTTP-FIXTURE-PROCESS.md) | [http-fixture-supervisor.ts](../packages/jobs/http-fixture-supervisor.ts), [http-fixture-worker.ts](../packages/perception/http-fixture-worker.ts) | [http-lane.test.ts](../tests/http-lane.test.ts), [test.mjs](../scripts/test.mjs) | [HTTP-FIXTURE-PROCESS-SUPERVISION.md](../reports/HTTP-FIXTURE-PROCESS-SUPERVISION.md) / parent05a0760 |
 | [OFFLINE-RENDER-SOURCE](milestones/OFFLINE-RENDER-SOURCE.md) | [index.ts](../packages/jobs/index.ts), [offline-render-source.ts](../packages/jobs/offline-render-source.ts) | [offline-render-source.test.ts](../tests/offline-render-source.test.ts), [test.mjs](../scripts/test.mjs), [test-render.mjs](../scripts/test-render.mjs) | [OFFLINE-RENDER-SOURCE-PREPARATION.md](../reports/OFFLINE-RENDER-SOURCE-PREPARATION.md) / parent359a01d |
+| [RENDER-TERMINAL-ACCOUNTING](milestones/RENDER-TERMINAL-ACCOUNTING.md) | [render-lane.ts](../packages/jobs/render-lane.ts), [render-supervisor.ts](../packages/jobs/render-supervisor.ts), [lease-context.ts](../packages/jobs/lease-context.ts), [017-render-supervisor.sql](../packages/persistence/migrations/017-render-supervisor.sql) | [render-lane.test.ts](../tests/render-lane.test.ts), [test.mjs](../scripts/test.mjs) | [RENDER-TERMINAL-ACCOUNTING.md](../reports/RENDER-TERMINAL-ACCOUNTING.md) / parent9620e9a |
 
 ## Capability and defect trace
 
@@ -55,6 +56,7 @@ Every [capability note](04-COVERAGE-MATRIX.md) maps its exact CAP requirement â†
 - [perception.test.ts](../tests/perception.test.ts)
 - [policy.test.ts](../tests/policy.test.ts)
 - [render-input.test.ts](../tests/render-input.test.ts)
+- [render-lane.test.ts](../tests/render-lane.test.ts)
 - [render-manifest.test.ts](../tests/render-manifest.test.ts)
 - [render-persistence.test.ts](../tests/render-persistence.test.ts)
 - [render-result.test.ts](../tests/render-result.test.ts)

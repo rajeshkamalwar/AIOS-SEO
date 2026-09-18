@@ -24,3 +24,5 @@ Acceptance is a design/authority disposition, not proof of full implementation o
 | ADR-015: observed local fixture HTTP process termination | Accepted reversible local engineering default | [015-local-http-process-supervision](../docs/decisions/015-local-http-process-supervision.md) |
 
 ADR-007 is the owner-accepted scoped-rejection decision. Its implementation, transition fixtures and subsequent current-input enforcement remain distinct traceable checkpoints; see [M2](milestones/M2.md) and [N1](milestones/N1.md). No accepted ADR grants website-write authority.
+
+- [ADR-016: independent offline-render accounting authority](../docs/decisions/016-render-terminal-accounting.md) — permanent bounded charges and independent terminal witnesses; no dispatch or evidence authority.

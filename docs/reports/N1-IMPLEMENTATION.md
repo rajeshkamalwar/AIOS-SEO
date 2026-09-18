@@ -181,3 +181,7 @@ Reality boundary: N1 live dispatch and governed render-evidence acceptance remai
 ## Persisted-source render preparation — 2026-09-18, parent359a01d
 
 [Source preparation report](../../reports/OFFLINE-RENDER-SOURCE-PREPARATION.md):419 application and73 compiled tests passed, alongside14 isolated browser scenarios. Exact persisted source/scope/robots/typed ancestry and current audit gates now feed offline UTF-8 preparation with distinct raw/input hashes. GAP-035 closes only this source bridge. Render accounting, independent invocation and atomic acceptance remain GAP-008; no public collection or website-write authority.
+
+## Render terminal accounting — 2026-09-18, parent9620e9a
+
+[Render protocol report](../../reports/RENDER-TERMINAL-ACCOUNTING.md):431 application and71 compiled tests passed. Permanent page/request/byte charges, one-run/two-global capacity and independent terminal receipt settlement are tested, including PostgreSQL restart. GAP-036 closes only accounting; test-authored witnesses do not prove actual container execution. GAP-008 dispatch/acceptance remains open; no website-write capability.

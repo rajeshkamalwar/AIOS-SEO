@@ -1,6 +1,6 @@
 # Coverage matrix
 
-<!-- Derived record/source digest: 178f3b9ce3e0d013422247ffda2f31f4dd8bb6c3a3db853f22ea58c4e339bc2d; regenerate with npm run vault:update. This is not a test receipt. -->
+<!-- Derived record/source digest: 8cbd0c215d714ad70f6a22bece840f347ef17c187176afa5a6ed9f248bad669e; regenerate with npm run vault:update. This is not a test receipt. -->
 
 All 36 domains / 195 canonical rows are indexed. Full-capability maturity and local prerequisite maturity are separate. **No full-capability completion is asserted.** Names are navigation labels; definitions remain in [14](../docs/14-CAPABILITY-TAXONOMY.md) and inherited contracts15/18.
 
@@ -41,7 +41,7 @@ All 36 domains / 195 canonical rows are indexed. Full-capability maturity and lo
 | --- | --- | --- | --- | --- |
 | [CAP-AUDIT-01](capabilities/CAP-AUDIT-01.md) Sensor and connector reliability | DEFINED | foundation_only / TESTED | INCOMPLETE | [GAP-DOM-AUDIT](gaps/GAP-DOM-AUDIT.md), [GAP-015](gaps/GAP-015.md) |
 | [CAP-AUDIT-02](capabilities/CAP-AUDIT-02.md) Skill and evidence readiness | DEFINED | partial_behavior / TESTED | INCOMPLETE | [GAP-DOM-AUDIT](gaps/GAP-DOM-AUDIT.md), [GAP-015](gaps/GAP-015.md) |
-| [CAP-AUDIT-03](capabilities/CAP-AUDIT-03.md) Work and cost control | DEFINED | partial_behavior / TESTED | INCOMPLETE | [GAP-005](gaps/GAP-005.md), [GAP-DOM-AUDIT](gaps/GAP-DOM-AUDIT.md), [GAP-015](gaps/GAP-015.md), [GAP-034](gaps/GAP-034.md) |
+| [CAP-AUDIT-03](capabilities/CAP-AUDIT-03.md) Work and cost control | DEFINED | partial_behavior / TESTED | INCOMPLETE | [GAP-005](gaps/GAP-005.md), [GAP-DOM-AUDIT](gaps/GAP-DOM-AUDIT.md), [GAP-015](gaps/GAP-015.md), [GAP-034](gaps/GAP-034.md), [GAP-036](gaps/GAP-036.md) |
 | [CAP-AUDIT-04](capabilities/CAP-AUDIT-04.md) Decision and evaluation reliability | DEFINED | foundation_only / TESTED | INCOMPLETE | [GAP-DOM-AUDIT](gaps/GAP-DOM-AUDIT.md), [GAP-015](gaps/GAP-015.md) |
 | [CAP-AUDIT-05](capabilities/CAP-AUDIT-05.md) Enforcement and deployment integrity | DEFINED | partial_behavior / TESTED | INCOMPLETE | [GAP-DOM-AUDIT](gaps/GAP-DOM-AUDIT.md), [GAP-015](gaps/GAP-015.md) |
 
@@ -221,11 +221,11 @@ All 36 domains / 195 canonical rows are indexed. Full-capability maturity and lo
 | Capability | Full maturity | Local evidence scope | Completion | Persistent gaps |
 | --- | --- | --- | --- | --- |
 | [CAP-JS-01](capabilities/CAP-JS-01.md) Technology and render-mode inference | DEFINED | specification_only / NOT_DEFINED | INCOMPLETE | [GAP-DOM-JS](gaps/GAP-DOM-JS.md), [GAP-008](gaps/GAP-008.md), [GAP-009](gaps/GAP-009.md) |
-| [CAP-JS-02](capabilities/CAP-JS-02.md) Raw/rendered parity | DEFINED | foundation_only / TESTED | INCOMPLETE | [GAP-DOM-JS](gaps/GAP-DOM-JS.md), [GAP-008](gaps/GAP-008.md), [GAP-009](gaps/GAP-009.md), [GAP-035](gaps/GAP-035.md) |
+| [CAP-JS-02](capabilities/CAP-JS-02.md) Raw/rendered parity | DEFINED | foundation_only / TESTED | INCOMPLETE | [GAP-DOM-JS](gaps/GAP-DOM-JS.md), [GAP-008](gaps/GAP-008.md), [GAP-009](gaps/GAP-009.md), [GAP-035](gaps/GAP-035.md), [GAP-036](gaps/GAP-036.md) |
 | [CAP-JS-03](capabilities/CAP-JS-03.md) Hydration stability | DEFINED | foundation_only / TESTED | INCOMPLETE | [GAP-DOM-JS](gaps/GAP-DOM-JS.md), [GAP-008](gaps/GAP-008.md), [GAP-009](gaps/GAP-009.md), [GAP-035](gaps/GAP-035.md) |
 | [CAP-JS-04](capabilities/CAP-JS-04.md) Client navigation discoverability | DEFINED | foundation_only / TESTED | INCOMPLETE | [GAP-DOM-JS](gaps/GAP-DOM-JS.md), [GAP-008](gaps/GAP-008.md), [GAP-009](gaps/GAP-009.md) |
 | [CAP-JS-05](capabilities/CAP-JS-05.md) Dynamic metadata consistency | DEFINED | foundation_only / TESTED | INCOMPLETE | [GAP-DOM-JS](gaps/GAP-DOM-JS.md), [GAP-008](gaps/GAP-008.md), [GAP-009](gaps/GAP-009.md) |
-| [CAP-JS-06](capabilities/CAP-JS-06.md) Blocked resource impact | DEFINED | foundation_only / TESTED | INCOMPLETE | [GAP-DOM-JS](gaps/GAP-DOM-JS.md), [GAP-008](gaps/GAP-008.md), [GAP-009](gaps/GAP-009.md), [GAP-035](gaps/GAP-035.md) |
+| [CAP-JS-06](capabilities/CAP-JS-06.md) Blocked resource impact | DEFINED | foundation_only / TESTED | INCOMPLETE | [GAP-DOM-JS](gaps/GAP-DOM-JS.md), [GAP-008](gaps/GAP-008.md), [GAP-009](gaps/GAP-009.md), [GAP-035](gaps/GAP-035.md), [GAP-036](gaps/GAP-036.md) |
 | [CAP-JS-07](capabilities/CAP-JS-07.md) SSR/SSG/ISR freshness | DEFINED | specification_only / NOT_DEFINED | INCOMPLETE | [GAP-DOM-JS](gaps/GAP-DOM-JS.md), [GAP-008](gaps/GAP-008.md), [GAP-009](gaps/GAP-009.md) |
 | [CAP-JS-08](capabilities/CAP-JS-08.md) Generated-site integrity | DEFINED | specification_only / NOT_DEFINED | INCOMPLETE | [GAP-DOM-JS](gaps/GAP-DOM-JS.md), [GAP-008](gaps/GAP-008.md), [GAP-009](gaps/GAP-009.md) |
 
