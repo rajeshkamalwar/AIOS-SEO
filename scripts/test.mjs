@@ -66,6 +66,7 @@ try {
       "tests/perception-persistence.test.ts",
       "tests/site-scope.test.ts",
       "tests/render-persistence.test.ts",
+      "tests/frontier-persistence.test.ts",
       "tests/perception.test.ts",
       "tests/robots.test.ts",
       "tests/sitemap.test.ts",

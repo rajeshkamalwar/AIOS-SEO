@@ -2,7 +2,9 @@
 
 Status: machine envelopes in [event.schema.json](../spec/event.schema.json) and [job.schema.json](../spec/job.schema.json); SQL durable queue chosen in ADR-002.
 
-The fifteen event variants specify exact payloads. Producer is authenticated service/version, not arbitrary caller text. occurred_at is source activity time; recorded_at/knowledge_seq come from26 acceptance. Event ID is UUID, aggregate_version monotonic per aggregate, correlation_id identifies run, causation_id identifies prior event or null for an initial command. No raw HTML, secrets or model text on the bus.
+The event variants specify exact payloads. Producer is authenticated service/version, not arbitrary caller text. occurred_at is source activity time; recorded_at/knowledge_seq come from26 acceptance. Event ID is UUID, aggregate_version monotonic per aggregate, correlation_id identifies run, causation_id identifies prior event or null for an initial command. No raw HTML, secrets or model text on the bus.
+
+`frontier.updated` records a committed read-only frontier classification. Its payload pins crawl, sitemap and robots Observation IDs and cumulative persisted discovered/admitted/excluded/deferred target counts at that update (not page visits or complete site coverage). Admission remains distinct from dispatch. Per-batch inserted/overflow/source-exclusion accounting remains in the durable batch receipt; no URLs, bodies or inferred business claims enter the event. Emit it atomically with target changes, and emit nothing for an idempotent retry.
 
 ## Atomicity and replay
 

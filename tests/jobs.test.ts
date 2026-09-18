@@ -17,7 +17,7 @@ import { literalClaims, graphProjection } from '../packages/understanding/index.
 import { createServer } from 'node:http';
 import { collectPublicHop } from '../packages/perception/collector.js';
 import { requestPinned } from '../packages/perception/transport.js';
-import { robotsState, pageAllowed } from '../packages/perception/robots-admission.js';
+import { FixtureFrontier } from '../packages/jobs/frontier.js';
 const cfg={host:process.env.AIOS_TEST_SOCKET!,port:55439,database:'aios_jobs_test'};
 const root=process.env.AIOS_TEST_ROOT!;
 let admin:pg.Pool,runtime:pg.Pool,scheduler:pg.Pool,operator:pg.Pool,evaluator:pg.Pool;
@@ -206,11 +206,12 @@ test('N1 projection preserves partial status and rolls back domain writes if com
  assert.equal((await admin.query('SELECT state FROM aios.job WHERE job_id=$1',[f.lease.jobId])).rows[0].state,'leased');
  const id=await projector.projectHttpFixture(f.lease,f.receipt.observationId);const r=(await admin.query('SELECT state,truncated FROM aios.page_snapshot WHERE id=$1',[id])).rows[0];assert.deepEqual(r,{state:'partial',truncated:true});await stopAll();
 });
-test('N1 actual loopback HTTP composes robots admission, evidence, frozen input and durable leased snapshot',async t=>{
+test('N1 actual loopback HTTP composes scope, durable robots/sitemap frontier and leased snapshot',async t=>{
  const requests:string[]=[],pageBytes=Buffer.from('<title>Fixture service unavailable</title>');
  const server=createServer((req,res)=>{
   requests.push(req.url!);
   if(req.url==='/robots.txt'){res.writeHead(200,{'content-type':'text/plain'});res.end('User-agent: *\nDisallow: /private\n');}
+  else if(req.url==='/sitemap.xml'){res.writeHead(200,{'content-type':'application/xml'});res.end('<urlset><url><loc>https://jobs.example/private</loc></url><url><loc>https://jobs.example/services</loc></url></urlset>');}
   else if(req.url==='/services'){res.writeHead(404,{'content-type':'text/html; charset=utf-8'});res.end(pageBytes);}
   else{res.writeHead(500);res.end('unexpected fixture request');}
  });
@@ -218,6 +219,9 @@ test('N1 actual loopback HTTP composes robots admission, evidence, frozen input 
  t.after(()=>new Promise<void>((resolve,reject)=>server.close(error=>error?reject(error):resolve())));
  const address=server.address();assert.ok(address&&typeof address!=='string');
  const evidence:string[]=[],observations:string[]=[];
+ const runId=await commands.submit(p,site,randomUUID(),budget());
+ const scopeReceipt=await ledger.acceptSiteScopeFixture(p,site,runId,deletions);
+ evidence.push(scopeReceipt.evidenceId);observations.push(scopeReceipt.observationId);
  const fetchFixture=async(path:string)=>{
   const url='https://jobs.example'+path;
   const response=await collectPublicHop(url,{
@@ -230,15 +234,18 @@ test('N1 actual loopback HTTP composes robots admission, evidence, frozen input 
   evidence.push(accepted.receiptEvidenceId);if(accepted.bodyEvidenceId)evidence.push(accepted.bodyEvidenceId);observations.push(accepted.observationId);
   return {response,accepted};
  };
- const robots=await fetchFixture('/robots.txt'),policy=robotsState(robots.response);
- assert.equal(policy.state,'known');
- const admitted:string[]=[];
- for(const path of ['/private','/services'])if(pageAllowed(policy,'https://jobs.example'+path))admitted.push(path);
- assert.deepEqual(admitted,['/services']);
- const page=await fetchFixture(admitted[0]!);assert.equal(page.response.status,404);assert.deepEqual(page.response.body,pageBytes);
- assert.deepEqual(requests,['/robots.txt','/services']);
+ const robots=await fetchFixture('/robots.txt'),sitemap=await fetchFixture('/sitemap.xml');
+ const frontierBundle=await ledger.freeze(p,site,await ledger.cutoff(p,site),evidence,observations);
+ const frontier=await new FixtureFrontier(runtime,deletions,blobs).discoverSitemap(p,site,runId,frontierBundle,sitemap.accepted.observationId,robots.accepted.observationId);
+ assert.equal(frontier.admitted_count,2);assert.equal(frontier.excluded_count,1);
+ const targets=(await admin.query('SELECT url,state,admitted,reason FROM aios.crawl_target WHERE crawl_id=$1 ORDER BY url',[runId])).rows;
+ assert.deepEqual(targets.find(row=>row.url.endsWith('/private')),{url:'https://jobs.example/private',state:'excluded',admitted:false,reason:'robots_denied'});
+ const next=targets.find(row=>row.url.endsWith('/services')&&row.state==='queued'&&row.admitted);assert.ok(next);
+ // Explicit fixture execution of one persisted target; no live dispatcher exists.
+ const page=await fetchFixture(new URL(next.url).pathname);assert.equal(page.response.status,404);assert.deepEqual(page.response.body,pageBytes);
+ assert.deepEqual(requests,['/robots.txt','/sitemap.xml','/services']);
  const frozen=await ledger.freeze(p,site,await ledger.cutoff(p,site),evidence,observations);
- const runId=await commands.submit(p,site,randomUUID(),budget());await commands.enqueue(p,site,runId,frozen,digest,randomUUID(),'project');
+ await commands.enqueue(p,site,runId,frozen,digest,randomUUID(),'project');
  const lease=(await worker.claim())!;assert.ok(lease);
  const snapshotId=await new Jobs(scheduler,deletions,blobs).projectHttpFixture(lease,page.accepted.observationId);
  const reopened=new pg.Pool({...cfg,user:'aios_runtime'});t.after(()=>reopened.end());
