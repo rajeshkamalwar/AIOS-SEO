@@ -1,8 +1,8 @@
 # Coverage matrix
 
-<!-- Derived record/source digest: 03ab9ef814d711e85beae5e7665f06cb967ee1be83cb1e86e6f0dff4f2b480ca; regenerate with npm run vault:update. This is not a test receipt. -->
+<!-- Derived record/source digest: 101cc1b557c4c24346d64aac555c95b1d7e4811d66d44eb346d06ebe57a31d37; regenerate with npm run vault:update. This is not a test receipt. -->
 
-All36domains/195canonical rows are indexed. Full-capability maturity and local prerequisite maturity are separate. **No full-capability completion is asserted.** Names are navigation labels; definitions remain in [14](../docs/14-CAPABILITY-TAXONOMY.md) and inherited contracts15/18.
+All 36 domains / 195 canonical rows are indexed. Full-capability maturity and local prerequisite maturity are separate. **No full-capability completion is asserted.** Names are navigation labels; definitions remain in [14](../docs/14-CAPABILITY-TAXONOMY.md) and inherited contracts15/18.
 
 ## AI — 5 capabilities
 
@@ -277,7 +277,7 @@ All36domains/195canonical rows are indexed. Full-capability maturity and local p
 | --- | --- | --- | --- | --- |
 | [CAP-MEM-01](capabilities/CAP-MEM-01.md) As-known-then retrieval | DEFINED | partial_behavior / TESTED | INCOMPLETE | [GAP-DOM-MEM](gaps/GAP-DOM-MEM.md) |
 | [CAP-MEM-02](capabilities/CAP-MEM-02.md) Contradiction preservation | DEFINED | specification_only / NOT_DEFINED | INCOMPLETE | [GAP-DOM-MEM](gaps/GAP-DOM-MEM.md) |
-| [CAP-MEM-03](capabilities/CAP-MEM-03.md) Graph projection integrity | DEFINED | partial_behavior / TESTED | INCOMPLETE | [GAP-DOM-MEM](gaps/GAP-DOM-MEM.md) |
+| [CAP-MEM-03](capabilities/CAP-MEM-03.md) Graph projection integrity | DEFINED | partial_behavior / TESTED | INCOMPLETE | [GAP-DOM-MEM](gaps/GAP-DOM-MEM.md), [GAP-026](gaps/GAP-026.md), [GAP-016](gaps/GAP-016.md) |
 | [CAP-MEM-04](capabilities/CAP-MEM-04.md) Retention and correction propagation | DEFINED | partial_behavior / TESTED | INCOMPLETE | [GAP-DOM-MEM](gaps/GAP-DOM-MEM.md) |
 
 ## PAGE — 5 capabilities
@@ -374,7 +374,7 @@ All36domains/195canonical rows are indexed. Full-capability maturity and local p
 
 | Capability | Full maturity | Local evidence scope | Completion | Persistent gaps |
 | --- | --- | --- | --- | --- |
-| [CAP-UX-01](capabilities/CAP-UX-01.md) Business interpretation | DEFINED | foundation_only / TESTED | INCOMPLETE | [GAP-DOM-UX](gaps/GAP-DOM-UX.md), [GAP-019](gaps/GAP-019.md) |
+| [CAP-UX-01](capabilities/CAP-UX-01.md) Business interpretation | DEFINED | foundation_only / TESTED | INCOMPLETE | [GAP-DOM-UX](gaps/GAP-DOM-UX.md), [GAP-019](gaps/GAP-019.md), [GAP-025](gaps/GAP-025.md), [GAP-028](gaps/GAP-028.md) |
 | [CAP-UX-02](capabilities/CAP-UX-02.md) Outcome reporting | DEFINED | foundation_only / TESTED | INCOMPLETE | [GAP-DOM-UX](gaps/GAP-DOM-UX.md), [GAP-019](gaps/GAP-019.md) |
 | [CAP-UX-03](capabilities/CAP-UX-03.md) Meaningful inbox triage | DEFINED | specification_only / NOT_DEFINED | INCOMPLETE | [GAP-DOM-UX](gaps/GAP-DOM-UX.md), [GAP-019](gaps/GAP-019.md) |
-| [CAP-UX-04](capabilities/CAP-UX-04.md) Real Brain exploration | DEFINED | foundation_only / TESTED | INCOMPLETE | [GAP-DOM-UX](gaps/GAP-DOM-UX.md), [GAP-019](gaps/GAP-019.md) |
+| [CAP-UX-04](capabilities/CAP-UX-04.md) Real Brain exploration | DEFINED | foundation_only / TESTED | INCOMPLETE | [GAP-DOM-UX](gaps/GAP-DOM-UX.md), [GAP-019](gaps/GAP-019.md), [GAP-026](gaps/GAP-026.md), [GAP-016](gaps/GAP-016.md) |

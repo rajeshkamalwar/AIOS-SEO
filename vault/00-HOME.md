@@ -25,7 +25,7 @@ These labels are not additive percentages or a marketing readiness score. Fixtur
 
 `OPEN → FIX_IN_PROGRESS → FIXED → TESTED → VERIFIED → CLOSED`
 
-Every gap has a permanent ID, scope, severity, evidence, owner role, closure criteria and append-only history. FIXED means a correction exists; TESTED means its named tests pass; VERIFIED requires review against the original scoped defect; CLOSED requires that scoped verification and no unresolved closure condition. Closing a local defect never closes a broader deployment risk. Preserve historical imports at the last evidenced stage; never invent missing transition dates. If a closed issue recurs, append a reopening entry referencing prior closure; never delete its history.
+Every gap has a permanent ID, scope, severity, evidence, owner role, closure criteria and append-only history. Aggregate domain gaps carry an explicit affected-capability set; independently verified rows may leave that set through an evidence-backed history update, so unrelated sibling capabilities do not have to complete together. FIXED means a correction exists; TESTED means its named tests pass; VERIFIED requires review against the original scoped defect; CLOSED requires that scoped verification and no unresolved closure condition. Closing a local defect never closes a broader deployment risk. Preserve historical imports at the last evidenced stage; never invent missing transition dates. If a closed issue recurs, append a reopening entry referencing prior closure; never delete its history.
 
 ## Milestone update protocol
 

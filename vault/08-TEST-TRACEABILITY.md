@@ -1,6 +1,6 @@
 # Test traceability
 
-<!-- Derived record/source digest: 03ab9ef814d711e85beae5e7665f06cb967ee1be83cb1e86e6f0dff4f2b480ca; regenerate with npm run vault:update. This is not a test receipt. -->
+<!-- Derived record/source digest: 101cc1b557c4c24346d64aac555c95b1d7e4811d66d44eb346d06ebe57a31d37; regenerate with npm run vault:update. This is not a test receipt. -->
 
 Counts below are successive snapshots, **never added together**. A referenced test is not proof of full capability acceptance. Fixture/loopback/offline browser results stay TESTED. Spec validation, production dependency audit and runtime execution establish different things.
 
@@ -22,6 +22,7 @@ Counts below are successive snapshots, **never added together**. A referenced te
 | [N2](milestones/N2.md) | — | — | [41-NEXT-PHASE-READINESS-PLAN.md](../docs/41-NEXT-PHASE-READINESS-PLAN.md) / None |
 | [N3](milestones/N3.md) | — | — | [41-NEXT-PHASE-READINESS-PLAN.md](../docs/41-NEXT-PHASE-READINESS-PLAN.md) / None |
 | [VAULT-BASELINE](milestones/VAULT-BASELINE.md) | [refresh.py](../vault/refresh.py) | [refresh.py](../vault/refresh.py), [validate.py](../spec/validate.py) | [VAULT-BASELINE.md](../vault/milestones/VAULT-BASELINE.md) / 2b6d527 |
+| [READONLY-CORRECTIONS](milestones/READONLY-CORRECTIONS.md) | [index.ts](../packages/api/index.ts), [index.ts](../packages/jobs/index.ts), [index.ts](../packages/understanding/index.ts), [refresh.py](../vault/refresh.py) | [jobs.test.ts](../tests/jobs.test.ts), [understanding.test.ts](../tests/understanding.test.ts), [test_refresh.py](../vault/test_refresh.py) | [POST-VAULT-READONLY-CORRECTIONS.md](../reports/POST-VAULT-READONLY-CORRECTIONS.md) / containing commit; parent673a11b |
 
 ## Capability and defect trace
 

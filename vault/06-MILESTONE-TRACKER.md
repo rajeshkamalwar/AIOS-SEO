@@ -1,8 +1,8 @@
 # Milestone tracker
 
-<!-- Derived record/source digest: 03ab9ef814d711e85beae5e7665f06cb967ee1be83cb1e86e6f0dff4f2b480ca; regenerate with npm run vault:update. This is not a test receipt. -->
+<!-- Derived record/source digest: 101cc1b557c4c24346d64aac555c95b1d7e4811d66d44eb346d06ebe57a31d37; regenerate with npm run vault:update. This is not a test receipt. -->
 
-Milestones are verification checkpoints, not permission boundaries or proof that the product is complete. Definitions and reports remain canonical. Open owner gates block only dependent work. [Full45-commit baseline history](10-REFERENCES.md) retains the original sequence; newer checkpoints append here.
+Milestones are verification checkpoints, not permission boundaries or proof that the product is complete. Definitions and reports remain canonical. Open owner gates block only dependent work. [Full 45-commit baseline history](10-REFERENCES.md) retains the original sequence; newer checkpoints append here.
 
 | Checkpoint | Canonical dependencies | Recorded status | Baseline | Reported tests | Evidence |
 | --- | --- | --- | --- | --- | --- |
@@ -22,3 +22,4 @@ Milestones are verification checkpoints, not permission boundaries or proof that
 | [N2](milestones/N2.md) Evaluated reasoning and Twin publication | [26-TEMPORAL-EVIDENCE-CONTRACT.md](../docs/26-TEMPORAL-EVIDENCE-CONTRACT.md), [27-KNOWLEDGE-GRAPH-CONTRACT.md](../docs/27-KNOWLEDGE-GRAPH-CONTRACT.md), [31-MODEL-GATEWAY.md](../docs/31-MODEL-GATEWAY.md), [35-QUALITY-SELF-AUDIT-GATES.md](../docs/35-QUALITY-SELF-AUDIT-GATES.md), [41-NEXT-PHASE-READINESS-PLAN.md](../docs/41-NEXT-PHASE-READINESS-PLAN.md) | NOT_STARTED | not implemented | not recorded normal; — compiled; — Docker | [41-NEXT-PHASE-READINESS-PLAN.md](../docs/41-NEXT-PHASE-READINESS-PLAN.md) |
 | [N3](milestones/N3.md) Controlled read-only pilot | [35-QUALITY-SELF-AUDIT-GATES.md](../docs/35-QUALITY-SELF-AUDIT-GATES.md), [37-IMPLEMENTATION-ARCHITECTURE.md](../docs/37-IMPLEMENTATION-ARCHITECTURE.md), [41-NEXT-PHASE-READINESS-PLAN.md](../docs/41-NEXT-PHASE-READINESS-PLAN.md) | NOT_STARTED | not implemented | not recorded normal; — compiled; — Docker | [41-NEXT-PHASE-READINESS-PLAN.md](../docs/41-NEXT-PHASE-READINESS-PLAN.md) |
 | [VAULT-BASELINE](milestones/VAULT-BASELINE.md) Repository-linked Obsidian control baseline | [README.md](../README.md), [AGENTS.md](../AGENTS.md), [14-CAPABILITY-TAXONOMY.md](../docs/14-CAPABILITY-TAXONOMY.md) | BASELINE_VERIFIED | 2b6d527 | not recorded normal; — compiled; — Docker | [VAULT-BASELINE.md](../vault/milestones/VAULT-BASELINE.md) |
+| [READONLY-CORRECTIONS](milestones/READONLY-CORRECTIONS.md) Post-vault API deadline and graph integrity corrections | [27-KNOWLEDGE-GRAPH-CONTRACT.md](../docs/27-KNOWLEDGE-GRAPH-CONTRACT.md), [30-CRAWL-RENDER-CONTRACT.md](../docs/30-CRAWL-RENDER-CONTRACT.md), [33-EVENT-JOB-CONTRACT.md](../docs/33-EVENT-JOB-CONTRACT.md), [37-IMPLEMENTATION-ARCHITECTURE.md](../docs/37-IMPLEMENTATION-ARCHITECTURE.md) | SCOPED_LOCAL_EXIT_VERIFIED | containing commit; parent673a11b | 357 normal; 33 compiled; — Docker | [POST-VAULT-READONLY-CORRECTIONS.md](../reports/POST-VAULT-READONLY-CORRECTIONS.md) |

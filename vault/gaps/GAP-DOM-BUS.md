@@ -3,6 +3,7 @@ id: "GAP-DOM-BUS"
 title: "Business and archetype understanding canonical capability delivery"
 status: "OPEN"
 severity: "HIGH"
+affected_capabilities: ["CAP-BUS-01", "CAP-BUS-02", "CAP-BUS-03", "CAP-BUS-04", "CAP-BUS-05", "CAP-BUS-06"]
 scope: "Full domain capability delivery, not a blocker for unrelated dependency-ready work"
 owner_role: "Business and archetype understanding domain owner and independent evaluation"
 specs: ["docs/14-CAPABILITY-TAXONOMY.md", "docs/15-CAPABILITY-CONTRACT.md", "docs/18-BUSINESS-ARCHETYPE-MATRIX.md", "docs/35-QUALITY-SELF-AUDIT-GATES.md"]
@@ -21,3 +22,5 @@ Read [14](../../docs/14-CAPABILITY-TAXONOMY.md) and [15](../../docs/15-CAPABILIT
 ## History
 
 - OPEN — 2026-09-18 inventory at2b6d527: full canonical delivery/release and operational proof not established. Keep this history when child capabilities advance.
+
+This is an aggregate delivery gap. `affected_capabilities` identifies the still-affected rows. A separately verified capability may leave that set with an appended evidence-backed scope update while sibling gaps remain open; do not force unrelated capabilities to complete together.

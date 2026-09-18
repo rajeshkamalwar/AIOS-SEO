@@ -1,12 +1,12 @@
 # Current state
 
-<!-- Derived record/source digest: 03ab9ef814d711e85beae5e7665f06cb967ee1be83cb1e86e6f0dff4f2b480ca; regenerate with npm run vault:update. This is not a test receipt. -->
+<!-- Derived record/source digest: 101cc1b557c4c24346d64aac555c95b1d7e4811d66d44eb346d06ebe57a31d37; regenerate with npm run vault:update. This is not a test receipt. -->
 
-Latest recorded execution evidence: [N1](milestones/N1.md) — **353 normal / 26 compiled / 13 Docker** at reported baseline `2b6d527`. Source/report digest changes above do not establish new test results. Read the linked report for environment, failures and scope.
+Latest recorded execution evidence: [READONLY-CORRECTIONS](milestones/READONLY-CORRECTIONS.md) — **357 normal / 33 compiled / not recorded Docker** at reported baseline `containing commit; parent673a11b`. Source/report digest changes above do not establish new test results. Read the linked report for environment, failures and scope.
 
 **Product incomplete.** M1–M5 local exits are reported; N0 customer activation and N1 live integration remain open. Real PostgreSQL transactions and private local blobs, loopback HTTP, persisted fixture frontiers/snapshots and isolated offline Chromium execute. Source fixtures, injected principals, test-authored publication/evaluator records and denied external resources remain explicit limitations. No capability is real-world or production-proven by those tests.
 
-The owner-approved N0 deployment/data-use profile gates customer processing. It does not block reversible local fixes such as [submission deadline](gaps/GAP-025.md) and [graph integrity](gaps/GAP-026.md), nor grant any website-write authority.
+The owner-approved N0 deployment/data-use profile gates customer processing. It does not block reversible local implementation. [Submission deadline](gaps/GAP-025.md), [graph integrity](gaps/GAP-026.md) and [remaining API parity](gaps/GAP-028.md) retain their own lifecycle histories; none grants website-write authority.
 
 | Milestone | Recorded state | Evidence scope |
 | --- | --- | --- |
@@ -26,10 +26,11 @@ The owner-approved N0 deployment/data-use profile gates customer processing. It 
 | [N2](milestones/N2.md) | NOT_STARTED | DEFINED |
 | [N3](milestones/N3.md) | NOT_STARTED | DEFINED |
 | [VAULT-BASELINE](milestones/VAULT-BASELINE.md) | BASELINE_VERIFIED | TESTED |
+| [READONLY-CORRECTIONS](milestones/READONLY-CORRECTIONS.md) | SCOPED_LOCAL_EXIT_VERIFIED | TESTED |
 
 ## GitHub snapshot and authority
 
-Inspected2026-09-18: [PR1](https://github.com/rajeshkamalwar/AIOS-SEO/pull/1) OPEN, `docs/architecture-readiness-review` → `main`, head0f3fdf9; [PR2](https://github.com/rajeshkamalwar/AIOS-SEO/pull/2) OPEN, `codex/m1-evidence-ledger` → specification branch. Baseline2b6d527 matched local/remote. Neither returned reviews or CI status checks. Subsequent checkpoint commits are in Git/PR history; this dated snapshot is not a live API. No merge or release is implied.
+Inspected 2026-09-18: [PR1](https://github.com/rajeshkamalwar/AIOS-SEO/pull/1) OPEN, `docs/architecture-readiness-review` → `main`, head0f3fdf9; [PR2](https://github.com/rajeshkamalwar/AIOS-SEO/pull/2) OPEN, `codex/m1-evidence-ledger` → specification branch. Baseline2b6d527 matched local/remote. Neither returned reviews or CI status checks. Subsequent checkpoint commits are in Git/PR history; this dated snapshot is not a live API. No merge or release is implied.
 
 ## Historical statements and current interpretation
 

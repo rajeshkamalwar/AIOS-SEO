@@ -10,8 +10,8 @@ canonical_release: "unreleased"
 specs: ["docs/14-CAPABILITY-TAXONOMY.md", "docs/15-CAPABILITY-CONTRACT.md", "docs/18-BUSINESS-ARCHETYPE-MATRIX.md"]
 implementation: ["packages/api/index.ts", "apps/web/index.html"]
 tests: ["tests/api.test.ts"]
-reports: ["docs/40-POST-M5-INTEGRATION-REALITY-REVIEW.md", "docs/41-NEXT-PHASE-READINESS-PLAN.md", "docs/reports/N1-IMPLEMENTATION.md"]
-gaps: ["GAP-DOM-UX", "GAP-019"]
+reports: ["docs/40-POST-M5-INTEGRATION-REALITY-REVIEW.md", "docs/41-NEXT-PHASE-READINESS-PLAN.md", "docs/reports/N1-IMPLEMENTATION.md", "reports/POST-VAULT-READONLY-CORRECTIONS.md"]
+gaps: ["GAP-DOM-UX", "GAP-019", "GAP-025", "GAP-028"]
 scope: "Scoped reading of supplied publication cards, honest missing-source shape and static mobile-width empty-state page."
 baseline: "2b6d527"
 required_stages: "Canonical15/18/28/35 applicable evidence, implementation, independent test/release, real-world and production proof; applicability and stage evidence must be explicitly reviewed before COMPLETE."
@@ -48,3 +48,7 @@ Open gaps: [GAP-DOM-UX](../gaps/GAP-DOM-UX.md), [GAP-019](../gaps/GAP-019.md).
 ## History
 
 - 2026-09-18 baseline2b6d527: conservative inventory import; no maturity promotion from test counts or draft manifests.
+
+- 2026-09-18: local read-only correction checkpoint tracks [GAP-025](../gaps/GAP-025.md), [GAP-028](../gaps/GAP-028.md). Full capability remains DEFINED / INCOMPLETE.
+
+Scoped verification: [post-vault correction report](../../reports/POST-VAULT-READONLY-CORRECTIONS.md). Capability maturity and completion are unchanged.

@@ -3,6 +3,7 @@ id: "GAP-DOM-COM"
 title: "Ecommerce, D2C and marketplace supply canonical capability delivery"
 status: "OPEN"
 severity: "HIGH"
+affected_capabilities: ["CAP-COM-01", "CAP-COM-02", "CAP-COM-03", "CAP-COM-04", "CAP-COM-05", "CAP-COM-06", "CAP-COM-07", "CAP-COM-08"]
 scope: "Full domain capability delivery, not a blocker for unrelated dependency-ready work"
 owner_role: "Ecommerce, D2C and marketplace supply domain owner and independent evaluation"
 specs: ["docs/14-CAPABILITY-TAXONOMY.md", "docs/15-CAPABILITY-CONTRACT.md", "docs/18-BUSINESS-ARCHETYPE-MATRIX.md", "docs/35-QUALITY-SELF-AUDIT-GATES.md"]
@@ -21,3 +22,5 @@ Read [14](../../docs/14-CAPABILITY-TAXONOMY.md) and [15](../../docs/15-CAPABILIT
 ## History
 
 - OPEN — 2026-09-18 inventory at2b6d527: full canonical delivery/release and operational proof not established. Keep this history when child capabilities advance.
+
+This is an aggregate delivery gap. `affected_capabilities` identifies the still-affected rows. A separately verified capability may leave that set with an appended evidence-backed scope update while sibling gaps remain open; do not force unrelated capabilities to complete together.

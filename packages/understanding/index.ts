@@ -16,8 +16,10 @@ export function gatewayDisabled(): { status:"unavailable"; provider:"local-synth
 export type GraphNode={id:string;type:string;label:string;basis:"observed"|"inferred"|"confirmed";evidence_ids:string[];support:Support};
 export type GraphEdge={id:string;subject_id:string;predicate:string;object_id:string;assertion_id:string;basis:"observed"|"inferred"|"confirmed";evidence_ids:string[];support:Support;valid_from:string|null;valid_to:string|null;recorded_at:string};
 export function graphProjection(siteId:string, knownSeq:number, knownAt:string, nodes:GraphNode[], edges:GraphEdge[]) {
-  const ids=new Set(nodes.map(n=>n.id)); const valid=edges.filter(e=>ids.has(e.subject_id)&&ids.has(e.object_id));
-  const graph={site_id:siteId,watermark:knownSeq,known_at:knownAt,valid_at:knownAt,view:"client",nodes:nodes.slice(0,200),edges:valid.slice(0,400),truncated:nodes.length>200||valid.length>400,next_cursor:null};
+  const visibleNodes=nodes.slice(0,200);
+  const ids=new Set(visibleNodes.map(n=>n.id));
+  const visibleEdges=edges.filter(e=>ids.has(e.subject_id)&&ids.has(e.object_id)).slice(0,400);
+  const graph={site_id:siteId,watermark:knownSeq,known_at:knownAt,valid_at:knownAt,view:"client",nodes:visibleNodes,edges:visibleEdges,truncated:nodes.length>visibleNodes.length||edges.length>visibleEdges.length,next_cursor:null};
   validate(base+"graph.schema.json",graph); return graph;
 }
 export type Opportunity={id:string; priority:1|2|3; reason:string; target_ids:string[]; evidence_bundle_id:string; capability_id:string; objective:"understand"|"grow"|"protect"};

@@ -107,6 +107,41 @@ test('M2 transitive revocation blocks admission, dispatch, and result acceptance
  const id=await commands.submit(p,site,randomUUID(),budget());await assert.rejects(commands.enqueue(p,site,id,bundle,parent,'revoked'),/skill_revoked/);await stopAll();
  const revokedRelease=await approve();await run(revokedRelease);await registry.change(revokedRelease,'revoked','before dispatch');assert.equal(await worker.claim(),null);await stopAll();
 });
+test('API store admits a fresh DB-clock budget after long uptime and preserves original retries',async(t)=>{
+ t.after(()=>stopAll());
+ const realNow=Date.now;
+ let store:PostgresReadOnlyStore;
+ try {Date.now=()=>realNow()-21*60*1000;store=new PostgresReadOnlyStore(runtime,ledger,deletions);}
+ finally {Date.now=realNow;}
+ const key=randomUUID(),first=await store.submit(p,'https://jobs.example/',key);
+ const original=(await admin.query('SELECT budget,input_hash,clock_timestamp() AS checked_at FROM aios.crawl WHERE id=$1',[first.run_id])).rows[0];
+ const remaining=Date.parse(original.budget.deadline)-+original.checked_at;
+ assert.ok(remaining>1190000&&remaining<=1200000,String(remaining));
+ assert.deepEqual({...original.budget,deadline:null},{http_requests:750,render_requests:0,render_pages:0,model_calls:0,tokens:0,cost_microusd:0,deadline:null});
+ try {Date.now=()=>realNow()+21*60*1000;assert.deepEqual(await store.submit(p,'https://jobs.example/',key),first);}
+ finally {Date.now=realNow;}
+ const reopened=new pg.Pool({...cfg,user:'aios_runtime'});t.after(()=>reopened.end());
+ const again=new PostgresReadOnlyStore(reopened,new Ledger(reopened,blobs,'local-synthetic-v1'),deletions);
+ assert.deepEqual(await again.submit(p,'https://jobs.example/',key),first);
+ const concurrentKey=randomUUID(),concurrent=await Promise.all([store.submit(p,'https://jobs.example/',concurrentKey),again.submit(p,'https://jobs.example/',concurrentKey)]);
+ assert.deepEqual(concurrent[0],concurrent[1]);
+ await assert.rejects(again.submit(p,'https://other-deadline.example/',key),/conflict/);
+ const retained=(await admin.query('SELECT budget,input_hash FROM aios.crawl WHERE id=$1',[first.run_id])).rows[0];
+ assert.deepEqual(retained,{budget:original.budget,input_hash:original.input_hash});
+ assert.equal((await admin.query("SELECT count(*) FROM aios.outbox WHERE aggregate_id=$1 AND event_type='crawl.requested'",[first.run_id])).rows[0].count,'1');
+ await assert.rejects(commands.submit(p,site,key,{...original.budget,http_requests:749}),/conflict/);
+ await admin.query('UPDATE control.health SET restore_ready=false');
+ try {await assert.rejects(again.submit(p,'https://jobs.example/',key),/policy_unavailable/);}finally{await admin.query('UPDATE control.health SET restore_ready=true');}
+ await admin.query("UPDATE aios.membership SET state='revoked' WHERE tenant_id=$1 AND user_id=$2",[p.tenantId,p.userId]);
+ try {await assert.rejects(commands.submitDiscovery(p,site,key),/scope_denied/);}finally{await admin.query("UPDATE aios.membership SET state='active' WHERE tenant_id=$1 AND user_id=$2",[p.tenantId,p.userId]);}
+ const expiringKey=randomUUID(),expiringBudget={...original.budget,deadline:new Date(Date.now()+300).toISOString()};
+ const expiring=await commands.submit(p,site,expiringKey,expiringBudget);
+ await new Promise(resolve=>setTimeout(resolve,350));
+ assert.equal((await again.submit(p,'https://jobs.example/',expiringKey)).run_id,expiring);
+ assert.deepEqual((await admin.query('SELECT budget FROM aios.crawl WHERE id=$1',[expiring])).rows[0].budget,expiringBudget);
+ const customKey=randomUUID();await commands.submit(p,site,customKey,budget());
+ await assert.rejects(again.submit(p,'https://jobs.example/',customKey),/conflict/);
+});
 test('M5 durable API adapter submits and reopens a persisted run',async()=>{
  await loadFixtures();
  const robots=parseRobots('User-agent: *\nDisallow: /private\nSitemap: https://jobs.example/sitemap.xml');
@@ -281,6 +316,8 @@ test('M2 deletion tombstone survives a stale database epoch and blocks acceptanc
  await run();const l=(await worker.claim())!;await deletions.record(p.tenantId,site);
  await assert.rejects(new Jobs(scheduler,deletions,blobs).projectHttpFixture(projected.lease,projected.receipt.observationId),/deleted_scope/);
  await assert.rejects(worker.complete(l,bundle),/deleted_scope/);await assert.rejects(commands.submit(p,site,randomUUID(),budget()),/deleted_scope/);
+ const prior=(await admin.query('SELECT idempotency_key FROM aios.crawl WHERE id=$1',[l.runId])).rows[0];
+ await assert.rejects(commands.submitDiscovery(p,site,prior.idempotency_key),/deleted_scope/);
  // No database deletion/epoch update happened: independently retained tombstone alone fences an older DB.
  assert.equal((await admin.query('SELECT deletion_epoch FROM aios.tenant WHERE id=$1',[p.tenantId])).rows[0].deletion_epoch,'0');await stopAll();
 });

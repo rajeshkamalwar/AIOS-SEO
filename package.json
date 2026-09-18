@@ -16,7 +16,7 @@
     "test:unit": "node --import tsx --test tests/contracts.test.ts tests/blob.test.ts",
     "test:render": "node --import tsx scripts/test-render.mjs",
     "vault:update": "python3 vault/refresh.py",
-    "vault:check": "python3 vault/refresh.py --check",
+    "vault:check": "python3 vault/refresh.py --check && python3 vault/test_refresh.py",
     "pretest": "npm run vault:check"
   },
   "dependencies": {

@@ -32,14 +32,24 @@ export class Jobs {
  }
  async submit(p:Principal,site:string,key:string,budget:Budget):Promise<string>{
   validate(base+'common.schema.json#/$defs/budget',budget);
+  return this.submitBudget(p,site,key,budget,budget.deadline);
+ }
+ /** Fixed read-only API budget. Its deadline is assigned once by the database,
+  * not by process startup/request time, and is immutable on idempotent replay. */
+ async submitDiscovery(p:Principal,site:string,key:string):Promise<string>{
+  return this.submitBudget(p,site,key,{http_requests:750,render_requests:0,render_pages:0,model_calls:0,tokens:0,cost_microusd:0});
+ }
+ private async submitBudget(p:Principal,site:string,key:string,limits:Omit<Budget,'deadline'>,explicitDeadline?:string):Promise<string>{
   if(!key||key.length>4096)throw new Error('invalid_input');
-  const inputHash=manifestHash({site,budget,policy:'discovery-v1'});
   return transaction(this.pool,'aios_runtime',async c=>{
    await this.locks(c);await scope(c,p,site);await this.health(c);
    if(await this.deletions.contains(p.tenantId,site))throw new Error('deleted_scope');
-   const prior=(await c.query('SELECT id,input_hash FROM crawl WHERE tenant_id=$1 AND idempotency_key=$2',[p.tenantId,key])).rows[0];
-   if(prior){if(prior.input_hash!==inputHash)throw new Error('conflict');return prior.id;}
+   const prior=(await c.query('SELECT id,input_hash,budget FROM crawl WHERE tenant_id=$1 AND idempotency_key=$2',[p.tenantId,key])).rows[0];
    const time=(await c.query('SELECT clock_timestamp() AS now')).rows[0].now;
+   const budget:Budget={...limits,deadline:explicitDeadline??prior?.budget.deadline??new Date(+time+1200000).toISOString()};
+   validate(base+'common.schema.json#/$defs/budget',budget);
+   const inputHash=manifestHash({site,budget,policy:'discovery-v1'});
+   if(prior){if(prior.input_hash!==inputHash)throw new Error('conflict');return prior.id;}
    if(Date.parse(budget.deadline)<=+time || Date.parse(budget.deadline)>+time+1200000)throw new Error('deadline');
    // Cross-tenant admission count comes from a narrow definer function, not unrestricted tenant record access.
    const counts=(await c.query('SELECT * FROM control.admission_counts($1)',[p.tenantId])).rows[0];

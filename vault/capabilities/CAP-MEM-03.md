@@ -10,8 +10,8 @@ canonical_release: "unreleased"
 specs: ["docs/14-CAPABILITY-TAXONOMY.md", "docs/15-CAPABILITY-CONTRACT.md", "docs/18-BUSINESS-ARCHETYPE-MATRIX.md"]
 implementation: ["packages/understanding/index.ts", "packages/api/index.ts", "packages/persistence/migrations/003-readonly-publication.sql"]
 tests: ["tests/understanding.test.ts", "tests/api.test.ts", "tests/jobs.test.ts"]
-reports: ["docs/40-POST-M5-INTEGRATION-REALITY-REVIEW.md", "docs/41-NEXT-PHASE-READINESS-PLAN.md", "docs/reports/N1-IMPLEMENTATION.md"]
-gaps: ["GAP-DOM-MEM"]
+reports: ["docs/40-POST-M5-INTEGRATION-REALITY-REVIEW.md", "docs/41-NEXT-PHASE-READINESS-PLAN.md", "docs/reports/N1-IMPLEMENTATION.md", "reports/POST-VAULT-READONLY-CORRECTIONS.md"]
+gaps: ["GAP-DOM-MEM", "GAP-026", "GAP-016"]
 scope: "Bounded graph payload construction with supplied node/edge provenance plus scoped persisted publication readback."
 baseline: "2b6d527"
 required_stages: "Canonical15/18/28/35 applicable evidence, implementation, independent test/release, real-world and production proof; applicability and stage evidence must be explicitly reviewed before COMPLETE."
@@ -48,3 +48,7 @@ Open gaps: [GAP-DOM-MEM](../gaps/GAP-DOM-MEM.md).
 ## History
 
 - 2026-09-18 baseline2b6d527: conservative inventory import; no maturity promotion from test counts or draft manifests.
+
+- 2026-09-18: local read-only correction checkpoint tracks [GAP-026](../gaps/GAP-026.md), [GAP-016](../gaps/GAP-016.md). Full capability remains DEFINED / INCOMPLETE.
+
+Scoped verification: [post-vault correction report](../../reports/POST-VAULT-READONLY-CORRECTIONS.md). Capability maturity and completion are unchanged.
