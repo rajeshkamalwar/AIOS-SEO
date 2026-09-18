@@ -9,6 +9,8 @@ import { normalizeUrl } from '../perception/url.js';
 import { DeletionLedger } from '../policy/deletion.js';
 import { assertInputsEligible } from '../policy/input-eligibility.js';
 export interface Budget { http_requests:number; render_requests:number; render_pages:number; model_calls:number; tokens:number; cost_microusd:number; deadline:string }
+export type CrawlState='queued'|'running'|'complete_in_scope'|'partial'|'blocked'|'failed'|'cancelled';
+export interface SubmissionReceipt {runId:string; replayed:boolean; state:CrawlState}
 export type BudgetKind=Exclude<keyof Budget,'deadline'>;
 export interface Lease { tenantId:string; siteId:string; runId:string; jobId:string; token:string; attempt:number; attemptId:string }
 const moneyKinds:BudgetKind[]=['http_requests','render_requests','render_pages','model_calls','tokens','cost_microusd'];
@@ -32,24 +34,29 @@ export class Jobs {
  }
  async submit(p:Principal,site:string,key:string,budget:Budget):Promise<string>{
   validate(base+'common.schema.json#/$defs/budget',budget);
-  return this.submitBudget(p,site,key,budget,budget.deadline);
+  return (await this.submitBudget(p,site,key,budget,budget.deadline)).runId;
  }
  /** Fixed read-only API budget. Its deadline is assigned once by the database,
   * not by process startup/request time, and is immutable on idempotent replay. */
  async submitDiscovery(p:Principal,site:string,key:string):Promise<string>{
+  return (await this.submitDiscoveryReceipt(p,site,key)).runId;
+ }
+ /** Receipt captures creation/replay and persisted state under the admission lock.
+  * It grants no execution authority and does not replace the API's current projection. */
+ async submitDiscoveryReceipt(p:Principal,site:string,key:string):Promise<SubmissionReceipt>{
   return this.submitBudget(p,site,key,{http_requests:750,render_requests:0,render_pages:0,model_calls:0,tokens:0,cost_microusd:0});
  }
- private async submitBudget(p:Principal,site:string,key:string,limits:Omit<Budget,'deadline'>,explicitDeadline?:string):Promise<string>{
+ private async submitBudget(p:Principal,site:string,key:string,limits:Omit<Budget,'deadline'>,explicitDeadline?:string):Promise<SubmissionReceipt>{
   if(!key||key.length>4096)throw new Error('invalid_input');
   return transaction(this.pool,'aios_runtime',async c=>{
    await this.locks(c);await scope(c,p,site);await this.health(c);
    if(await this.deletions.contains(p.tenantId,site))throw new Error('deleted_scope');
-   const prior=(await c.query('SELECT id,input_hash,budget FROM crawl WHERE tenant_id=$1 AND idempotency_key=$2',[p.tenantId,key])).rows[0];
+   const prior=(await c.query('SELECT id,input_hash,budget,state FROM crawl WHERE tenant_id=$1 AND idempotency_key=$2',[p.tenantId,key])).rows[0];
    const time=(await c.query('SELECT clock_timestamp() AS now')).rows[0].now;
    const budget:Budget={...limits,deadline:explicitDeadline??prior?.budget.deadline??new Date(+time+1200000).toISOString()};
    validate(base+'common.schema.json#/$defs/budget',budget);
    const inputHash=manifestHash({site,budget,policy:'discovery-v1'});
-   if(prior){if(prior.input_hash!==inputHash)throw new Error('conflict');return prior.id;}
+   if(prior){if(prior.input_hash!==inputHash)throw new Error('conflict');return {runId:prior.id,replayed:true,state:prior.state};}
    if(Date.parse(budget.deadline)<=+time || Date.parse(budget.deadline)>+time+1200000)throw new Error('deadline');
    // Cross-tenant admission count comes from a narrow definer function, not unrestricted tenant record access.
    const counts=(await c.query('SELECT * FROM control.admission_counts($1)',[p.tenantId])).rows[0];
@@ -64,7 +71,7 @@ export class Jobs {
    const seed=normalizeUrl(siteRow.submitted_url);
    if(seed.excluded)throw new Error('policy_blocked');
    await c.query('SELECT control.seed_submitted_target($1,$2)',[id,seed.url]);
-   await event(c,p.tenantId,site,id,id,'crawl.requested',{crawl_id:id,policy_version:'discovery-v1'});return id;
+   await event(c,p.tenantId,site,id,id,'crawl.requested',{crawl_id:id,policy_version:'discovery-v1'});return {runId:id,replayed:false,state:'queued'};
   });
  }
  async enqueue(p:Principal,site:string,run:string,input:string,digest:string,key:string,kind='audit'):Promise<string>{

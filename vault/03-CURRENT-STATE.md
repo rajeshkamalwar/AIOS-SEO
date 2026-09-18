@@ -1,8 +1,8 @@
 # Current state
 
-<!-- Derived record/source digest: 101cc1b557c4c24346d64aac555c95b1d7e4811d66d44eb346d06ebe57a31d37; regenerate with npm run vault:update. This is not a test receipt. -->
+<!-- Derived record/source digest: b11b3e27ad9ed28c601fc952549f0afffb03e2f3d38d734b85e9318da1ecc197; regenerate with npm run vault:update. This is not a test receipt. -->
 
-Latest recorded execution evidence: [READONLY-CORRECTIONS](milestones/READONLY-CORRECTIONS.md) — **357 normal / 33 compiled / not recorded Docker** at reported baseline `containing commit; parent673a11b`. Source/report digest changes above do not establish new test results. Read the linked report for environment, failures and scope.
+Latest recorded execution evidence: [API-CONTRACT-CORRECTIONS](milestones/API-CONTRACT-CORRECTIONS.md) — **369 normal / 33 compiled / not recorded Docker** at reported baseline `parent d7b721b`. Source/report digest changes above do not establish new test results. Read the linked report for environment, failures and scope.
 
 **Product incomplete.** M1–M5 local exits are reported; N0 customer activation and N1 live integration remain open. Real PostgreSQL transactions and private local blobs, loopback HTTP, persisted fixture frontiers/snapshots and isolated offline Chromium execute. Source fixtures, injected principals, test-authored publication/evaluator records and denied external resources remain explicit limitations. No capability is real-world or production-proven by those tests.
 
@@ -27,6 +27,7 @@ The owner-approved N0 deployment/data-use profile gates customer processing. It 
 | [N3](milestones/N3.md) | NOT_STARTED | DEFINED |
 | [VAULT-BASELINE](milestones/VAULT-BASELINE.md) | BASELINE_VERIFIED | TESTED |
 | [READONLY-CORRECTIONS](milestones/READONLY-CORRECTIONS.md) | SCOPED_LOCAL_EXIT_VERIFIED | TESTED |
+| [API-CONTRACT-CORRECTIONS](milestones/API-CONTRACT-CORRECTIONS.md) | PARTIAL_GAP_CHECKPOINT | TESTED |
 
 ## GitHub snapshot and authority
 

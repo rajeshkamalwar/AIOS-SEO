@@ -1,6 +1,6 @@
 # Coverage matrix
 
-<!-- Derived record/source digest: 101cc1b557c4c24346d64aac555c95b1d7e4811d66d44eb346d06ebe57a31d37; regenerate with npm run vault:update. This is not a test receipt. -->
+<!-- Derived record/source digest: b11b3e27ad9ed28c601fc952549f0afffb03e2f3d38d734b85e9318da1ecc197; regenerate with npm run vault:update. This is not a test receipt. -->
 
 All 36 domains / 195 canonical rows are indexed. Full-capability maturity and local prerequisite maturity are separate. **No full-capability completion is asserted.** Names are navigation labels; definitions remain in [14](../docs/14-CAPABILITY-TAXONOMY.md) and inherited contracts15/18.
 

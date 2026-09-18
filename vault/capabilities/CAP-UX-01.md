@@ -10,7 +10,7 @@ canonical_release: "unreleased"
 specs: ["docs/14-CAPABILITY-TAXONOMY.md", "docs/15-CAPABILITY-CONTRACT.md", "docs/18-BUSINESS-ARCHETYPE-MATRIX.md"]
 implementation: ["packages/api/index.ts", "apps/web/index.html"]
 tests: ["tests/api.test.ts"]
-reports: ["docs/40-POST-M5-INTEGRATION-REALITY-REVIEW.md", "docs/41-NEXT-PHASE-READINESS-PLAN.md", "docs/reports/N1-IMPLEMENTATION.md", "reports/POST-VAULT-READONLY-CORRECTIONS.md"]
+reports: ["reports/API-CONTRACT-CORRECTIONS.md", "docs/40-POST-M5-INTEGRATION-REALITY-REVIEW.md", "docs/41-NEXT-PHASE-READINESS-PLAN.md", "docs/reports/N1-IMPLEMENTATION.md", "reports/POST-VAULT-READONLY-CORRECTIONS.md"]
 gaps: ["GAP-DOM-UX", "GAP-019", "GAP-025", "GAP-028"]
 scope: "Scoped reading of supplied publication cards, honest missing-source shape and static mobile-width empty-state page."
 baseline: "2b6d527"
@@ -29,7 +29,7 @@ Implementation: [index.ts](../../packages/api/index.ts), [index.html](../../apps
 
 Tests: [api.test.ts](../../tests/api.test.ts)
 
-Evidence/reports: [40-POST-M5-INTEGRATION-REALITY-REVIEW.md](../../docs/40-POST-M5-INTEGRATION-REALITY-REVIEW.md), [41-NEXT-PHASE-READINESS-PLAN.md](../../docs/41-NEXT-PHASE-READINESS-PLAN.md), [N1-IMPLEMENTATION.md](../../docs/reports/N1-IMPLEMENTATION.md)
+Evidence/reports: ["reports/API-CONTRACT-CORRECTIONS.md", 40-POST-M5-INTEGRATION-REALITY-REVIEW.md](../../docs/40-POST-M5-INTEGRATION-REALITY-REVIEW.md), [41-NEXT-PHASE-READINESS-PLAN.md](../../docs/41-NEXT-PHASE-READINESS-PLAN.md), [N1-IMPLEMENTATION.md](../../docs/reports/N1-IMPLEMENTATION.md)
 
 Remaining: No business-language interpretation engine, outcome narrative or connected persistent client flow; static UI is not implemented business experience.
 
@@ -52,3 +52,5 @@ Open gaps: [GAP-DOM-UX](../gaps/GAP-DOM-UX.md), [GAP-019](../gaps/GAP-019.md).
 - 2026-09-18: local read-only correction checkpoint tracks [GAP-025](../gaps/GAP-025.md), [GAP-028](../gaps/GAP-028.md). Full capability remains DEFINED / INCOMPLETE.
 
 Scoped verification: [post-vault correction report](../../reports/POST-VAULT-READONLY-CORRECTIONS.md). Capability maturity and completion are unchanged.
+
+- 2026-09-18 API boundary checkpoint: [verification](../../reports/API-CONTRACT-CORRECTIONS.md); maturity unchanged. Publication authority/current eligibility is tracked in [GAP-030](../gaps/GAP-030.md).

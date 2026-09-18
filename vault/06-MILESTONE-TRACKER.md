@@ -1,6 +1,6 @@
 # Milestone tracker
 
-<!-- Derived record/source digest: 101cc1b557c4c24346d64aac555c95b1d7e4811d66d44eb346d06ebe57a31d37; regenerate with npm run vault:update. This is not a test receipt. -->
+<!-- Derived record/source digest: b11b3e27ad9ed28c601fc952549f0afffb03e2f3d38d734b85e9318da1ecc197; regenerate with npm run vault:update. This is not a test receipt. -->
 
 Milestones are verification checkpoints, not permission boundaries or proof that the product is complete. Definitions and reports remain canonical. Open owner gates block only dependent work. [Full 45-commit baseline history](10-REFERENCES.md) retains the original sequence; newer checkpoints append here.
 
@@ -23,3 +23,4 @@ Milestones are verification checkpoints, not permission boundaries or proof that
 | [N3](milestones/N3.md) Controlled read-only pilot | [35-QUALITY-SELF-AUDIT-GATES.md](../docs/35-QUALITY-SELF-AUDIT-GATES.md), [37-IMPLEMENTATION-ARCHITECTURE.md](../docs/37-IMPLEMENTATION-ARCHITECTURE.md), [41-NEXT-PHASE-READINESS-PLAN.md](../docs/41-NEXT-PHASE-READINESS-PLAN.md) | NOT_STARTED | not implemented | not recorded normal; — compiled; — Docker | [41-NEXT-PHASE-READINESS-PLAN.md](../docs/41-NEXT-PHASE-READINESS-PLAN.md) |
 | [VAULT-BASELINE](milestones/VAULT-BASELINE.md) Repository-linked Obsidian control baseline | [README.md](../README.md), [AGENTS.md](../AGENTS.md), [14-CAPABILITY-TAXONOMY.md](../docs/14-CAPABILITY-TAXONOMY.md) | BASELINE_VERIFIED | 2b6d527 | not recorded normal; — compiled; — Docker | [VAULT-BASELINE.md](../vault/milestones/VAULT-BASELINE.md) |
 | [READONLY-CORRECTIONS](milestones/READONLY-CORRECTIONS.md) Post-vault API deadline and graph integrity corrections | [27-KNOWLEDGE-GRAPH-CONTRACT.md](../docs/27-KNOWLEDGE-GRAPH-CONTRACT.md), [30-CRAWL-RENDER-CONTRACT.md](../docs/30-CRAWL-RENDER-CONTRACT.md), [33-EVENT-JOB-CONTRACT.md](../docs/33-EVENT-JOB-CONTRACT.md), [37-IMPLEMENTATION-ARCHITECTURE.md](../docs/37-IMPLEMENTATION-ARCHITECTURE.md) | SCOPED_LOCAL_EXIT_VERIFIED | containing commit; parent673a11b | 357 normal; 33 compiled; — Docker | [POST-VAULT-READONLY-CORRECTIONS.md](../reports/POST-VAULT-READONLY-CORRECTIONS.md) |
+| [API-CONTRACT-CORRECTIONS](milestones/API-CONTRACT-CORRECTIONS.md) Read-only API status and response boundary | [37-IMPLEMENTATION-ARCHITECTURE.md](../docs/37-IMPLEMENTATION-ARCHITECTURE.md), [27-KNOWLEDGE-GRAPH-CONTRACT.md](../docs/27-KNOWLEDGE-GRAPH-CONTRACT.md) | PARTIAL_GAP_CHECKPOINT | parent d7b721b | 369 normal; 33 compiled; — Docker | [API-CONTRACT-CORRECTIONS.md](../reports/API-CONTRACT-CORRECTIONS.md) |

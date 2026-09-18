@@ -70,6 +70,25 @@ test('M2 submission and job idempotency, immutable approved bytes, authority sep
  await assert.rejects(new Jobs(runtime,deletions).claim(),/service_authority_required/);
  await stopAll();
 });
+test('Discovery submission receipt distinguishes concurrent creation from current-state replay',async(t)=>{
+ t.after(()=>stopAll());
+ const key=randomUUID(),pair=await Promise.all([commands.submitDiscoveryReceipt(p,site,key),commands.submitDiscoveryReceipt(p,site,key)]);
+ assert.equal(pair[0]!.runId,pair[1]!.runId);
+ assert.deepEqual(pair.map(r=>r.replayed).sort(),[false,true]);
+ assert.ok(pair.every(r=>r.state==='queued'));
+ const id=pair[0]!.runId;
+ await commands.enqueue(p,site,id,bundle,digest,'receipt-state');
+ const lease=(await worker.claim())!;assert.equal(lease.runId,id);
+ assert.deepEqual(await commands.submitDiscoveryReceipt(p,site,key),{runId:id,replayed:true,state:'running'});
+ await commands.cancel(p,site,id);await commands.cancel(p,site,id);
+ const reopened=new pg.Pool({...cfg,user:'aios_runtime'});t.after(()=>reopened.end());
+ assert.deepEqual(await new Jobs(reopened,deletions).submitDiscoveryReceipt(p,site,key),{runId:id,replayed:true,state:'cancelled'});
+ assert.equal((await admin.query("SELECT count(*) FROM aios.work_audit WHERE crawl_id=$1 AND operation='cancel'",[id])).rows[0].count,'1');
+ assert.equal((await admin.query("SELECT count(*) FROM aios.outbox WHERE aggregate_id=$1 AND event_type='crawl.requested'",[id])).rows[0].count,'1');
+ await admin.query("UPDATE aios.membership SET state='revoked' WHERE tenant_id=$1 AND user_id=$2",[p.tenantId,p.userId]);
+ try {await assert.rejects(commands.submitDiscoveryReceipt(p,site,key),/scope_denied/);}
+ finally {await admin.query("UPDATE aios.membership SET state='active' WHERE tenant_id=$1 AND user_id=$2",[p.tenantId,p.userId]);}
+});
 test('M2 simultaneous claims produce one live lease; duplicate result acceptance is fenced',async()=>{
  const r=await run();const claimed=await Promise.all([worker.claim(),worker.claim()]);
  const leases=claimed.filter((l):l is Lease=>!!l);assert.equal(leases.length,1,JSON.stringify((await admin.query("SELECT state,error FROM aios.job")).rows));const l=leases[0]!;
@@ -118,13 +137,13 @@ test('API store admits a fresh DB-clock budget after long uptime and preserves o
  const remaining=Date.parse(original.budget.deadline)-+original.checked_at;
  assert.ok(remaining>1190000&&remaining<=1200000,String(remaining));
  assert.deepEqual({...original.budget,deadline:null},{http_requests:750,render_requests:0,render_pages:0,model_calls:0,tokens:0,cost_microusd:0,deadline:null});
- try {Date.now=()=>realNow()+21*60*1000;assert.deepEqual(await store.submit(p,'https://jobs.example/',key),first);}
+ try {Date.now=()=>realNow()+21*60*1000;assert.equal((await store.submit(p,'https://jobs.example/',key)).run_id,first.run_id);}
  finally {Date.now=realNow;}
  const reopened=new pg.Pool({...cfg,user:'aios_runtime'});t.after(()=>reopened.end());
  const again=new PostgresReadOnlyStore(reopened,new Ledger(reopened,blobs,'local-synthetic-v1'),deletions);
- assert.deepEqual(await again.submit(p,'https://jobs.example/',key),first);
+ assert.equal((await again.submit(p,'https://jobs.example/',key)).run_id,first.run_id);
  const concurrentKey=randomUUID(),concurrent=await Promise.all([store.submit(p,'https://jobs.example/',concurrentKey),again.submit(p,'https://jobs.example/',concurrentKey)]);
- assert.deepEqual(concurrent[0],concurrent[1]);
+ assert.equal(concurrent[0]!.run_id,concurrent[1]!.run_id);assert.equal(concurrent[0]!.site_id,concurrent[1]!.site_id);
  await assert.rejects(again.submit(p,'https://other-deadline.example/',key),/conflict/);
  const retained=(await admin.query('SELECT budget,input_hash FROM aios.crawl WHERE id=$1',[first.run_id])).rows[0];
  assert.deepEqual(retained,{budget:original.budget,input_hash:original.input_hash});
@@ -141,6 +160,28 @@ test('API store admits a fresh DB-clock budget after long uptime and preserves o
  assert.deepEqual((await admin.query('SELECT budget FROM aios.crawl WHERE id=$1',[expiring])).rows[0].budget,expiringBudget);
  const customKey=randomUUID();await commands.submit(p,site,customKey,budget());
  await assert.rejects(again.submit(p,'https://jobs.example/',customKey),/conflict/);
+});
+test('Postgres API returns current advanced replay and idempotent cancellation with honest pending projections',async(t)=>{
+ t.after(()=>stopAll());
+ const api=new ReadOnlyApi(new PostgresReadOnlyStore(runtime,ledger,deletions),'csrf');
+ const request={method:'POST',path:'/v1/sites/discovery-runs',principal:p,csrf:'csrf',body:{url:'https://jobs.example/',idempotency_key:randomUUID()}};
+ const accepted=await api.handle(request);assert.equal(accepted.status,202);
+ const id=(accepted.body as any).run_id;
+ assert.deepEqual((await api.handle(request)).body,accepted.body);
+ for(const suffix of ['understanding','graph']){
+  const pending=await api.handle({method:'GET',path:`/v1/sites/${site}/${suffix}`,principal:p});
+  assert.equal(pending.status,503);assert.equal((pending.body as any).error.code,'projection_pending');assert.equal(pending.headers['retry-after'],'5');
+ }
+ await commands.enqueue(p,site,id,bundle,digest,'api-replay');
+ assert.equal((await worker.claim())!.runId,id);
+ const running=await api.handle(request);assert.equal(running.status,200);assert.equal((running.body as any).state,'running');assert.equal((running.body as any).run_id,id);
+ const cancel={method:'POST',path:`/v1/discovery-runs/${id}/cancel`,principal:p,csrf:'csrf'};
+ const cancelled=await api.handle(cancel);assert.equal(cancelled.status,202);assert.equal((cancelled.body as any).state,'cancelled');
+ assert.deepEqual((await api.handle(cancel)).body,cancelled.body);
+ const replay=await api.handle(request);assert.equal(replay.status,200);assert.deepEqual(replay.body,cancelled.body);
+ assert.equal((await admin.query("SELECT count(*) FROM aios.work_audit WHERE crawl_id=$1 AND operation='cancel'",[id])).rows[0].count,'1');
+ const conflict=await api.handle({...request,body:{...request.body,url:'https://different-replay.example/'}});assert.equal(conflict.status,409);
+ const hidden=await api.handle({...cancel,principal:{tenantId:randomUUID(),userId:randomUUID()}});assert.equal(hidden.status,404);
 });
 test('M5 durable API adapter submits and reopens a persisted run',async()=>{
  await loadFixtures();
