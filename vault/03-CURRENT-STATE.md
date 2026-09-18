@@ -1,8 +1,8 @@
 # Current state
 
-<!-- Derived record/source digest: a91e6b1c6d5dc811215b726186a8745b85d456a4da495f3b24e0103be82e4462; regenerate with npm run vault:update. This is not a test receipt. -->
+<!-- Derived record/source digest: 7bce27c080057861d9c22f719f73b16b5eeaa8c3202e5126f14983d04c463bd7; regenerate with npm run vault:update. This is not a test receipt. -->
 
-Latest recorded execution evidence: [GOVERNED-HTTP-BOOTSTRAP](milestones/GOVERNED-HTTP-BOOTSTRAP.md) — **547 normal / 109 compiled / 2 Docker** at reported baseline `parent42d88b3`. Source/report digest changes above do not establish new test results. Read the linked report for environment, failures and scope.
+Latest recorded execution evidence: [GOVERNED-HTTP-EVIDENCE](milestones/GOVERNED-HTTP-EVIDENCE.md) — **568 normal / 110 compiled / 1 Docker** at reported baseline `parentaa8e9f7`. Source/report digest changes above do not establish new test results. Read the linked report for environment, failures and scope.
 
 **Product incomplete.** M1–M5 local exits are reported; N0 customer activation and N1 live integration remain open. Real PostgreSQL transactions and private local blobs, loopback HTTP, persisted fixture frontiers/snapshots and isolated offline Chromium execute. Source fixtures, injected principals, test-authored evaluator records and denied external resources remain explicit limitations. Legacy publication JSON is suppressed because independent publication receipts are absent; see GAP-030 and ADR-013. No capability is real-world or production-proven by those tests.
 
@@ -39,6 +39,7 @@ The owner-approved N0 deployment/data-use profile gates customer processing. It 
 | [ISOLATED-HTTP-EGRESS](milestones/ISOLATED-HTTP-EGRESS.md) | SCOPED_LOCAL_EXIT_VERIFIED | TESTED |
 | [REVIEWED-FIXTURE-RETENTION](milestones/REVIEWED-FIXTURE-RETENTION.md) | SCOPED_LOCAL_EXIT_VERIFIED | TESTED |
 | [GOVERNED-HTTP-BOOTSTRAP](milestones/GOVERNED-HTTP-BOOTSTRAP.md) | SCOPED_LOCAL_EXIT_VERIFIED | TESTED |
+| [GOVERNED-HTTP-EVIDENCE](milestones/GOVERNED-HTTP-EVIDENCE.md) | SCOPED_LOCAL_EXIT_VERIFIED | TESTED |
 
 ## GitHub snapshot and authority
 

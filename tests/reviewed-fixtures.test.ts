@@ -59,3 +59,11 @@ test('scope URLs use the same closed corpus and reject ordinary opaque query dat
 test('Reviewed alternate API fixture identities remain available for idempotency conflict checks',()=>{
  for(const host of ['other-deadline','different-replay'])assert.doesNotThrow(()=>scopeUrl(`https://${host}.example/`));
 });
+
+test('trusted broker failure details use an exact bounded vocabulary',()=>{
+ for(const [code,retryable,detail] of [['source_unavailable',true,'fixture transport failed'],['cancelled',false,'fixture aborted'],['parse_failed',false,'fixture content encoding unsupported']] as const){
+  const error={code,retryable,detail,evidence_ids:[]};metadata({...receipt(),status_code:null,headers:[],error});
+  assert.throws(()=>metadata({...receipt(),status_code:null,headers:[],error:{...error,detail:detail+' PRIVATE'}}),/unreviewed_fixture/);
+  assert.throws(()=>metadata({...receipt(),status_code:null,headers:[],error:{...error,retryable:!retryable}}),/unreviewed_fixture/);
+ }
+});

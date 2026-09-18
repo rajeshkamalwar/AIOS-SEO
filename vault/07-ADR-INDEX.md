@@ -38,3 +38,5 @@ ADR-007 is the owner-accepted scoped-rejection decision. Its implementation, tra
 - [ADR-021: reviewed synthetic raw retention](../docs/decisions/021-reviewed-synthetic-raw-retention.md) — exact corpus/metadata admission and legacy reuse checks; unchanged byte provenance, no general customer-content certification.
 
 - [ADR-022: governed local HTTP bootstrap](../docs/decisions/022-governed-local-http-bootstrap.md) — immutable scope-derived child, installed one-call permission and current dispatch gates; no accepted Evidence.
+
+- [ADR-023: governed local HTTP evidence acceptance](../docs/decisions/023-governed-local-http-evidence.md) — private response/witness binding and separate current-gated acceptor; no completion or public activation.

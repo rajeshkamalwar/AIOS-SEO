@@ -8,14 +8,15 @@ local_scope_kind: "partial_behavior"
 completion: "INCOMPLETE"
 canonical_release: "unreleased"
 specs: ["docs/14-CAPABILITY-TAXONOMY.md", "docs/15-CAPABILITY-CONTRACT.md", "docs/18-BUSINESS-ARCHETYPE-MATRIX.md", "spec/examples/skill-public-discovery.json"]
-implementation: ["packages/perception/url.ts", "packages/perception/robots-admission.ts", "packages/jobs/frontier.ts", "packages/jobs/frontier-links.ts", "packages/jobs/frontier-context.ts", "packages/persistence/index.ts", "packages/jobs/isolated-http-fixture-supervisor.ts", "packages/jobs/docker-http-fixture.ts", "packages/perception/http-fixture-broker.ts", "packages/perception/reviewed-fixtures.ts", "packages/jobs/http-bootstrap-job.ts", "packages/jobs/index.ts", "packages/jobs/http-lane.ts", "packages/skills/http-bootstrap.ts", "packages/persistence/migrations/021-http-bootstrap-job.sql"]
-tests: ["tests/site-scope.test.ts", "tests/frontier-persistence.test.ts", "tests/frontier-links.test.ts", "tests/sitemap-index-persistence.test.ts", "tests/jobs.test.ts", "tests/http-isolated.test.ts", "tests/http-fixture-broker.test.ts", "tests/reviewed-fixtures.test.ts", "tests/http-evidence.test.ts", "tests/offline-render-source.test.ts", "tests/http-bootstrap.test.ts", "tests/http-fixture-engine.test.ts"]
-reports: ["docs/40-POST-M5-INTEGRATION-REALITY-REVIEW.md", "docs/41-NEXT-PHASE-READINESS-PLAN.md", "docs/reports/N1-IMPLEMENTATION.md", "reports/ISOLATED-HTTP-EGRESS.md", "reports/REVIEWED-FIXTURE-RETENTION.md", "reports/GOVERNED-HTTP-BOOTSTRAP.md"]
-gaps: ["GAP-DOM-CRW", "GAP-004", "GAP-007", "GAP-041", "GAP-039", "GAP-042"]
+implementation: ["packages/perception/url.ts", "packages/perception/robots-admission.ts", "packages/jobs/frontier.ts", "packages/jobs/frontier-links.ts", "packages/jobs/frontier-context.ts", "packages/persistence/index.ts", "packages/jobs/isolated-http-fixture-supervisor.ts", "packages/jobs/docker-http-fixture.ts", "packages/perception/http-fixture-broker.ts", "packages/perception/reviewed-fixtures.ts", "packages/jobs/http-bootstrap-job.ts", "packages/jobs/index.ts", "packages/jobs/http-lane.ts", "packages/skills/http-bootstrap.ts", "packages/persistence/migrations/021-http-bootstrap-job.sql", "packages/jobs/http-bootstrap-acceptance.ts", "packages/persistence/migrations/022-http-bootstrap-acceptance.sql"]
+tests: ["tests/site-scope.test.ts", "tests/frontier-persistence.test.ts", "tests/frontier-links.test.ts", "tests/sitemap-index-persistence.test.ts", "tests/jobs.test.ts", "tests/http-isolated.test.ts", "tests/http-fixture-broker.test.ts", "tests/reviewed-fixtures.test.ts", "tests/http-evidence.test.ts", "tests/offline-render-source.test.ts", "tests/http-bootstrap.test.ts", "tests/http-fixture-engine.test.ts", "tests/http-acceptance.test.ts"]
+reports: ["docs/40-POST-M5-INTEGRATION-REALITY-REVIEW.md", "docs/41-NEXT-PHASE-READINESS-PLAN.md", "docs/reports/N1-IMPLEMENTATION.md", "reports/ISOLATED-HTTP-EGRESS.md", "reports/REVIEWED-FIXTURE-RETENTION.md", "reports/GOVERNED-HTTP-BOOTSTRAP.md", "reports/GOVERNED-HTTP-EVIDENCE.md"]
+gaps: ["GAP-DOM-CRW", "GAP-004", "GAP-007", "GAP-041", "GAP-039", "GAP-042", "GAP-043"]
 scope: "Synthetic scope receipts, robots-pinned durable sitemap/index/link frontier admission and loopback HTTP-to-PageSnapshot composition."
 baseline: "2b6d527"
 required_stages: "Canonical15/18/28/35 applicable evidence, implementation, independent test/release, real-world and production proof; applicability and stage evidence must be explicitly reviewed before COMPLETE."
 ---
+
 
 # CAP-CRW-01 — Scoped discovery
 
@@ -60,3 +61,7 @@ Open gaps: [GAP-DOM-CRW](../gaps/GAP-DOM-CRW.md), [GAP-004](../gaps/GAP-004.md),
 - 2026-09-18 after42d88b3: [GAP-042](../gaps/GAP-042.md) progresses governed local bootstrap dispatch; verification pending and full maturity unchanged.
 
 - 2026-09-18: [governed bootstrap report](../../reports/GOVERNED-HTTP-BOOTSTRAP.md) verifies GAP-042 local closure with547 source/109 compiled/2 actual Docker cases. Parent and full capability scope remain incomplete.
+
+- 2026-09-18 afteraa8e9f7: [governed HTTP evidence](../../reports/GOVERNED-HTTP-EVIDENCE.md) progresses GAP-043; local acceptance verification pending. No full scope closure.
+
+- 2026-09-19: GAP-043 local acceptance closed against [report](../../reports/GOVERNED-HTTP-EVIDENCE.md):568 source/110 compiled/1 actual Docker integration. Full capability and parent live scope remain incomplete.

@@ -1,6 +1,6 @@
 # Coverage matrix
 
-<!-- Derived record/source digest: a91e6b1c6d5dc811215b726186a8745b85d456a4da495f3b24e0103be82e4462; regenerate with npm run vault:update. This is not a test receipt. -->
+<!-- Derived record/source digest: 7bce27c080057861d9c22f719f73b16b5eeaa8c3202e5126f14983d04c463bd7; regenerate with npm run vault:update. This is not a test receipt. -->
 
 All 36 domains / 195 canonical rows are indexed. Full-capability maturity and local prerequisite maturity are separate. **No full-capability completion is asserted.** Names are navigation labels; definitions remain in [14](../docs/14-CAPABILITY-TAXONOMY.md) and inherited contracts15/18.
 
@@ -41,7 +41,7 @@ All 36 domains / 195 canonical rows are indexed. Full-capability maturity and lo
 | --- | --- | --- | --- | --- |
 | [CAP-AUDIT-01](capabilities/CAP-AUDIT-01.md) Sensor and connector reliability | DEFINED | foundation_only / TESTED | INCOMPLETE | [GAP-DOM-AUDIT](gaps/GAP-DOM-AUDIT.md), [GAP-015](gaps/GAP-015.md) |
 | [CAP-AUDIT-02](capabilities/CAP-AUDIT-02.md) Skill and evidence readiness | DEFINED | partial_behavior / TESTED | INCOMPLETE | [GAP-DOM-AUDIT](gaps/GAP-DOM-AUDIT.md), [GAP-015](gaps/GAP-015.md) |
-| [CAP-AUDIT-03](capabilities/CAP-AUDIT-03.md) Work and cost control | DEFINED | partial_behavior / TESTED | INCOMPLETE | [GAP-005](gaps/GAP-005.md), [GAP-DOM-AUDIT](gaps/GAP-DOM-AUDIT.md), [GAP-015](gaps/GAP-015.md), [GAP-034](gaps/GAP-034.md), [GAP-036](gaps/GAP-036.md), [GAP-037](gaps/GAP-037.md), [GAP-038](gaps/GAP-038.md), [GAP-039](gaps/GAP-039.md), [GAP-040](gaps/GAP-040.md), [GAP-041](gaps/GAP-041.md), [GAP-042](gaps/GAP-042.md) |
+| [CAP-AUDIT-03](capabilities/CAP-AUDIT-03.md) Work and cost control | DEFINED | partial_behavior / TESTED | INCOMPLETE | [GAP-005](gaps/GAP-005.md), [GAP-DOM-AUDIT](gaps/GAP-DOM-AUDIT.md), [GAP-015](gaps/GAP-015.md), [GAP-034](gaps/GAP-034.md), [GAP-036](gaps/GAP-036.md), [GAP-037](gaps/GAP-037.md), [GAP-038](gaps/GAP-038.md), [GAP-039](gaps/GAP-039.md), [GAP-040](gaps/GAP-040.md), [GAP-041](gaps/GAP-041.md), [GAP-042](gaps/GAP-042.md), [GAP-043](gaps/GAP-043.md) |
 | [CAP-AUDIT-04](capabilities/CAP-AUDIT-04.md) Decision and evaluation reliability | DEFINED | foundation_only / TESTED | INCOMPLETE | [GAP-DOM-AUDIT](gaps/GAP-DOM-AUDIT.md), [GAP-015](gaps/GAP-015.md) |
 | [CAP-AUDIT-05](capabilities/CAP-AUDIT-05.md) Enforcement and deployment integrity | DEFINED | partial_behavior / TESTED | INCOMPLETE | [GAP-DOM-AUDIT](gaps/GAP-DOM-AUDIT.md), [GAP-015](gaps/GAP-015.md), [GAP-041](gaps/GAP-041.md), [GAP-039](gaps/GAP-039.md) |
 
@@ -138,7 +138,7 @@ All 36 domains / 195 canonical rows are indexed. Full-capability maturity and lo
 
 | Capability | Full maturity | Local evidence scope | Completion | Persistent gaps |
 | --- | --- | --- | --- | --- |
-| [CAP-CRW-01](capabilities/CAP-CRW-01.md) Scoped discovery | DEFINED | partial_behavior / TESTED | INCOMPLETE | [GAP-DOM-CRW](gaps/GAP-DOM-CRW.md), [GAP-004](gaps/GAP-004.md), [GAP-007](gaps/GAP-007.md), [GAP-041](gaps/GAP-041.md), [GAP-039](gaps/GAP-039.md), [GAP-042](gaps/GAP-042.md) |
+| [CAP-CRW-01](capabilities/CAP-CRW-01.md) Scoped discovery | DEFINED | partial_behavior / TESTED | INCOMPLETE | [GAP-DOM-CRW](gaps/GAP-DOM-CRW.md), [GAP-004](gaps/GAP-004.md), [GAP-007](gaps/GAP-007.md), [GAP-041](gaps/GAP-041.md), [GAP-039](gaps/GAP-039.md), [GAP-042](gaps/GAP-042.md), [GAP-043](gaps/GAP-043.md) |
 | [CAP-CRW-02](capabilities/CAP-CRW-02.md) Crawl prioritization | DEFINED | partial_behavior / TESTED | INCOMPLETE | [GAP-DOM-CRW](gaps/GAP-DOM-CRW.md), [GAP-004](gaps/GAP-004.md), [GAP-007](gaps/GAP-007.md) |
 | [CAP-CRW-03](capabilities/CAP-CRW-03.md) Trap and duplicate-work control | DEFINED | partial_behavior / TESTED | INCOMPLETE | [GAP-DOM-CRW](gaps/GAP-DOM-CRW.md), [GAP-004](gaps/GAP-004.md), [GAP-007](gaps/GAP-007.md) |
 | [CAP-CRW-04](capabilities/CAP-CRW-04.md) Coverage reconciliation | DEFINED | foundation_only / TESTED | INCOMPLETE | [GAP-DOM-CRW](gaps/GAP-DOM-CRW.md), [GAP-004](gaps/GAP-004.md), [GAP-007](gaps/GAP-007.md) |
@@ -180,7 +180,7 @@ All 36 domains / 195 canonical rows are indexed. Full-capability maturity and lo
 
 | Capability | Full maturity | Local evidence scope | Completion | Persistent gaps |
 | --- | --- | --- | --- | --- |
-| [CAP-HTTP-01](capabilities/CAP-HTTP-01.md) Status and availability | DEFINED | partial_behavior / TESTED | INCOMPLETE | [GAP-DOM-HTTP](gaps/GAP-DOM-HTTP.md), [GAP-004](gaps/GAP-004.md), [GAP-007](gaps/GAP-007.md), [GAP-039](gaps/GAP-039.md) |
+| [CAP-HTTP-01](capabilities/CAP-HTTP-01.md) Status and availability | DEFINED | partial_behavior / TESTED | INCOMPLETE | [GAP-DOM-HTTP](gaps/GAP-DOM-HTTP.md), [GAP-004](gaps/GAP-004.md), [GAP-007](gaps/GAP-007.md), [GAP-039](gaps/GAP-039.md), [GAP-043](gaps/GAP-043.md) |
 | [CAP-HTTP-02](capabilities/CAP-HTTP-02.md) Redirect semantics | DEFINED | foundation_only / TESTED | INCOMPLETE | [GAP-DOM-HTTP](gaps/GAP-DOM-HTTP.md), [GAP-004](gaps/GAP-004.md), [GAP-007](gaps/GAP-007.md) |
 | [CAP-HTTP-03](capabilities/CAP-HTTP-03.md) Chains and loops | DEFINED | partial_behavior / TESTED | INCOMPLETE | [GAP-DOM-HTTP](gaps/GAP-DOM-HTTP.md), [GAP-004](gaps/GAP-004.md), [GAP-007](gaps/GAP-007.md) |
 | [CAP-HTTP-04](capabilities/CAP-HTTP-04.md) Soft-404 candidates | DEFINED | specification_only / NOT_DEFINED | INCOMPLETE | [GAP-DOM-HTTP](gaps/GAP-DOM-HTTP.md), [GAP-004](gaps/GAP-004.md), [GAP-007](gaps/GAP-007.md) |

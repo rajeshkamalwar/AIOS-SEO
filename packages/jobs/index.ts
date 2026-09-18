@@ -1,3 +1,4 @@
+import {acceptHttpBootstrapFixture,type HttpBootstrapAcceptanceInput,type HttpBootstrapAcceptance} from './http-bootstrap-acceptance.js';
 import {assertHttpBootstrapRelease} from '../skills/http-bootstrap.js';
 import {resolveHttpBootstrapSource,validateHttpBootstrapScope,httpBootstrapDescriptor,readHttpBootstrapDescriptor,type HttpBootstrapJobDescriptor} from './http-bootstrap-job.js';
 import {assertReviewedRawFixture,assertReviewedHttpFixtureMetadata} from '../perception/reviewed-fixtures.js';
@@ -24,7 +25,7 @@ export type BudgetKind=Exclude<keyof Budget,'deadline'>;
 export interface Lease { tenantId:string; siteId:string; runId:string; jobId:string; token:string; attempt:number; attemptId:string }
 const moneyKinds:BudgetKind[]=['http_requests','render_requests','render_pages','model_calls','tokens','cost_microusd'];
 export class Jobs {
- constructor(private pool:Pool, private deletions:DeletionLedger, private artifacts?:RenderArtifacts, private renderAcceptorPool?:Pool){}
+ constructor(private pool:Pool, private deletions:DeletionLedger, private artifacts?:RenderArtifacts, private renderAcceptorPool?:Pool, private httpAcceptorPool?:Pool){}
  private async locks(c:PoolClient){return lockGovernedWork(c);}
  private async health(c:PoolClient){return assertWorkHealth(c);}
  private async live(c:PoolClient,tenant:string,site:string,run:string){return requireLiveRun(c,tenant,site,run,this.deletions);}
@@ -193,6 +194,10 @@ export class Jobs {
   const bytes=await this.artifacts.read(source.evidence.artifact_key,source.evidence.sha256,Number(source.evidence.bytes));
   validateHttpBootstrapScope(source,bytes,l);
   const current=await resolve();if(current.fingerprint!==source.fingerprint)throw new Error('source_context_changed');return current;
+ }
+ async acceptHttpBootstrapFixture(l:Lease,input:HttpBootstrapAcceptanceInput):Promise<HttpBootstrapAcceptance>{
+  if(!this.httpAcceptorPool)throw new Error('http_acceptor_required');
+  const lease={...l};return acceptHttpBootstrapFixture(this.httpAcceptorPool,this.deletions,this.artifacts,lease,input,()=>this.prepareHttpBootstrapExecution(lease));
  }
  async enqueueHttpBootstrapFixture(parent:Lease,release:string,key:string):Promise<string>{
   if(!key||key.length>4096)throw new Error('invalid_input');

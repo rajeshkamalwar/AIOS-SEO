@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.aios-seo.invalid/v1/http-bootstrap-acceptance.schema.json",
+  "type": "object",
+  "properties": {
+    "invocationId": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+    },
+    "bodyEvidenceId": {
+      "anyOf": [
+        {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "receiptEvidenceId": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+    },
+    "observationId": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+    }
+  },
+  "required": [
+    "invocationId",
+    "bodyEvidenceId",
+    "receiptEvidenceId",
+    "observationId"
+  ],
+  "additionalProperties": false
+}

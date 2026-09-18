@@ -8,14 +8,15 @@ local_scope_kind: "partial_behavior"
 completion: "INCOMPLETE"
 canonical_release: "unreleased"
 specs: ["docs/14-CAPABILITY-TAXONOMY.md", "docs/15-CAPABILITY-CONTRACT.md", "docs/18-BUSINESS-ARCHETYPE-MATRIX.md"]
-implementation: ["packages/perception/collector.ts", "packages/perception/transport.ts", "packages/perception/dns.ts", "packages/perception/address.ts", "packages/persistence/index.ts", "packages/jobs/index.ts"]
-tests: ["tests/collector.test.ts", "tests/http-evidence.test.ts", "tests/jobs.test.ts"]
-reports: ["docs/40-POST-M5-INTEGRATION-REALITY-REVIEW.md", "docs/41-NEXT-PHASE-READINESS-PLAN.md", "docs/reports/N1-IMPLEMENTATION.md"]
-gaps: ["GAP-DOM-HTTP", "GAP-004", "GAP-007", "GAP-039"]
+implementation: ["packages/perception/collector.ts", "packages/perception/transport.ts", "packages/perception/dns.ts", "packages/perception/address.ts", "packages/persistence/index.ts", "packages/jobs/index.ts", "packages/jobs/http-bootstrap-acceptance.ts", "packages/jobs/isolated-http-fixture-supervisor.ts"]
+tests: ["tests/collector.test.ts", "tests/http-evidence.test.ts", "tests/jobs.test.ts", "tests/http-acceptance.test.ts"]
+reports: ["docs/40-POST-M5-INTEGRATION-REALITY-REVIEW.md", "docs/41-NEXT-PHASE-READINESS-PLAN.md", "docs/reports/N1-IMPLEMENTATION.md", "reports/GOVERNED-HTTP-EVIDENCE.md"]
+gaps: ["GAP-DOM-HTTP", "GAP-004", "GAP-007", "GAP-039", "GAP-043"]
 scope: "Safe bounded low-level HTTP transport and exact synthetic/loopback status-body-receipt persistence and snapshot projection."
 baseline: "2b6d527"
 required_stages: "Canonical15/18/28/35 applicable evidence, implementation, independent test/release, real-world and production proof; applicability and stage evidence must be explicitly reviewed before COMPLETE."
 ---
+
 
 # CAP-HTTP-01 — Status and availability
 
@@ -50,3 +51,7 @@ Open gaps: [GAP-DOM-HTTP](../gaps/GAP-DOM-HTTP.md), [GAP-004](../gaps/GAP-004.md
 - 2026-09-18 baseline2b6d527: conservative inventory import; no maturity promotion from test counts or draft manifests.
 
 - 2026-09-18: GAP-039 records raw fixture retention privacy work exposed by render acceptance review; existing tests do not certify that missing transformation.
+
+- 2026-09-19 afteraa8e9f7: governed local HTTP acceptance under implementation in GAP-043; full capability remains DEFINED/INCOMPLETE.
+
+- 2026-09-19: GAP-043 local acceptance closed against [report](../../reports/GOVERNED-HTTP-EVIDENCE.md):568 source/110 compiled/1 actual Docker integration. Full capability and parent live scope remain incomplete.

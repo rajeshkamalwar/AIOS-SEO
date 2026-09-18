@@ -1,10 +1,11 @@
 import { randomUUID } from 'node:crypto';
-import { hash, manifestHash, base, validate } from '../contracts/index.js';
-import { runHttpFixtureBroker } from '../perception/http-fixture-broker.js';
+import { hash, manifestHash, base, validate, canonical } from '../contracts/index.js';
+import { runHttpFixtureBrokerCaptured, type HttpFixturePrivateCapture } from '../perception/http-fixture-broker.js';
 import { parseHttpFixtureResult, type HttpFixtureEngine, type HttpFixtureMetadata, type HttpFixtureRunResult, type HttpFixtureContainer, type HttpFixtureCleanup } from './docker-http-fixture.js';
 import { HttpLane, type HttpReservation } from './http-lane.js';
 import { HttpSupervisor, type HttpInvocationBinding } from './http-supervisor.js';
 import { Jobs, type Lease } from './index.js';
+import type {HttpBootstrapAcceptanceInput} from './http-bootstrap-acceptance.js';
 
 export interface IsolatedHttpFixtureResult {
  state:'completed'|'failed'|'aborted'|'timeout'; reservation:HttpReservation;
@@ -16,6 +17,16 @@ export interface IsolatedHttpFixtureResult {
 export class IsolatedHttpFixtureSupervisor {
  constructor(private jobs:Jobs,private lane:HttpLane,private supervisor:HttpSupervisor,private engine:HttpFixtureEngine){}
  async collect(lease:Lease,input:{fixturePort:number},options:{signal?:AbortSignal;wallTimeoutMs?:number}={}):Promise<IsolatedHttpFixtureResult>{
+  return this.execute(lease,input,options);
+ }
+ /** Private host-only handoff; no raw body or headers enter the child or return. */
+ async collectAndAccept(lease:Lease,input:{fixturePort:number},options:{signal?:AbortSignal;wallTimeoutMs?:number}={}){
+  const l={...lease};let acceptance:Awaited<ReturnType<Jobs['acceptHttpBootstrapFixture']>>|undefined;
+  const execution=await this.execute(l,input,options,async captured=>{acceptance=await this.jobs.acceptHttpBootstrapFixture(l,captured);});
+  if(!acceptance)throw new Error('http_result_not_acceptable');
+  return {execution,acceptance};
+ }
+ private async execute(lease:Lease,input:{fixturePort:number},options:{signal?:AbortSignal;wallTimeoutMs?:number},accept?:(input:HttpBootstrapAcceptanceInput)=>Promise<void>):Promise<IsolatedHttpFixtureResult>{
   const wall=options.wallTimeoutMs??25000,externalSignal=options.signal;
   if(Object.keys(input).join(',')!=='fixturePort'||Object.keys(options).some(k=>!['signal','wallTimeoutMs'].includes(k))||!Number.isSafeInteger(input.fixturePort)||input.fixturePort<1||input.fixturePort>65535||!Number.isSafeInteger(wall)||wall<1||wall>25000)throw new Error('invalid_input');
   if(externalSignal?.aborted)throw new Error('aborted');
@@ -34,7 +45,7 @@ export class IsolatedHttpFixtureSupervisor {
   },10000);
   let container:HttpFixtureContainer|undefined,cleanup:HttpFixtureCleanup|undefined;
   let binding:HttpInvocationBinding|undefined,bound=false,requested=false,protocolViolation=false;
-  let broker:Awaited<ReturnType<typeof runHttpFixtureBroker>>|undefined;
+  let broker:Awaited<ReturnType<typeof runHttpFixtureBrokerCaptured>>['receipt']|undefined,capture:HttpFixturePrivateCapture|undefined;
   let execution:HttpFixtureRunResult|undefined;
   let failure:unknown;
   const current=async()=>{
@@ -52,7 +63,8 @@ export class IsolatedHttpFixtureSupervisor {
    execution=await this.engine.start(container,{timeoutMs:wall,signal,beforeStart:current,onRequest:async signal=>{
     if(requested){protocolViolation=true;throw new Error('duplicate_broker_request');}
     requested=true;
-    broker=await runHttpFixtureBroker(task,{signal,beforeRequest:current});
+    const collected=await runHttpFixtureBrokerCaptured(task,{signal,beforeRequest:current});
+    broker=collected.receipt;capture=collected.capture;
     if(!broker.result)throw new Error('fixture_transport_failed');
     return broker.result;
    }});
@@ -69,10 +81,15 @@ export class IsolatedHttpFixtureSupervisor {
   const parsed=execution?parseHttpFixtureResult(stdout,task.maxDecodedBytes):null;
   const valid=!signal.aborted&&!failure&&!protocolViolation&&execution?.state==='exited'&&cleanup.exitCode===0&&broker?.result&&parsed&&manifestHash(parsed)===manifestHash(broker.result);
   const finishedAt=broker&&broker.closedAt>cleanup.finishedAt?broker.closedAt:cleanup.finishedAt;
-  const terminalReceiptId=await this.supervisor.recordTerminalReceipt({...binding,finishedAt,termination:cleanup.termination,resultDigest:manifestHash({profile:'isolated-http-fixture-v1',containerId:container.id,stdoutSha256:hash(stdout),state:execution?.state??'failed',exitCode:cleanup.exitCode,brokerClosedAt:broker?.closedAt??null,brokerResult:broker?.result??null,protocolViolation}),actualDecodedBytes:null});
+  const transcript={workerConformance:valid?'valid' as const:'invalid' as const,stdoutSha256:hash(stdout),state:execution?.state??'failed',exitCode:cleanup.exitCode,brokerClosedAt:broker?.closedAt??null,brokerResult:broker?.result??null,protocolViolation};
+  const boundCapture=capture?{observedAt:capture.observedAt,receiptSha256:hash(Buffer.from(canonical({...capture.result,body_evidence_id:null}))),bodySha256:capture.body===null?null:hash(capture.body),bodyBytes:capture.body===null?null:capture.body.length}:null;
+  const terminalReceiptId=await this.supervisor.recordTerminalReceipt({...binding,finishedAt,termination:cleanup.termination,resultDigest:manifestHash({profile:'isolated-http-fixture-v1',containerId:container.id,...transcript,capture:boundCapture}),actualDecodedBytes:null});
   await this.lane.settle(l,reservation.reservationId,terminalReceiptId);
   const result:IsolatedHttpFixtureResult={state:signal.aborted?'aborted':execution?.state==='timeout'?'timeout':valid?'completed':'failed',reservation:{...reservation,state:'settled'},terminalReceiptId,containerId:container.id,result:valid?parsed:null,evidenceAccepted:false};
   validate(base+'http-bootstrap-execution.schema.json',result);
+  if(accept&&capture&&broker&&!signal.aborted&&!protocolViolation&&(valid||broker.result===null)){
+   await accept({invocationId:reservation.invocationId,terminalReceiptId,containerId:container.id,imageDigest:container.imageDigest,fixturePort,observedAt:capture.observedAt,result:capture.result,body:capture.body,transcript:{...transcript,brokerClosedAt:broker.closedAt}});
+  }
   return result;
  }
 }

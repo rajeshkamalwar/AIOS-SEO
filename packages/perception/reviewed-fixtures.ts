@@ -80,5 +80,5 @@ export function assertReviewedHttpFixtureMetadata(input:unknown):void {
   if(h.name==='content-length'&&typeof h.value==='string'&&/^(0|[1-9][0-9]{0,7})$/.test(h.value)&&Number(h.value)<=5*1024*1024)continue;
   return fail();
  }
- if(r.error!==null){const e=record(r.error,['code','retryable','detail','evidence_ids']);if(e.code!=='timeout'||e.retryable!==true||e.detail!=='fixture timeout'||array(e.evidence_ids,0).length!==0)return fail();}
+ if(r.error!==null){const e=record(r.error,['code','retryable','detail','evidence_ids']);const known=[['timeout',true,'fixture timeout'],['source_unavailable',true,'fixture transport failed'],['cancelled',false,'fixture aborted'],['parse_failed',false,'fixture content encoding unsupported']];if(!known.some(([code,retryable,detail])=>e.code===code&&e.retryable===retryable&&e.detail===detail)||array(e.evidence_ids,0).length!==0)return fail();}
 }

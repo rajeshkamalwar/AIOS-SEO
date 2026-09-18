@@ -1,6 +1,6 @@
 # Gap register
 
-<!-- Derived record/source digest: a91e6b1c6d5dc811215b726186a8745b85d456a4da495f3b24e0103be82e4462; regenerate with npm run vault:update. This is not a test receipt. -->
+<!-- Derived record/source digest: 7bce27c080057861d9c22f719f73b16b5eeaa8c3202e5126f14983d04c463bd7; regenerate with npm run vault:update. This is not a test receipt. -->
 
 Persistent IDs are never renumbered or deleted. Lifecycle: OPEN → FIX_IN_PROGRESS → FIXED → TESTED → VERIFIED → CLOSED. Historical R/D/S design dispositions are preserved separately from runtime/production gaps; FIXED design does not certify operations. Severity applies to the named scope, not a blanket stop on all work.
 
@@ -48,6 +48,7 @@ Persistent IDs are never renumbered or deleted. Lifecycle: OPEN → FIX_IN_PROGR
 | [GAP-040](gaps/GAP-040.md) | Typed local render projection and atomic governed job completion | HIGH — GAP-008 accepted local collection to policy-limited RenderSnapshot and job completion; no resource URL reconstruction | CLOSED | Exact accepted artifacts and current gates; truthful typed samples/no invented failure DOM; atomic snapshots/mapping/job completion/outboxes; immutable replay and security/rollback/restart proof. |
 | [GAP-041](gaps/GAP-041.md) | Independent isolated local HTTP fixture egress | CRITICAL — Local one-hop mediation and OS network denial; not deployed public egress | CLOSED | Prove one mediated hop, no worker-selected destination or repeat dispatch, actual OS network denial, current gates and joint container/socket cleanup accounting. |
 | [GAP-042](gaps/GAP-042.md) | Governed local HTTP bootstrap dispatch | HIGH — Local fixed robots bootstrap admission and execution; no Evidence acceptance | CLOSED | Prove scope-derived immutable child authority, exact installed permission, cumulative call budget, current gates and real isolated execution. |
+| [GAP-043](gaps/GAP-043.md) | Governed local HTTP evidence acceptance | HIGH — Private observed response handoff and fenced local Evidence acceptance | CLOSED | Prove exact observed response binding, preupload retention checks, separately authorized current-gated atomic acceptance, replay and actual local isolated integration. |
 | [GAP-101](gaps/GAP-101.md) | Reserved/private and special-use address filtering | HIGH — Named local conformance defect only; not deployed safety certification | CLOSED | Satisfied for named local defect by retained implementation report and linked regression; broader operational gates remain OPEN. |
 | [GAP-102](gaps/GAP-102.md) | Response overflow, transfer and decoded size enforcement | HIGH — Named local conformance defect only; not deployed safety certification | CLOSED | Satisfied for named local defect by retained implementation report and linked regression; broader operational gates remain OPEN. |
 | [GAP-103](gaps/GAP-103.md) | DNS pinning, redirects, cancellation and URL credential exclusions | HIGH — Named local conformance defect only; not deployed safety certification | CLOSED | Satisfied for named local defect by retained implementation report and linked regression; broader operational gates remain OPEN. |
