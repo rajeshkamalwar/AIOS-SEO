@@ -264,6 +264,26 @@
       "path": "examples/invalid-http-bootstrap-projection.json",
       "schema": "https://schemas.aios-seo.invalid/v1/http-bootstrap-projection.schema.json",
       "valid": false
+    },
+    {
+      "path": "examples/http-bootstrap-seed-admission.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/http-bootstrap-seed-admission.schema.json",
+      "valid": true
+    },
+    {
+      "path": "examples/invalid-http-bootstrap-seed-admission.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/http-bootstrap-seed-admission.schema.json",
+      "valid": false
+    },
+    {
+      "path": "examples/frontier-seed-classified.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/event.schema.json",
+      "valid": true
+    },
+    {
+      "path": "examples/invalid-frontier-seed-classified.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/event.schema.json",
+      "valid": false
     }
   ],
   "note": "Schema fixtures test shape only. Scenario semantics require implementation tests."

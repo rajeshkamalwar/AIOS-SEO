@@ -1,8 +1,8 @@
 # Current state
 
-<!-- Derived record/source digest: 30447a9a8472cbf55b3d8bf7f8f135388ce7d023482ab073835d12bce7bf0566; regenerate with npm run vault:update. This is not a test receipt. -->
+<!-- Derived record/source digest: 919789946fe9f140c9a47200e59d2a757ec4272e9482c4b23bcca2c27b9fb715; regenerate with npm run vault:update. This is not a test receipt. -->
 
-Latest recorded execution evidence: [GOVERNED-ROBOTS-COMPLETION](milestones/GOVERNED-ROBOTS-COMPLETION.md) — **584 normal / 89 compiled / 1 Docker** at reported baseline `parentf5402a1`. Source/report digest changes above do not establish new test results. Read the linked report for environment, failures and scope.
+Latest recorded execution evidence: [GOVERNED-SEED-ADMISSION](milestones/GOVERNED-SEED-ADMISSION.md) — **602 normal / 89 compiled / 1 Docker** at reported baseline `parent2ec8bc6`. Source/report digest changes above do not establish new test results. Read the linked report for environment, failures and scope.
 
 **Product incomplete.** M1–M5 local exits are reported; N0 customer activation and N1 live integration remain open. Real PostgreSQL transactions and private local blobs, loopback HTTP, persisted fixture frontiers/snapshots and isolated offline Chromium execute. Source fixtures, injected principals, test-authored evaluator records and denied external resources remain explicit limitations. Legacy publication JSON is suppressed because independent publication receipts are absent; see GAP-030 and ADR-013. No capability is real-world or production-proven by those tests.
 
@@ -41,6 +41,7 @@ The owner-approved N0 deployment/data-use profile gates customer processing. It 
 | [GOVERNED-HTTP-BOOTSTRAP](milestones/GOVERNED-HTTP-BOOTSTRAP.md) | SCOPED_LOCAL_EXIT_VERIFIED | TESTED |
 | [GOVERNED-HTTP-EVIDENCE](milestones/GOVERNED-HTTP-EVIDENCE.md) | SCOPED_LOCAL_EXIT_VERIFIED | TESTED |
 | [GOVERNED-ROBOTS-COMPLETION](milestones/GOVERNED-ROBOTS-COMPLETION.md) | SCOPED_LOCAL_EXIT_VERIFIED | TESTED |
+| [GOVERNED-SEED-ADMISSION](milestones/GOVERNED-SEED-ADMISSION.md) | SCOPED_LOCAL_EXIT_VERIFIED | TESTED |
 
 ## GitHub snapshot and authority
 

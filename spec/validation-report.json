@@ -2,15 +2,15 @@
   "status": "passed",
   "scope": "specification_conformance_only",
   "counts": {
-    "schemas": 26,
-    "references": 1072,
-    "examples": 40,
-    "negative_examples": 13,
+    "schemas": 27,
+    "references": 1089,
+    "examples": 42,
+    "negative_examples": 15,
     "artifact_hashes": 13,
     "source_excerpt_hashes": 6,
     "catalog_records": 48,
     "skill_manifests": 11,
-    "document_links": 183
+    "document_links": 189
   },
   "not_tested": [
     "runtime_security",

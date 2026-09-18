@@ -42,3 +42,5 @@ ADR-007 is the owner-accepted scoped-rejection decision. Its implementation, tra
 - [ADR-023: governed local HTTP evidence acceptance](../docs/decisions/023-governed-local-http-evidence.md) — private response/witness binding and separate current-gated acceptor; no completion or public activation.
 
 - [ADR-024: governed local robots completion](../docs/decisions/024-governed-local-robots-completion.md) — accepted-input projection and atomic child completion; unknown/denied remain explicit and grant no next dispatch.
+
+- [ADR-025: governed submitted-seed admission](../docs/decisions/025-governed-local-seed-admission.md) — exact current robots evidence, independent seed classification and atomic new frozen bundle; no fetch authority.

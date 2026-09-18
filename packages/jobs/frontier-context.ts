@@ -28,6 +28,7 @@ export async function frontierContext(c:PoolClient,p:Principal,site:string,run:s
     await assertInputsEligible(c,p.tenantId,site,run,[...inputIds]);
    };
    if((await c.query('SELECT 1 FROM fixture_frontier_batch WHERE tenant_id=$1 AND crawl_id=$2 AND robots_observation_id<>$3 UNION ALL SELECT 1 FROM fixture_link_batch WHERE tenant_id=$1 AND crawl_id=$2 AND robots_observation_id<>$3 LIMIT 1',[p.tenantId,run,robotsObservationId])).rowCount)throw new Error('robots_context_conflict');
+   if((await c.query("SELECT 1 FROM http_bootstrap_seed_admission WHERE tenant_id=$1 AND crawl_id=$2 AND result->>'observationId'<>$3",[p.tenantId,run,robotsObservationId])).rowCount)throw new Error('robots_context_conflict');
    const bundle=(await c.query("SELECT * FROM evidence_bundle WHERE tenant_id=$1 AND site_id=$2 AND id=$3 AND state='frozen'",[p.tenantId,site,bundleId])).rows[0];
    if(!bundle)throw new Error('bundle_membership_required');
    await assertInputs();

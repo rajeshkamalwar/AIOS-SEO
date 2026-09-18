@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.aios-seo.invalid/v1/http-bootstrap-seed-admission.schema.json",
+  "description": "Local submitted-target classification and immutable post-robots bundle. Admission grants no fetch or website-write authority.",
+  "type": "object",
+  "properties": {
+    "invocationId": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+    },
+    "observationId": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+    },
+    "targetId": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+    },
+    "bundleId": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+    },
+    "state": {
+      "enum": [
+        "queued",
+        "excluded",
+        "deferred"
+      ]
+    },
+    "admitted": {
+      "type": "boolean"
+    },
+    "reason": {
+      "enum": [
+        null,
+        "robots_disallowed",
+        "robots_denied",
+        "robots_unknown",
+        "admission_budget"
+      ]
+    },
+    "policyVersion": {
+      "const": "discovery-v1"
+    }
+  },
+  "required": [
+    "invocationId",
+    "observationId",
+    "targetId",
+    "bundleId",
+    "state",
+    "admitted",
+    "reason",
+    "policyVersion"
+  ],
+  "additionalProperties": false,
+  "oneOf": [
+    {
+      "properties": {
+        "state": {
+          "const": "queued"
+        },
+        "admitted": {
+          "const": true
+        },
+        "reason": {
+          "type": "null"
+        }
+      }
+    },
+    {
+      "properties": {
+        "state": {
+          "const": "excluded"
+        },
+        "admitted": {
+          "const": false
+        },
+        "reason": {
+          "enum": [
+            "robots_disallowed",
+            "robots_denied"
+          ]
+        }
+      }
+    },
+    {
+      "properties": {
+        "state": {
+          "const": "deferred"
+        },
+        "admitted": {
+          "const": false
+        },
+        "reason": {
+          "enum": [
+            "robots_unknown",
+            "admission_budget"
+          ]
+        }
+      }
+    }
+  ]
+}
