@@ -105,3 +105,11 @@ Migration 010 persists canonical RenderSnapshot and ResourceObservation records 
 URL admission now rejects known credential aliases and array-key variants, including common signed URLs, before collection. Ordinary array query parameters retain their exact order and values; IPv4 and IPv6 literals remain rejected explicitly. This conservative key guard cannot establish that arbitrary query values contain no secrets.
 
 Verification: 289 normal tests, eight compiled parser-worker tests and seven Docker regressions pass. Typecheck/build/specification validation pass; root and isolated-worker production dependency audits report zero vulnerabilities. Live customer activation remains gated by N0; next work is validated offline render results and governed discovery integration.
+
+## Offline render-result validation checkpoint
+
+`parseOfflineRenderResult` validates bounded worker stdout against the expected fixture URL and independently supplied browser build. It enforces profile, exact field shapes, sample ordering/timing, DOM byte limits, denial caps, sandbox fields and explicit partial/failure states. It creates no Evidence or authority. The local Docker harness obtains its expected browser build separately from the installed image's Playwright metadata; this is image conformance, not signed production attestation.
+
+Review found and corrected two encoding pitfalls: the host now passes original stdout bytes to fatal UTF-8 decoding, and the validator rejects JSON strings with lone surrogate code units that would silently change when encoded as DOM artifacts. Real-container regressions cover both, including hostile JavaScript creating such a DOM. Valid captured samples feed the bounded inert parser with exact byte hashes/locators; no visibility or SEO mismatch claim is inferred. All named probe/render containers are removed and absence confirmed, including failure paths.
+
+Verification: 295 normal tests, 14 compiled parser/validator tests and ten separate Docker regressions pass. Typecheck/build/specification validation pass; production dependency audits remain clean. Governed render acceptance and live egress remain unimplemented and unactivated. Durable fixture frontier discovery is the next integration dependency.

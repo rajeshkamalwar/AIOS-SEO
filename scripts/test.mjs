@@ -73,6 +73,7 @@ try {
       "tests/decoding.test.ts",
       "tests/dom.test.ts",
       "tests/dom-isolated.test.ts",
+      "tests/render-result.test.ts",
       "tests/understanding.test.ts",
       "tests/api.test.ts",
       "tests/runtime.test.ts",

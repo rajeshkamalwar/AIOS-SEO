@@ -2,6 +2,9 @@ import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
+import { parseOfflineRenderResult } from '../packages/perception/render-result.ts';
+import { extractHtmlIsolated } from '../packages/perception/dom-isolated.ts';
+import { hash } from '../packages/contracts/index.ts';
 
 const directory=fileURLToPath(new URL('../workers/render-fixture/',import.meta.url));
 const seccomp=fileURLToPath(new URL('../workers/render-fixture/seccomp.json',import.meta.url));
@@ -25,7 +28,8 @@ function docker(args,{input='',timeoutMs=35000,allowFailure=false}={}){
   child.on('close',(code)=>{
    clearTimeout(timer);
    if(failure){reject(failure);return;}
-   const result={code,stdout:Buffer.concat(out).toString('utf8'),stderr:Buffer.concat(err).toString('utf8')};
+   const stdoutBytes=Buffer.concat(out);
+   const result={code,stdoutBytes,stdout:stdoutBytes.toString('utf8'),stderr:Buffer.concat(err).toString('utf8')};
    if(code!==0&&!allowFailure){reject(new Error('docker_failed: '+result.stderr.slice(-4096)));return;}
    resolve(result);
   });
@@ -40,18 +44,13 @@ const runFlags=[
  '--tmpfs','/tmp:rw,nosuid,nodev,size=134217728',
  '-e','XDG_CONFIG_HOME=/tmp/config','-e','XDG_CACHE_HOME=/tmp/cache',
 ];
-async function render(input,{timeoutMs=35000}={}){
+async function runContainer({input='',timeoutMs=35000,buildProbe=false,echoProbe=false}={}){
  const name='aios-render-test-'+randomUUID();
  try {
-  const result=await docker(['run','--name',name,'-i',...runFlags,image],{input:JSON.stringify(input),timeoutMs});
-  // Worker stdout must contain exactly one machine-readable response, no logs.
-  const receipt=JSON.parse(result.stdout);
-  assert.equal(receipt.profile,'local-offline-replay-v1');
-  assert.ok(['captured','policy_limited','failed','timeout'].includes(receipt.state));
-  assert.ok(Array.isArray(receipt.samples));
-  assert.ok(Array.isArray(receipt.deniedRequests));
-  assert.ok(Number.isSafeInteger(receipt.deniedCount)&&receipt.deniedCount>=receipt.deniedRequests.length);
-  return receipt;
+  // Read expected build from installed package metadata, independently of the
+  // untrusted render receipt. This is fixture-image conformance, not attestation.
+  const command=echoProbe?['-e','process.stdin.pipe(process.stdout)']:buildProbe?['--input-type=module','-e',"import{readFileSync}from'node:fs';const b=JSON.parse(readFileSync('node_modules/playwright-core/browsers.json'));process.stdout.write(b.browsers.find(x=>x.name==='chromium').browserVersion)"]:[];
+  return await docker(['run','--name',name,'-i',...runFlags,...(buildProbe||echoProbe?['--entrypoint','node']:[]),image,...command],{input,timeoutMs});
  } finally {
   // Kill the named container even if the Docker client was killed, output overflowed,
   // parsing failed, or hostile code hung Chromium. Never leave a background worker.
@@ -63,9 +62,17 @@ async function render(input,{timeoutMs=35000}={}){
  }
 }
 
+let expectedBuild;
+async function render(input,{timeoutMs=35000,expectedUrl=input.url}={}){
+ const result=await runContainer({input:JSON.stringify(input),timeoutMs});
+ return parseOfflineRenderResult(result.stdoutBytes,{url:expectedUrl,browserBuild:expectedBuild});
+}
+
 await docker(['build','--tag',image,directory],{timeoutMs:120000});
 const imageInfo=await docker(['image','inspect',image,'--format','{{.Config.User}}']);
 assert.equal(imageInfo.stdout.trim(),'pwuser','renderer must use nonroot image user');
+expectedBuild=(await runContainer({buildProbe:true})).stdout.trim();
+assert.match(expectedBuild,/^\d+\.\d+\.\d+\.\d+$/);
 
 const url='https://render.example/';
 const positive=await render({url,html:`<!doctype html><html><head><title>Fixture</title></head><body><main id="state">initial</main><script>
@@ -85,6 +92,31 @@ for(let i=0;i<3;i++){
  assert.match(sample.dom,new RegExp('<main id="state">'+['initial','second','third'][i]+'</main>'));
 }
 console.log('PASS isolated Chromium captures real inline JS at 0/2/5 seconds');
+
+const invalidEncoding={...positive,samples:positive.samples.map(s=>({...s,dom:'INVALID_UTF8_MARKER'}))};
+const invalidBytes=Buffer.from(JSON.stringify(invalidEncoding));
+invalidBytes[invalidBytes.indexOf('INVALID_UTF8_MARKER')]=0xff;
+const echoed=await runContainer({input:invalidBytes,echoProbe:true});
+assert.deepEqual(echoed.stdoutBytes,invalidBytes);
+assert.throws(()=>parseOfflineRenderResult(echoed.stdoutBytes,{url,browserBuild:expectedBuild}),/render_result_invalid/);
+console.log('PASS host preserves and rejects invalid UTF-8 worker output');
+
+for(const sample of positive.samples){
+ const bytes=Buffer.from(sample.dom),source={evidenceId:randomUUID(),sha256:hash(bytes),responseUrl:url,contentType:'text/html; charset=utf-8',truncated:false,policyLimited:false};
+ const extracted=await extractHtmlIsolated(bytes,source);
+ assert.equal(extracted.state,'extracted');
+ assert.equal(extracted.mainText.text,['initial','second','third'][positive.samples.indexOf(sample)]);
+ assert.equal(extracted.mainText.visibility,'not_observed');
+ for(const segment of extracted.mainText.segments){
+  assert.equal(segment.source.sha256,source.sha256);
+  const [,start,end]=segment.source.locator.split(':').map(Number);
+  assert.equal(bytes.subarray(start,end).toString(),segment.value);
+ }
+}
+console.log('PASS validated real DOM samples preserve extraction byte provenance');
+
+await assert.rejects(render({url,html:'<!doctype html><main id="bad"></main><script>document.getElementById("bad").textContent=String.fromCharCode(0xd800)</script>'}),/render_result_invalid/);
+console.log('PASS non-UTF-8-representable browser DOM is rejected without silent replacement');
 
 const adverse=await render({url,html:`<!doctype html><html><body><main>fixture only</main><script>
  fetch('https://outside.example/get').catch(()=>{});
@@ -112,7 +144,7 @@ const moved=await render({url,html:'<!doctype html><script>history.replaceState(
 assert.equal(moved.state,'policy_limited');assert.deepEqual(moved.samples,[]);
 console.log('PASS changed navigation context cannot be captured under the original URL');
 
-const rejected=await render({url:'https://www.google.com/',html:'<main>must not render</main>'});
+const rejected=await render({url:'https://www.google.com/',html:'<main>must not render</main>'},{expectedUrl:url});
 assert.equal(rejected.state,'failed');assert.deepEqual(rejected.samples,[]);
 console.log('PASS non-fixture URL rejected without fabricated DOM');
 
