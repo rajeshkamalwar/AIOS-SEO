@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.aios-seo.invalid/v1/http-bootstrap-projection.schema.json",
+  "description": "Operational projection of accepted local fixture robots evidence. Known means rules understood or unavailable by HTTP status; this result grants no dispatch authority.",
+  "type": "object",
+  "properties": {
+    "invocationId": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+    },
+    "observationId": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+    },
+    "bodyEvidenceId": {
+      "anyOf": [
+        {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "receiptEvidenceId": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+    },
+    "contextHash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "state": {
+      "enum": [
+        "known",
+        "denied",
+        "unknown"
+      ]
+    },
+    "reason": {
+      "enum": [
+        "parsed",
+        "not_available",
+        "access_denied",
+        "transport_failed",
+        "unavailable_or_incomplete",
+        "parse_failed"
+      ]
+    },
+    "policyVersion": {
+      "const": "discovery-v1"
+    },
+    "parserVersion": {
+      "const": "robots-v1"
+    },
+    "freshUntil": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+    }
+  },
+  "required": [
+    "invocationId",
+    "observationId",
+    "bodyEvidenceId",
+    "receiptEvidenceId",
+    "contextHash",
+    "state",
+    "reason",
+    "policyVersion",
+    "parserVersion",
+    "freshUntil"
+  ],
+  "additionalProperties": false,
+  "oneOf": [
+    {
+      "properties": {
+        "state": {
+          "const": "known"
+        },
+        "reason": {
+          "enum": [
+            "parsed",
+            "not_available"
+          ]
+        }
+      }
+    },
+    {
+      "properties": {
+        "state": {
+          "const": "denied"
+        },
+        "reason": {
+          "const": "access_denied"
+        }
+      }
+    },
+    {
+      "properties": {
+        "state": {
+          "const": "unknown"
+        },
+        "reason": {
+          "enum": [
+            "transport_failed",
+            "unavailable_or_incomplete",
+            "parse_failed"
+          ]
+        }
+      }
+    }
+  ]
+}

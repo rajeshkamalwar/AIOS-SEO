@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.aios-seo.invalid/v1/capture.schema.json",
+  "type": "object",
+  "properties": {
+    "attemptId": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+    },
+    "sourceUri": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4096
+    },
+    "capturedAt": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+    },
+    "mimeType": {
+      "enum": [
+        "text/html",
+        "application/json"
+      ]
+    },
+    "contextHash": {
+      "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/hash"
+    }
+  },
+  "required": [
+    "attemptId",
+    "sourceUri",
+    "capturedAt",
+    "mimeType",
+    "contextHash"
+  ],
+  "additionalProperties": false
+}

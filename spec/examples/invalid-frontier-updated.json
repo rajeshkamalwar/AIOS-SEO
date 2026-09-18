@@ -1,0 +1,26 @@
+{
+  "event_id": "10000000-0000-4000-8000-000000000001",
+  "tenant_id": "10000000-0000-4000-8000-000000000002",
+  "site_id": "10000000-0000-4000-8000-000000000003",
+  "schema_version": 1,
+  "aggregate_id": "10000000-0000-4000-8000-000000000004",
+  "aggregate_version": 12,
+  "causation_id": null,
+  "correlation_id": "10000000-0000-4000-8000-000000000004",
+  "occurred_at": "2026-09-18T00:00:00.000Z",
+  "recorded_at": "2026-09-18T00:00:00.000Z",
+  "knowledge_seq": 12,
+  "idempotency_key": "10000000-0000-4000-8000-000000000005",
+  "producer": "governed-work@0.0.1",
+  "event_type": "frontier.updated",
+  "payload": {
+    "crawl_id": "10000000-0000-4000-8000-000000000004",
+    "sitemap_observation_id": "10000000-0000-4000-8000-000000000006",
+    "robots_observation_id": "10000000-0000-4000-8000-000000000007",
+    "discovered_count": 3,
+    "admitted_count": 2,
+    "excluded_count": 1,
+    "deferred_count": 0,
+    "raw_html": "<html>must not enter bus</html>"
+  }
+}

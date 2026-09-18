@@ -1,0 +1,8 @@
+# Local synthetic replay only. This development image is not live-crawl approval.
+FROM mcr.microsoft.com/playwright:v1.63.0-noble@sha256:eff16c30e6f3f4af0a03fa4b706120d5e9b0891c344a27d64559aff5900a4a27
+WORKDIR /opt/aios-render
+COPY package.json package-lock.json ./
+RUN npm ci --ignore-scripts --omit=dev
+COPY worker.mjs ./
+USER pwuser
+ENTRYPOINT ["node", "worker.mjs"]

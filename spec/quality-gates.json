@@ -1,5 +1,5 @@
 {
-  "version": "1.0.0",
+  "version": "1.1.0",
   "rules": [
     {
       "id": "A01",
@@ -9,7 +9,9 @@
       "required": true,
       "failure_effect": "degrade",
       "unknown_effect": "degrade",
-      "recovery": "new passing independent receipt and operator-reviewed resumption"
+      "recovery": "new passing independent receipt and operator-reviewed resumption",
+      "scope": "outputs",
+      "incomplete_scope_effect": "quarantine_run"
     },
     {
       "id": "A02",
@@ -17,9 +19,11 @@
       "comparator": "lte",
       "threshold": 0,
       "required": true,
-      "failure_effect": "quarantine",
-      "unknown_effect": "quarantine",
-      "recovery": "new passing independent receipt and operator-reviewed resumption"
+      "failure_effect": "reject_outputs",
+      "unknown_effect": "reject_outputs",
+      "recovery": "new passing independent receipt and operator-reviewed resumption",
+      "scope": "outputs",
+      "incomplete_scope_effect": "quarantine_run"
     },
     {
       "id": "A03",
@@ -27,9 +31,11 @@
       "comparator": "lte",
       "threshold": 0,
       "required": true,
-      "failure_effect": "quarantine",
-      "unknown_effect": "quarantine",
-      "recovery": "new passing independent receipt and operator-reviewed resumption"
+      "failure_effect": "quarantine_run",
+      "unknown_effect": "quarantine_run",
+      "recovery": "new passing independent receipt and operator-reviewed resumption",
+      "scope": "run",
+      "incomplete_scope_effect": "quarantine_run"
     },
     {
       "id": "A04",
@@ -39,7 +45,9 @@
       "required": true,
       "failure_effect": "degrade",
       "unknown_effect": "degrade",
-      "recovery": "new passing independent receipt and operator-reviewed resumption"
+      "recovery": "new passing independent receipt and operator-reviewed resumption",
+      "scope": "outputs",
+      "incomplete_scope_effect": "quarantine_run"
     },
     {
       "id": "A05",
@@ -49,7 +57,9 @@
       "required": true,
       "failure_effect": "degrade",
       "unknown_effect": "degrade",
-      "recovery": "new passing independent receipt and operator-reviewed resumption"
+      "recovery": "new passing independent receipt and operator-reviewed resumption",
+      "scope": "outputs",
+      "incomplete_scope_effect": "quarantine_run"
     },
     {
       "id": "A06",
@@ -57,9 +67,11 @@
       "comparator": "lte",
       "threshold": 0,
       "required": true,
-      "failure_effect": "quarantine",
-      "unknown_effect": "quarantine",
-      "recovery": "new passing independent receipt and operator-reviewed resumption"
+      "failure_effect": "quarantine_run",
+      "unknown_effect": "quarantine_run",
+      "recovery": "new passing independent receipt and operator-reviewed resumption",
+      "scope": "run",
+      "incomplete_scope_effect": "quarantine_run"
     },
     {
       "id": "A07",
@@ -67,9 +79,11 @@
       "comparator": "lte",
       "threshold": 0,
       "required": true,
-      "failure_effect": "quarantine",
-      "unknown_effect": "quarantine",
-      "recovery": "new passing independent receipt and operator-reviewed resumption"
+      "failure_effect": "reject_outputs",
+      "unknown_effect": "reject_outputs",
+      "recovery": "new passing independent receipt and operator-reviewed resumption",
+      "scope": "outputs",
+      "incomplete_scope_effect": "quarantine_run"
     },
     {
       "id": "A08",
@@ -77,9 +91,11 @@
       "comparator": "lte",
       "threshold": 0,
       "required": true,
-      "failure_effect": "quarantine",
-      "unknown_effect": "quarantine",
-      "recovery": "new passing independent receipt and operator-reviewed resumption"
+      "failure_effect": "reject_outputs",
+      "unknown_effect": "reject_outputs",
+      "recovery": "new passing independent receipt and operator-reviewed resumption",
+      "scope": "outputs",
+      "incomplete_scope_effect": "quarantine_run"
     },
     {
       "id": "A09",
@@ -89,7 +105,9 @@
       "required": true,
       "failure_effect": "degrade",
       "unknown_effect": "degrade",
-      "recovery": "new passing independent receipt and operator-reviewed resumption"
+      "recovery": "new passing independent receipt and operator-reviewed resumption",
+      "scope": "outputs",
+      "incomplete_scope_effect": "quarantine_run"
     },
     {
       "id": "A10",
@@ -99,7 +117,9 @@
       "required": true,
       "failure_effect": "degrade",
       "unknown_effect": "degrade",
-      "recovery": "new passing independent receipt and operator-reviewed resumption"
+      "recovery": "new passing independent receipt and operator-reviewed resumption",
+      "scope": "outputs",
+      "incomplete_scope_effect": "quarantine_run"
     },
     {
       "id": "A11",
@@ -107,9 +127,11 @@
       "comparator": "lte",
       "threshold": 0,
       "required": true,
-      "failure_effect": "quarantine",
-      "unknown_effect": "quarantine",
-      "recovery": "new passing independent receipt and operator-reviewed resumption"
+      "failure_effect": "reject_outputs",
+      "unknown_effect": "reject_outputs",
+      "recovery": "new passing independent receipt and operator-reviewed resumption",
+      "scope": "outputs",
+      "incomplete_scope_effect": "quarantine_run"
     },
     {
       "id": "A12",
@@ -117,9 +139,11 @@
       "comparator": "lte",
       "threshold": 2,
       "required": true,
-      "failure_effect": "quarantine",
-      "unknown_effect": "quarantine",
-      "recovery": "new passing independent receipt and operator-reviewed resumption"
+      "failure_effect": "quarantine_run",
+      "unknown_effect": "quarantine_run",
+      "recovery": "new passing independent receipt and operator-reviewed resumption",
+      "scope": "run",
+      "incomplete_scope_effect": "quarantine_run"
     },
     {
       "id": "A13",
@@ -127,9 +151,11 @@
       "comparator": "lte",
       "threshold": 0,
       "required": true,
-      "failure_effect": "quarantine",
-      "unknown_effect": "quarantine",
-      "recovery": "new passing independent receipt and operator-reviewed resumption"
+      "failure_effect": "quarantine_run",
+      "unknown_effect": "quarantine_run",
+      "recovery": "new passing independent receipt and operator-reviewed resumption",
+      "scope": "run",
+      "incomplete_scope_effect": "quarantine_run"
     },
     {
       "id": "A14",
@@ -137,9 +163,11 @@
       "comparator": "lte",
       "threshold": 0,
       "required": false,
-      "failure_effect": "quarantine",
-      "unknown_effect": "quarantine",
-      "recovery": "new passing independent receipt and operator-reviewed resumption"
+      "failure_effect": "quarantine_run",
+      "unknown_effect": "quarantine_run",
+      "recovery": "new passing independent receipt and operator-reviewed resumption",
+      "scope": "run",
+      "incomplete_scope_effect": "quarantine_run"
     },
     {
       "id": "A15",
@@ -147,9 +175,11 @@
       "comparator": "lte",
       "threshold": 0,
       "required": false,
-      "failure_effect": "quarantine",
-      "unknown_effect": "quarantine",
-      "recovery": "new passing independent receipt and operator-reviewed resumption"
+      "failure_effect": "quarantine_run",
+      "unknown_effect": "quarantine_run",
+      "recovery": "new passing independent receipt and operator-reviewed resumption",
+      "scope": "run",
+      "incomplete_scope_effect": "quarantine_run"
     },
     {
       "id": "A16",
@@ -157,9 +187,11 @@
       "comparator": "lte",
       "threshold": 0,
       "required": false,
-      "failure_effect": "quarantine",
-      "unknown_effect": "quarantine",
-      "recovery": "new passing independent receipt and operator-reviewed resumption"
+      "failure_effect": "quarantine_run",
+      "unknown_effect": "quarantine_run",
+      "recovery": "new passing independent receipt and operator-reviewed resumption",
+      "scope": "run",
+      "incomplete_scope_effect": "quarantine_run"
     },
     {
       "id": "A17",
@@ -169,7 +201,9 @@
       "required": true,
       "failure_effect": "degrade",
       "unknown_effect": "degrade",
-      "recovery": "new passing independent receipt and operator-reviewed resumption"
+      "recovery": "new passing independent receipt and operator-reviewed resumption",
+      "scope": "outputs",
+      "incomplete_scope_effect": "quarantine_run"
     },
     {
       "id": "A18",
@@ -177,9 +211,11 @@
       "comparator": "lte",
       "threshold": 0,
       "required": true,
-      "failure_effect": "quarantine",
-      "unknown_effect": "quarantine",
-      "recovery": "new passing independent receipt and operator-reviewed resumption"
+      "failure_effect": "quarantine_run",
+      "unknown_effect": "quarantine_run",
+      "recovery": "new passing independent receipt and operator-reviewed resumption",
+      "scope": "run",
+      "incomplete_scope_effect": "quarantine_run"
     },
     {
       "id": "A19",
@@ -187,9 +223,11 @@
       "comparator": "lte",
       "threshold": 0,
       "required": true,
-      "failure_effect": "quarantine",
-      "unknown_effect": "quarantine",
-      "recovery": "new passing independent receipt and operator-reviewed resumption"
+      "failure_effect": "quarantine_run",
+      "unknown_effect": "quarantine_run",
+      "recovery": "new passing independent receipt and operator-reviewed resumption",
+      "scope": "run",
+      "incomplete_scope_effect": "quarantine_run"
     },
     {
       "id": "A20",
@@ -197,9 +235,11 @@
       "comparator": "lte",
       "threshold": 0,
       "required": true,
-      "failure_effect": "quarantine",
-      "unknown_effect": "quarantine",
-      "recovery": "new passing independent receipt and operator-reviewed resumption"
+      "failure_effect": "quarantine_run",
+      "unknown_effect": "quarantine_run",
+      "recovery": "new passing independent receipt and operator-reviewed resumption",
+      "scope": "run",
+      "incomplete_scope_effect": "quarantine_run"
     },
     {
       "id": "A21",
@@ -207,9 +247,11 @@
       "comparator": "lte",
       "threshold": 0,
       "required": true,
-      "failure_effect": "quarantine",
-      "unknown_effect": "quarantine",
-      "recovery": "new passing independent receipt and operator-reviewed resumption"
+      "failure_effect": "quarantine_run",
+      "unknown_effect": "quarantine_run",
+      "recovery": "new passing independent receipt and operator-reviewed resumption",
+      "scope": "run",
+      "incomplete_scope_effect": "quarantine_run"
     },
     {
       "id": "A22",
@@ -217,9 +259,11 @@
       "comparator": "lte",
       "threshold": 0,
       "required": true,
-      "failure_effect": "quarantine",
-      "unknown_effect": "quarantine",
-      "recovery": "new passing independent receipt and operator-reviewed resumption"
+      "failure_effect": "quarantine_run",
+      "unknown_effect": "quarantine_run",
+      "recovery": "new passing independent receipt and operator-reviewed resumption",
+      "scope": "run",
+      "incomplete_scope_effect": "quarantine_run"
     }
   ]
 }

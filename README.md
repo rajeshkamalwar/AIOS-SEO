@@ -10,7 +10,7 @@ Primary law: **Backend speaks SEO. Frontend speaks business.**
 
 ## Status
 
-This repository contains specifications, not an implemented application. Documents 00–06 establish canonical product intent. Documents 07–13 contain the architecture readiness review and proposed implementation contracts, boundaries and decision gates. Documents 14–23 define the Phase 2 capability universe, skill/source governance, archetype activation and the first read-only Brain slice. Documents24–39 close Phase3 contracts and record accepted engineering defaults. Document39 declares readiness for the narrowly scoped M1 in38; production and later milestones remain gated.
+This repository contains canonical specifications, the locally tested M1–M5 read-only foundation and ongoing N0/N1 perception work. The complete Search Brain is not implemented. Current evidence and limitations are linked in the [control vault](vault/00-HOME.md), [current state](vault/03-CURRENT-STATE.md) and [N1 report](docs/reports/N1-IMPLEMENTATION.md). Documents 00–06 establish canonical product intent. Documents 07–13 contain the architecture readiness review and proposed implementation contracts, boundaries and decision gates. Documents 14–23 define the Phase 2 capability universe, skill/source governance, archetype activation and the first read-only Brain slice. Documents24–39 close Phase3 contracts and record accepted engineering defaults. Document39 records the historical M1 readiness decision. Documents40–41 and subsequent reports track later read-only implementation and the still-open production gates.
 
 ## Required reading order
 
@@ -58,10 +58,34 @@ Read [AGENTS.md](AGENTS.md) completely first, then this README, then every docum
 39. [38 — First Slice Implementation Plan](docs/38-FIRST-SLICE-IMPLEMENTATION-PLAN.md)
 40. [39 — Phase 3 Readiness Review](docs/39-PHASE-3-READINESS-REVIEW.md)
 
-Then read [ADRs001–006](docs/decisions/001-transactional-domain-core.md) in filename order and [spec/README.md](spec/README.md), all schemas, examples and fixtures.
+41. [40 — Post-M5 Integration Reality Review](docs/40-POST-M5-INTEGRATION-REALITY-REVIEW.md)
+42. [41 — Next-Phase Readiness Plan](docs/41-NEXT-PHASE-READINESS-PLAN.md)
+
+Then read all [ADRs](docs/decisions/001-transactional-domain-core.md) in filename order and [spec/README.md](spec/README.md), all schemas, examples and fixtures.
 
 ## Engineering boundary
 
 Preserve the persistent, domain-native Brain. Do not reinterpret it as a conventional SEO dashboard, a SEMrush/Ahrefs clone, disconnected tools, a generic chatbot or a website builder.
 
-Surface conflicts with the constitution and record accepted changes explicitly. Start with the findings in 07 and decision gates in 13 before requesting application implementation. Neither specification phase scaffolds the application. Read documents38–39 for the current implementation boundary; all website mutations remain out of scope for the first slice.
+Surface conflicts with the constitution and record accepted changes explicitly. Start with the findings in 07 and decision gates in 13 before requesting application implementation. Specification phases do not scaffold the application. Documents38–39 preserve the initial implementation contract; documents40–41 and subsequent implementation reports record the current read-only integration boundary. All website mutations remain separately gated.
+
+## Local verification
+
+Requires Node24, Python3 (standard-library vault validation) and PostgreSQL17 binaries (`PG_BIN` if not on PATH). No customer URL, credentials, model account or existing database is needed.
+
+```sh
+npm ci --ignore-scripts
+npm run typecheck
+npm run build
+npm test
+```
+
+`npm test` creates a private disposable PostgreSQL cluster using Unix sockets, runs the real storage/isolation/restart suite, then removes it. It never uses an existing database service. On Homebrew, PostgreSQL17 can coexist with other installed versions; set `PG_BIN=/opt/homebrew/opt/postgresql@17/bin` when needed. The blob adapter accepts only the local synthetic profile.
+
+The compiled libraries and their schemas/migrations are in ignored `dist/`. The local synthetic read-only slice through M5 is implemented and tested; see the milestone reports, the [post-M5 reality review](docs/40-POST-M5-INTEGRATION-REALITY-REVIEW.md), the [next-phase readiness plan](docs/41-NEXT-PHASE-READINESS-PLAN.md), and the [N0 implementation report](docs/reports/N0-IMPLEMENTATION.md). Legacy persistent publication reads are now suppressed until independently governed receipts exist; see [ADR-013](docs/decisions/013-unverified-publication-suppression.md). Historical M5 fixture success is not current publication authority. Production identity, live collection/rendering, model providers and website writes remain separately gated.
+
+For the N1 isolated synthetic renderer, Docker is additionally required. Run `npm run test:render` (optionally set `AIOS_DOCKER_CONTEXT`); see the [worker runbook](workers/render-fixture/README.md) for the fixed offline boundary. This separate suite builds a pinned browser image and tests actual Linux/Chromium isolation, DOM sampling and supervised cleanup. It does not enable live collection or replace the normal suite.
+
+## Repository knowledge vault
+
+Open this repository root in Obsidian. The [vault control layer](vault/00-HOME.md) links authoritative specifications, code, tests and reports without duplicating them. It tracks all195capabilities, persistent gaps and scoped milestones; fixture testing never means real-world or production verification. After updating milestone/capability/gap evidence, run `npm run vault:update` to regenerate all five current-state views, then `npm run vault:check`. The normal test command checks consistency. See [Definition of Complete and workflow](vault/00-HOME.md).

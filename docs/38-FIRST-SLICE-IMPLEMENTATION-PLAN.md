@@ -1,6 +1,6 @@
 # 38 — First Slice Implementation Plan
 
-Status: ordered implementation contract. The user's2026-09-17 request authorizes only the first implementation milestone after readiness closure. Stop after M1; later rows are dependencies, not permission to continue automatically.
+Status: ordered implementation contract. The subsequent 2026-09-17 user instruction authorizes sequential implementation through M5. Before each milestone, re-read its referenced specifications and ADRs; implement, fully test, report, commit and push that milestone to the existing implementation PR. Advance only after all acceptance criteria pass and no genuine specification, security, privacy, authority or architectural blocker remains. This supersedes the earlier M1-only stopping instruction; production activation and external website writes remain separately gated.
 
 ## M1 — Tenant-scoped evidence ledger and atomic delivery
 
@@ -32,3 +32,15 @@ Tests are adversarial integration tests for those seven criteria, plus schema re
 | M5 Returnable read-only product | M4; authenticated APIs, business projections and simple mobile web client | apps/api, apps/web, interpretation; E2E submit→reopen, auth/CSRF, accessibility and evidence drill-down | Entire36 path persists through crashes; max3 useful next steps, missing sources honest; no3D/expert dashboard default |
 
 M5 is a working persistent read-only Brain, not a mock dashboard. Native mobile, deeper expert console, private search integrations, territory visibility, experiments, controlled website actuators and global learning each require later scoped authorization/contracts. Do not pretend M1 implements the full product.
+
+M1 execution evidence: [implementation report](../reports/M1-IMPLEMENTATION.md). M2–M5 authorization is conditional as stated above.
+
+M2 governance review: [implementation report](../reports/M2-IMPLEMENTATION.md) and [accepted ADR-007](decisions/007-audit-effect-scope.md).
+
+M2 execution evidence: [implementation report](../reports/M2-IMPLEMENTATION.md). ADR-007 is accepted and the M2 acceptance suite passes.
+
+M3 execution evidence: [implementation report](../reports/M3-IMPLEMENTATION.md). The local synthetic perception core passes its bounded parser/frontier tests; live collection and isolated rendering remain deployment-gated.
+
+M4 execution evidence: [implementation report](../reports/M4-IMPLEMENTATION.md). Deterministic evidence-backed understanding and bounded graph/opportunity projections pass locally; external reasoning remains disabled.
+
+M5 execution evidence: [implementation report](../reports/M5-IMPLEMENTATION.md). The authenticated API/client boundary and PostgreSQL-backed publication/reopen path pass in the local synthetic profile; production identity and deployment remain gated.

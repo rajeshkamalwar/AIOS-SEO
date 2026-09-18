@@ -2418,7 +2418,13 @@
         "effect",
         "evidence_ids",
         "reason",
-        "knowledge_seq"
+        "knowledge_seq",
+        "scope",
+        "scope_complete",
+        "dependency_snapshot_hash",
+        "recovery_of_id",
+        "direct_output_ids",
+        "affected_output_ids"
       ],
       "optional_fields": []
     },

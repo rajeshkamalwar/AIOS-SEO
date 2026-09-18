@@ -198,6 +198,127 @@
         "late_commit": "scope_denied",
         "restored_reads_before_replay": 0
       }
+    },
+    {
+      "id": "local-offline-replay-v3",
+      "artifacts": [],
+      "test_references": [
+        "tests/render-execution.test.ts: Dedicated render child pins independently prepared source without accepting new evidence",
+        "tests/render-execution.test.ts: Real governed local Docker replay confirms cleanup and terminal accounting without accepting evidence"
+      ],
+      "expected": {
+        "deployment_profile": "local-synthetic-v1",
+        "handler": "offline_render_v1",
+        "job_kind": "render",
+        "network_mode": "none",
+        "source": "persisted_same_run_raw_snapshot",
+        "source_preparation": "recomputed_and_bound",
+        "container_identity": "immutable_and_supervisor_bound",
+        "cleanup": "independently_confirmed_before_settlement",
+        "evidence_accepted": false,
+        "canonical_job_completion": false,
+        "unknown_actual_requests": null,
+        "unknown_actual_bytes": null
+      }
+    },
+    {
+      "id": "render-permission-mismatch",
+      "artifacts": [],
+      "test_references": [
+        "tests/render-execution.test.ts: Render release installation rejects missing, wrong-version or overbroad permission and unknown procedure",
+        "tests/render-execution.test.ts: Generic project lease is rejected before even a trusted fixture engine is created"
+      ],
+      "expected": {
+        "invalid_variants": [
+          "missing_render_permission",
+          "wrong_tool_version",
+          "overbroad_max_calls",
+          "unknown_procedure",
+          "generic_project_lease"
+        ],
+        "error": "handler_not_installed",
+        "container_starts": 0,
+        "evidence_accepted": false
+      }
+    },
+    {
+      "id": "render-source-changed",
+      "artifacts": [],
+      "test_references": [
+        "tests/render-execution.test.ts: A project reliability release cannot authorize a render child; existing child replay cannot change release/source",
+        "tests/render-execution.test.ts: Current rejected source cannot enter render execution",
+        "tests/render-execution.test.ts: Final metadata gate catches changed Site scope and stale robots without artifact I/O"
+      ],
+      "expected": {
+        "descriptor_mutable": false,
+        "changed_source_replay": "conflict",
+        "changed_current_context": "source_context_changed",
+        "rejected_source": "audit_input_rejected",
+        "stale_robots": "robots_unavailable",
+        "new_container_starts": 0,
+        "evidence_accepted": false
+      }
+    },
+    {
+      "id": "isolated-http-fixture-v1",
+      "artifacts": [],
+      "test_references": [
+        "tests/http-bootstrap.test.ts: Bootstrap child pins current scope and frozen bundle in an immutable bounded GET descriptor",
+        "tests/http-bootstrap.test.ts: Bootstrap reservation max_calls=1 stays spent across retry attempts and never refunds unknown bytes"
+      ],
+      "expected": {
+        "deployment_profile": "local-synthetic-v1",
+        "handler": "http_bootstrap_fixture_v1",
+        "job_kind": "fetch",
+        "method": "GET",
+        "path": "/robots.txt",
+        "worker_network_mode": "none",
+        "broker_transport": "trusted_loopback_fixture",
+        "max_calls_per_job": 1,
+        "max_decoded_bytes": 512000,
+        "request_timeout_ms": 20000,
+        "evidence_accepted": false,
+        "canonical_job_completion": false,
+        "unknown_actual_bytes": null
+      }
+    },
+    {
+      "id": "http-permission-mismatch",
+      "artifacts": [],
+      "test_references": [
+        "tests/http-bootstrap.test.ts: Signed fixture release cannot broaden installed HTTP permission or change its fixed procedure",
+        "tests/http-bootstrap.test.ts: Generic project leases cannot launch the HTTP container or reserve physical work"
+      ],
+      "expected": {
+        "invalid_variants": [
+          "missing_http_permission",
+          "wrong_tool_version",
+          "overbroad_max_calls",
+          "unknown_procedure",
+          "generic_project_lease"
+        ],
+        "error": "handler_not_installed",
+        "container_starts": 0,
+        "evidence_accepted": false
+      }
+    },
+    {
+      "id": "scope-source-changed",
+      "artifacts": [],
+      "test_references": [
+        "tests/http-bootstrap.test.ts: Bootstrap scope metadata or retained bytes changing after admission fence execution",
+        "tests/http-bootstrap.test.ts: A corrupted frozen bundle manifest cannot authorize a bootstrap child",
+        "tests/http-bootstrap.test.ts: Scope artifact reads hold no work lock and cancellation during I/O blocks admission"
+      ],
+      "expected": {
+        "descriptor_mutable": false,
+        "changed_current_context": "source_context_changed",
+        "corrupt_retained_bytes": "artifact_integrity_failed",
+        "corrupt_frozen_manifest": "artifact_integrity_failed",
+        "cancelled_run": "run_fenced",
+        "new_container_starts": 0,
+        "evidence_accepted": false
+      }
     }
   ]
 }

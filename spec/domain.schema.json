@@ -5953,7 +5953,7 @@
           "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
         },
         "schema_version": {
-          "const": 1
+          "const": 2
         },
         "version": {
           "type": "integer",
@@ -6026,7 +6026,8 @@
           "enum": [
             "allow",
             "degrade",
-            "quarantine"
+            "reject_outputs",
+            "quarantine_run"
           ]
         },
         "evidence_ids": {
@@ -6047,6 +6048,46 @@
           "type": "integer",
           "minimum": 1,
           "maximum": 9007199254740991
+        },
+        "scope": {
+          "enum": [
+            "outputs",
+            "run"
+          ]
+        },
+        "scope_complete": {
+          "type": "boolean"
+        },
+        "dependency_snapshot_hash": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/hash"
+        },
+        "recovery_of_id": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "direct_output_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
+        },
+        "affected_output_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+          },
+          "minItems": 0,
+          "maxItems": 5000,
+          "uniqueItems": true
         }
       },
       "required": [
@@ -6070,7 +6111,13 @@
         "effect",
         "evidence_ids",
         "reason",
-        "knowledge_seq"
+        "knowledge_seq",
+        "scope",
+        "scope_complete",
+        "dependency_snapshot_hash",
+        "recovery_of_id",
+        "direct_output_ids",
+        "affected_output_ids"
       ],
       "additionalProperties": false
     },

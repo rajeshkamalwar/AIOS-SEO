@@ -1,0 +1,199 @@
+# N1 implementation report
+
+## Current scope
+
+The low-level HTTP collector now shares canonical URL admission and address filtering with perception. It rejects special-use IPv4/IPv6, translated/mapped addresses, malformed/mixed DNS answers, unsafe initial and redirect URLs, credential queries and action-like URLs. DNS includes bounded CNAME traversal and cancellation. Each new hop resolves again; its connection uses the validated IP while retaining the hostname for HTTP and TLS verification.
+
+Transport enforces an absolute deadline, connect/header deadlines, 32KiB header cap, bounded decoded and transferred bodies, and gzip/deflate/Brotli decoding. Exact-cap bodies remain complete; overflow terminates the stream and marks its prefix truncated. Unsupported MIME and redirects stop at headers. Cookie/authentication/custom headers are excluded from returned receipts. Production transport does not use ambient proxy agents.
+
+## Regression evidence
+
+The initial regressions failed on reserved addresses, admission bypass, fragment forwarding and invalid limit overrides before the fixes. The expanded suite exercises real loopback HTTP streams: boundary sizes, multi-chunk overflow and early close, decompression bombs, successful decompression, corrupt/truncated transfers, unsupported MIME/encoding, oversized headers, absolute slow-trickle timeout and HTTP Host. A self-signed TLS server is rejected before HTTP dispatch. Unit cases cover DNS mixed answers, rebinding, alias cycles/depth, family mismatch, DNS timeout, redirect scope/limits, URL policy, secret-header exclusion and permitted ordinary public addresses.
+
+These are local conformance tests, not production firewall/sandbox certification or a live customer crawl. ADR-010 records the conservative transport choices.
+
+## Remaining N1 acceptance
+
+Governed live dispatch, complete durable frontier transitions, integrated per-hop accounting, retries/fairness and governed live-render integration remain required. Subsequent checkpoints below record completed prerequisites; storage and synthetic fixture acceptance do not establish live-worker acceptance. The collector is not integrated as a customer-facing live execution path. N0 deployment/privacy approval and independent network enforcement still gate customer URLs. No inference or website-write behavior was added.
+
+## Collector safety checkpoint verification
+
+- `npm test`: 194 passed, zero failed/skipped.
+- `npm run typecheck` and `npm run build`: passed.
+- `spec/validate.py` using the specification virtualenv: passed (19 schemas, 989 references, 31 positive and 4 negative examples).
+- `npm audit --omit=dev`: zero vulnerabilities.
+- `git diff --check`: passed.
+
+## Discovery-admission prerequisite checkpoint
+
+Robots now handles agent groups, specific-agent precedence, query/wildcard/octet rules, malformed bytes and HTTP failure/unknown policy. Strict sitemap parsing adds XML entity decoding, structural locations, text files, index separation, exclusion counts, and traversal caps. Frontier adds same-origin scope, twenty query variants, full-string identity and a cumulative 500-admission ceiling. The composed M5 fixture used literal backslash-n instead of newlines; corrected its input rather than weakening strict parsing. Built perception libraries now include their discovery policy JSON.
+
+Verification: 213 tests pass, typecheck/build and compiled perception import pass, specification validation passes, production audit has zero vulnerabilities. ADR-011 records the parser dependency and scope. These changes do not enable customer collection.
+
+## Durable storage prerequisite checkpoint
+
+Migration 004 adds canonical CrawlTarget, Page and PageSnapshot storage, tenant/site/run composite references, record-spine registration, full-normalized-URL identity, admission/truncation/temporal checks and forced RLS. It grants reads only. Migration-owner test fixtures verify schema roundtrip, duplicate identity rejection, cross-scope references, pooled scope reuse, denied unfenced writes and actual PostgreSQL crash/restart. This is storage groundwork, not worker result acceptance or content/evidence coherence verification.
+
+Verification: 219 tests pass, typecheck/build/specification validation pass, production audit has zero vulnerabilities, diff checks pass. The next dependency is narrow, authorized frontier creation and later atomic lease-fenced evidence/observation/snapshot/outbox acceptance.
+
+## Durable submitted-target checkpoint
+
+`Jobs.submit` now creates one unadmitted `discovered` target in the same transaction as the crawl and `crawl.requested` outbox event. A narrow database function derives scope from the queued crawl, checks the submitting principal's current authorization and exact stored site URL, and grants no table write or page-fetch authority. Retry with the same idempotency key preserves the original target. Tests prove no-scope/foreign-URL rejection, denied direct admission updates, and rollback of both seed and crawl when event insertion fails.
+
+Verification: 221 tests pass; typecheck/build/specification validation pass; production audit has zero vulnerabilities; diff hygiene passes after removing a trailing blank line.
+
+## Retained HTTP receipt and local integration checkpoint
+
+Added `Ledger.acceptHttpFixture`, explicitly limited to authorized synthetic fixture scopes. Existing canonical HTTP receipt JSON is stored alongside the optional body; server-generated IDs link both artifacts to one Observation and outbox transaction. Context hashes bind exact retained receipt bytes. Status and truncation are supplied observations, never inferred defaults. Timeout failures retain null status/body and an explicit error. Changed bytes or receipt under the same attempt conflict; foreign scope, secret headers and forged references fail. Failed transactions leave only sweepable private orphans.
+
+`collectPublicHop` performs exactly one request and returns an admitted redirect destination for a later separately reserved job. It does not implement retries or durable budget reservations itself.
+
+The integration fixture runs a real loopback server, observes robots first, parses a sitemap, omits a disallowed page, collects allowed pages, retains exact bodies/receipts and reopens their frozen bundle after reconnect. The advertised `.example` URLs are explicitly mapped to a local fixture transport. This is genuine local HTTP/DB/blob integration, not a customer-domain crawl or production egress certification.
+
+HTML decoding now uses pinned `html-encoding-sniffer` 6.0.0 for the standard bounded meta/BOM prescan and Node's fatal decoder. This workload needs browser-compatible encoding detection rather than a hand-written meta regex. Unsupported/ambiguous declarations and undecodable bytes stay `parse_failed`; unsupported MIME stays `not_applicable`. Transcoded text does not replace original artifact bytes/hashes/locators. [Library behavior](https://github.com/jsdom/html-encoding-sniffer).
+
+Verification: 234 tests pass; typecheck/build and compiled imports pass; specification validation passes; production dependency audit has zero vulnerabilities. No new production profile or external authority was activated.
+
+## Fenced projection and persistent HTTP accounting checkpoint
+
+`Jobs.projectHttpFixture` derives a Page and PageSnapshot only from accepted synthetic HTTP artifacts in the leased project's frozen bundle. It checks exact membership, temporal cutoff, retained body/receipt digests, source linkage and lease/release/deletion/health gates again after artifact I/O. A narrow scheduler-only database function rechecks persisted authority; snapshot, provenance, job completion and outbox commit atomically. Page classification remains unknown. Both Page and snapshot provenance reject later runtime additions. Duplicate delivery, corruption, missing or foreign artifacts, cancellation/revocation, expired leases and outbox rollback have regressions.
+
+`HttpLane` reserves an HTTP attempt and worst-case decoded bytes durably before a future dispatch. Shared scheduler counters enforce two active attempts and one-second spacing across tenants/runs; dotted/undotted DNS names and HTTP/HTTPS variants share the conservative hostname lane without changing Site identity or receipt URLs; run caps are 750 attempts and 250MiB decoded, with a 5MiB maximum reservation. Generic budget accounting includes each attempt so its API cannot independently overspend or refund it. Reconnect preserves reservations and idempotent settlement. Unknown crash slots remain occupied until trusted settlement; cancellation is not evidence that a remote request stopped. These receipts grant no network authority, and no live dispatcher is installed.
+
+A combined integration test now follows real loopback HTTP robots admission through retained body/receipt evidence, a frozen bundle, signed fixture job, leased projection and snapshot readback through a fresh runtime pool. It proves a denied URL is never dispatched and preserves the actual HTTP status rather than inventing success. This does not establish a complete crawl runner, production egress or customer-domain execution.
+
+Verification: 248 tests pass; typecheck/build/specification validation pass; production dependency audit has zero vulnerabilities; diff hygiene passes.
+
+## Offline isolated-render conformance checkpoint
+
+Added a one-shot, digest-pinned Linux/Playwright worker for explicit synthetic HTML replay. The Docker harness supplies no mounts or credentials, disables network access, runs nonroot with Chromium's sandbox, drops all capabilities, applies no-new-privileges/read-only root and bounds CPU, memory, PIDs and temporary storage. Worker probes verify Linux restrictions and Chromium namespace/PID/network/seccomp status. Only the initial fixture document is fulfilled; every other request is denied. This is real JS execution in a local container, not customer-site rendering or production escape-resistance certification.
+
+Seven executable Docker regressions pass: 0/2/5-second DOM mutation samples; denied external/private GET, POST, beacon, socket and popup; actual 100-attempt termination; changed-URL context rejection; non-fixture URL rejection; hung-page failure without invented DOM; host deadline with confirmed container removal. Review corrected an initially diagnostic-only attempt cap and ensured terminal receipts kill late asynchronous setup. ADR-012 records the boundary and seccomp compatibility choice. Raw evidence acceptance, render job authority, resource replay provenance, independent live egress and production activation remain open.
+
+Verification: 248 normal tests and seven separate Docker regressions pass; typecheck/build/specification validation pass; root and isolated-worker production dependency audits both report zero vulnerabilities; diff checks pass.
+
+## HTTP accounting restart regression
+
+A real immediate PostgreSQL stop/restart now proves that active HTTP reservations, both global slots, attempt charges and conservative decoded-byte charges survive. Reopened services reject new work while slots/caps remain occupied. The previously authenticated receipt can settle exactly once after cancellation without refunding budget.
+
+Unknown worker termination remains distinct from lease expiry. Automatic reclaim requires a future reservation-to-invocation binding and independent terminal supervisor/egress receipt; none exists yet, so no timeout-based slot release is added. This is an explicit dispatcher-integration dependency, not permission to infer completion from a missing heartbeat.
+
+## Inert HTML extraction checkpoint
+
+Added deterministic extraction of title, canonical/base declarations, named metadata (including robots), resolved anchors and qualified main-text candidates. Every retained value has the original evidence ID, digest, parser version and half-open byte locator. Tests cover malformed HTML, literal versus absent/empty fields, hidden metadata semantics, foreign/base destinations without fetch authority, UTF-8/UTF-16/Windows-1252 byte mapping including astral characters/BOM/CRLF, and partial-source qualification. XHTML and encodings without an exact locator map abstain. Static text is never labeled computed-visible; no raw/render mismatch, SEO defect or business claim is produced.
+
+Pinned `parse5` 8.0.1 is justified by HTML's tolerant tree-construction semantics and source-location support; regex extraction cannot correctly handle raw text, entities, malformed nesting or source positions. Its [parser options](https://parse5.js.org/interfaces/parse5.ParserOptions.html) and [character-based offsets](https://parse5.js.org/interfaces/parse5.Token.Location.html) require explicit original-byte mapping. The application node cap applies after parsing, so future live use still requires isolated CPU/memory execution. This pure library has no pipeline consumer or network authority yet.
+
+Verification: 264 normal tests and seven Docker regressions pass; typecheck/build/specification validation pass; production dependency audit reports zero vulnerabilities; diff checks pass. The Docker build context now explicitly includes only worker runtime files, excluding unrelated files or credentials.
+
+## Bounded parser execution checkpoint
+
+`extractHtmlIsolated` runs the trusted inert HTML parser in a separate V8 worker with a 64MiB old-generation heap, 16MiB young-generation heap and two-second result deadline. Input and context are bounded before structured clone, no process environment or preload arguments are forwarded, conflicting heap overrides fail closed, and worker termination is awaited before returning. Late results, timeout and memory failure return explicit `not_extracted` rather than empty success. Original source-byte locators remain identical to the pure extractor.
+
+This is a CPU/heap budget, not an OS boundary or permission to execute page JavaScript. [Node's resource-limit documentation](https://nodejs.org/docs/latest-v24.x/api/worker_threads.html#new-workerfilename-options) excludes external ArrayBuffers and process-wide OOM; live workers still need process/container limits. Regressions cover pathological trees while the parent remains responsive, subsequent reuse, no lingering ports, source/context budgets, integrity failures and heap-override refusal. The compiled adapter is exercised separately from the source loader.
+
+The offline browser worker also checks cancellation after asynchronous capture boundaries so a timed-out coroutine cannot append a later sample or overwrite terminal state. Its existing seven Docker regressions continue to pass.
+
+Verification: 272 normal tests, eight compiled parser-worker tests and seven Docker regressions pass. Typecheck/build/specification validation pass; production dependency audit reports zero vulnerabilities; diff checks pass. Live customer URLs remain blocked by the canonical N0 deployment/data-use approval gate; complete frontier dispatch, independent live egress and governed render-evidence acceptance remain N1 integration work.
+
+## Scope bootstrap and render storage checkpoint
+
+`Ledger.acceptSiteScopeFixture` derives an internal-policy scope receipt from an existing authorized Site/Crawl and submitter. It checks current membership, run/deletion fences, deadline and policy health, including after artifact upload. Immutable retained bytes, Observation, relationship, clock and outbox commit together; retries are idempotent only under current gates. Its frozen bundle supplies traceable bootstrap input without asserting ownership, live dispatch or website-write authority. Migration 009 and positive/negative schema fixtures make this distinction explicit. Tests cover cross-scope/submitter denial, concurrent retries, fresh-pool readback, tombstones, cancellation, delayed policy expiry and rollback with orphan cleanup.
+
+Migration 010 persists canonical RenderSnapshot and ResourceObservation records with tenant/site references, same-run render linkage, temporal fields, immutable payload/provenance and forced RLS. Service roles receive SELECT only. Migration-owner fixtures test contract roundtrip, denied writes, cross-scope/run references, pooled scope and actual PostgreSQL crash/restart. No worker-result acceptance or rendering authority is installed by these tables.
+
+URL admission now rejects known credential aliases and array-key variants, including common signed URLs, before collection. Ordinary array query parameters retain their exact order and values; IPv4 and IPv6 literals remain rejected explicitly. This conservative key guard cannot establish that arbitrary query values contain no secrets.
+
+Verification: 289 normal tests, eight compiled parser-worker tests and seven Docker regressions pass. Typecheck/build/specification validation pass; root and isolated-worker production dependency audits report zero vulnerabilities. Live customer activation remains gated by N0; next work is validated offline render results and governed discovery integration.
+
+## Offline render-result validation checkpoint
+
+`parseOfflineRenderResult` validates bounded worker stdout against the expected fixture URL and independently supplied browser build. It enforces profile, exact field shapes, sample ordering/timing, DOM byte limits, denial caps, sandbox fields and explicit partial/failure states. It creates no Evidence or authority. The local Docker harness obtains its expected browser build separately from the installed image's Playwright metadata; this is image conformance, not signed production attestation.
+
+Review found and corrected two encoding pitfalls: the host now passes original stdout bytes to fatal UTF-8 decoding, and the validator rejects JSON strings with lone surrogate code units that would silently change when encoded as DOM artifacts. Real-container regressions cover both, including hostile JavaScript creating such a DOM. Valid captured samples feed the bounded inert parser with exact byte hashes/locators; no visibility or SEO mismatch claim is inferred. All named probe/render containers are removed and absence confirmed, including failure paths.
+
+Verification: 295 normal tests, 14 compiled parser/validator tests and ten separate Docker regressions pass. Typecheck/build/specification validation pass; production dependency audits remain clean. Governed render acceptance and live egress remain unimplemented and unactivated. Durable fixture frontier discovery is the next integration dependency.
+
+## Durable fixture frontier checkpoint
+
+`FixtureFrontier.discoverSitemap` derives candidates from retained, hash-verified sitemap and robots HTTP evidence plus the exact run's frozen scope receipt. It accepts declared robots sitemap sources or the same-origin fallback only, classifies the submitted seed under the same policy, and persists full-URL identities and immutable admission provenance. Current membership, fixture profile, work/deletion fences, policy health, run deadline and source freshness are checked, including after private artifact reads. No caller-supplied robots decision or arbitrary candidate URL is accepted by the application API.
+
+A narrow database command enforces scoped transitions, 20 document batches, 5000 retained targets, 20 query variants per pathname and 500 cumulative admissions across restart. Service roles cannot directly mutate targets or their provenance. Idempotent retries preserve the prior batch under current gates. The new `frontier.updated` event commits with classifications and reports cumulative counts without claiming page visits or whole-site coverage. Unknown/truncated/old robots and unsupported sitemap indexes abstain; index traversal and link discovery are still separate implementation work.
+
+The combined real-loopback integration now submits a run, retains scope, observes robots and sitemap, freezes them, persists permitted/denied targets, selects a queued permitted target, collects real HTTP bytes and commits a leased PageSnapshot. It proves the denied target is not fetched, but is still an explicit fixture driver, not a live dispatcher or installed discovery Skill.
+
+Review corrected the durable document ceiling, source eligibility, missing seed provenance and SQL NULL validation. Eleven frontier regressions include those cases, actual PostgreSQL crash/restart, cumulative budgets, delayed policy/source expiry, future-observation rejection and outbox rollback.
+
+Verification: 308 normal tests pass; typecheck/build, 14 compiled parser/validator tests, specification validation and diff checks pass. Both production dependency audits report zero vulnerabilities. The unchanged offline renderer retains its ten passing Docker regressions. No customer URL or website-write authority was enabled.
+
+## Exact offline render input binding checkpoint
+
+The offline worker receipt advances to `local-offline-replay-v2` with a required input digest. The worker strict-decodes stdin, rejects non-roundtrippable input strings, hashes the exact UTF-8 HTML Buffer and supplies that same Buffer to Chromium. Host validation supplies its independently calculated digest; a matching URL/build cannot substitute changed HTML, and old/unbound outputs fail closed. Pre-admission failures retain null URL/digest and no invented samples. Digest matching is local conformance, not worker attestation or evidence-acceptance authority.
+
+Verification: 309 normal tests, 15 compiled parser/validator tests and 11 Docker regressions pass, including changed HTML at the same URL, empty HTML, malformed UTF-8 and lone surrogates. Typecheck/build/specification validation and diff checks pass; production dependency audits remain clean. Next local integration work derives durable links from retained page snapshots under the same frontier budgets.
+
+## Durable raw-link frontier checkpoint
+
+`FixtureLinkFrontier.discoverLinks` derives anchors from a same-run accepted PageSnapshot whose raw body/HTTP receipt, robots and scope evidence are pinned at the supplied frozen cutoff. The parent must already be admitted. Bounded inert extraction preserves source-byte locators, evidence digest and parser version; child targets retain parent lineage and depth. Unsupported, non-successful, partial or unparseable source snapshots explicitly abstain rather than asserting an empty link inventory. Canonical declarations do not become fetch candidates.
+
+Link and sitemap expansion share persisted target identity, query-variant/discovery/admission budgets and one robots context. The shared source-gate helper retains current membership, run, deletion, health and post-I/O freshness checks. Migration 012 stores immutable batches and source locators; narrow database validation enforces exact source fields/digest/byte bounds and canonical provenance types. `frontier.links_updated` reports cumulative counts without putting raw content on the bus.
+
+Review found and corrected an invalid provenance reference type, insufficient SQL source-shape validation and asymmetric cross-source robots-context checks. Nine new regressions cover these, depth/scope/unsupported input, retained-source corruption, restart/idempotency and shared caps. The combined loopback test now also fetches a real synthetic home document, projects its leased snapshot, freezes the evidence and expands its actual anchors without fetching denied or newly discovered URLs.
+
+Verification: 320 normal tests and 15 compiled parser/validator tests pass. Typecheck/build/specification validation, diff checks and both production dependency audits pass. The unchanged offline renderer retains 11 passing Docker regressions. Live dispatch, full sitemap-index traversal and governed renderer evidence acceptance remain separate N1 integration work; no external mutation authority was enabled.
+
+## Retained-byte replay preparation checkpoint
+
+`prepareOfflineRenderInput` validates supplied retained-byte identity and context, decodes complete fixture HTML using its full Content-Type/charset declaration, and records separate raw and transformed UTF-8 hashes/lengths. The existing evidence ID is referenced, never generated. Raw and expanded input each have a 5MiB ceiling. Unsupported/XHTML/partial/undecodable content explicitly abstains; malformed context and integrity mismatches throw. This pure transformation grants no persistence or renderer dispatch authority.
+
+A real Chromium regression verifies windows-1252 source bytes become the expected UTF-8 title while raw and replay digests remain distinct. One initial local Docker run exceeded a host deadline on the hung-page path; the owned test container was absent afterward. The failure did not recur in two complete reruns. Limits were not relaxed. Host timeout diagnostics now include operation and deadline, and the forced-timeout regression checks the exact run deadline.
+
+Verification was repeated from an isolated staged-code worktree so parallel sitemap-index edits could not enter the checkpoint: 326 normal tests, 20 compiled parser/replay tests and 12 Docker regressions pass. Typecheck/build/specification validation and both production dependency audits pass. The checkpoint includes no live/customer processing or website-write authority.
+
+## Measured offline render receipt checkpoint
+
+The fixture worker advances to receipt profile v3. Each captured DOM reports a worker-side UTC timestamp and the measured count of context HTTP Request objects awaiting terminal lifecycle events. Denials carry their own timestamps. Validation checks independently supplied host invocation bounds, monotonic measured times, integer count bounds and exact input/build binding; missing or old measurements fail closed. These counts do not assert network idle or render completeness. Real Chromium inline fixtures verify zero outstanding requests; nonzero counts have validator coverage but not yet a deterministic real-browser pending-request fixture.
+
+Verification from an isolated staged-code worktree: 327 normal tests and 21 compiled parser/replay tests pass, together with typecheck, build, specification validation and both production dependency audits (zero vulnerabilities). All 12 Docker regressions pass against the same worker/harness changes. No live dispatch, governed evidence acceptance or website-write authority is enabled.
+
+## Governed sitemap traversal and render artifact checkpoint
+
+Sitemap indexes now retain immutable document ancestry, exact source receipts and explicit child eligibility. Depth0–2 traversal verifies the complete pinned parent chain; deeper children remain deferred and never become page targets. Index and leaf documents share the twenty-document budget and durable frontier caps. Exact pre-migration retries preserve historical results even when multiple old observations used the same URL; changed inputs and new duplicate document admissions remain denied. Tests cover PostgreSQL restart, current-source gates, budget boundaries and atomic rollback.
+
+Current input eligibility enforces persisted Self-Audit restrictions before further fixture interpretation or HTTP snapshot projection. Actual bundle/run/site, scope and HTTP sources, parent targets, snapshots and reused Page identities are checked. Direct/transitive rejection does not suppress independent valid inputs; incomplete scope and run quarantine block affected source reuse across runs. Recovery requires a distinct version-matched passing evaluator receipt plus operator review; explicit rejection of that witness prevents recovery. Multiple independently reviewed run recoveries do not circularly invalidate one another. The helper never clears work fences or implements an operational recovery writer.
+
+Migration014 serializes receipt/impact/recovery/source-association inserts and knowledge-clock writes with the existing global work lock. This closes the check/commit race and avoids clock-before-work lock inversion for existing writers. Real evaluator-clock and direct source-association races verify the boundary. Global serialization trades local throughput for safety; it is not a production scalability claim. This local guard fails closed beyond 5000 site receipts, 10000 total impacts or 128 nested recovery dependencies rather than treating a partial graph as permission.
+
+The pure offline manifest transformer separates each exact DOM into a bounded artifact and retains a closed, versioned metadata manifest. Raw-source, transformed-input, original-stdout and manifest digests remain distinct; original stdout is explicitly a non-retained transport digest. Zero-sample failures retain no invented DOM. Assigned identities and original stdout are validated, but this transformer does not authenticate a supervisor, upload evidence, grant collection authority or complete governed render acceptance. A real Chromium regression exercises the transformation on original worker stdout.
+
+Final combined verification: 353 normal tests, 26 compiled parser/replay/manifest tests and 13 Docker regressions pass. Typecheck, build, specification validation (21 schemas, 35 positive and 8 negative examples), diff checks and both production dependency audits pass; audits report zero vulnerabilities. The dedicated local Docker VM was used without host mounts or external resource access.
+
+Reality boundary: N1 live dispatch and governed render-evidence acceptance remain open. The next real-URL activation boundary is the owner-approved N0 deployment/data-use profile required by ADR-006 and document41. Local fixtures cannot establish customer processing/storage/retention/provider-use commitments. No live customer processing or website-write capability was enabled.
+
+## Independent HTTP terminal authority checkpoint
+
+[Detailed report](../../reports/HTTP-TERMINAL-AUTHORITY.md): reservation-generated invocation IDs, separate supervisor pre-execution binding and immutable terminal witnesses now fence slot settlement. Narrow SQL commands prevent direct scheduler refund/counter/ghost-reservation bypasses. Legacy unknown reservations receive no invented binding; unknown bytes remain null. 397 application cases,45 compiled cases and10 vault guards pass; typecheck/build/spec validation and both production dependency audits pass. These are local protocol fixtures, not a real process/egress producer. GAP-005/GAP-004 remain open; no live collection authority.
+
+## Local HTTP process checkpoint — 2026-09-18, parent05a0760
+
+[Process supervision report](../../reports/HTTP-FIXTURE-PROCESS-SUPERVISION.md):405 application tests and84 compiled tests passed. Fixed local child/loopback lifecycle now produces independently recorded termination with actual close timestamps and conservative unknown-byte accounting. GAP-034 closes only this local scope; live dispatch, deployed egress, evidence acceptance and real-world capability proof remain open. No website-write capability.
+
+## Persisted-source render preparation — 2026-09-18, parent359a01d
+
+[Source preparation report](../../reports/OFFLINE-RENDER-SOURCE-PREPARATION.md):419 application and73 compiled tests passed, alongside14 isolated browser scenarios. Exact persisted source/scope/robots/typed ancestry and current audit gates now feed offline UTF-8 preparation with distinct raw/input hashes. GAP-035 closes only this source bridge. Render accounting, independent invocation and atomic acceptance remain GAP-008; no public collection or website-write authority.
+
+## Render terminal accounting — 2026-09-18, parent9620e9a
+
+[Render protocol report](../../reports/RENDER-TERMINAL-ACCOUNTING.md):431 application and71 compiled tests passed. Permanent page/request/byte charges, one-run/two-global capacity and independent terminal receipt settlement are tested, including PostgreSQL restart. GAP-036 closes only accounting; test-authored witnesses do not prove actual container execution. GAP-008 dispatch/acceptance remains open; no website-write capability.
+
+## Governed local render execution — 2026-09-18, parentf9543a8
+
+[Execution report](../../reports/GOVERNED-OFFLINE-RENDER-EXECUTION.md):446 application and72 compiled tests passed. The opt-in suite passed28 cases, including one actual persisted-source-to-Chromium execution with independently confirmed container removal;27 cases overlap protocol tests. Exact cumulative render permission, immutable source descriptor and final current gates authorize only local fixture replay. GAP-037 closes this bounded prerequisite; GAP-008 accepted artifacts and atomic job completion remain open. No website-write capability.
+
+## Local rendered evidence acceptance — 2026-09-18, parentd04ebff
+
+[Acceptance report](../../reports/LOCAL-RENDER-EVIDENCE-ACCEPTANCE.md):477 application/88 compiled tests and the28-case opt-in suite passed, including one actual Docker-to-private-evidence case. Separate collection credentials accept only transcript-bound, privacy-limited artifacts under current authority. GAP-038 closes this prerequisite; GAP-008 typed render projections/job completion and GAP-039 upstream raw privacy remain open. No real-world/production capability proof or website-write capability.
+
+## Typed local render completion — 2026-09-18, parent8a86864
+
+[Projection report](../../reports/LOCAL-RENDER-PROJECTION.md):487 application/85 compiled tests and25 opt-in cases passed, including one actual Chromium-to-typed-snapshots/completed-job path. GAP-040 closes this bounded local handler; snapshots remain policy-limited and critical-text hashes null. Exact replay, current governance, private artifact integrity, two-event rollback and restart are verified. Resource intelligence, raw privacy, live operation and full capabilities remain open. No website-write capability.

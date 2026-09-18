@@ -1,0 +1,38 @@
+{
+  "name": "aios-seo",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "build": "node scripts/build.mjs",
+    "test": "node scripts/test.mjs",
+    "test:unit": "node --import tsx --test tests/contracts.test.ts tests/blob.test.ts",
+    "test:render": "node --import tsx scripts/test-render.mjs",
+    "vault:update": "python3 vault/refresh.py",
+    "vault:check": "python3 vault/refresh.py --check && python3 vault/test_refresh.py",
+    "pretest": "npm run vault:check"
+  },
+  "dependencies": {
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1",
+    "html-encoding-sniffer": "6.0.0",
+    "parse5": "8.0.1",
+    "pg": "^8.16.3",
+    "sax": "1.6.1"
+  },
+  "devDependencies": {
+    "@types/html-encoding-sniffer": "3.0.2",
+    "@types/node": "^24.0.0",
+    "@types/pg": "^8.15.0",
+    "@types/sax": "1.2.7",
+    "tsx": "^4.20.0",
+    "typescript": "^5.9.0"
+  }
+}

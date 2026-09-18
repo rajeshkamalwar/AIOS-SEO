@@ -1,0 +1,20 @@
+{
+  "state": "completed",
+  "reservation": {
+    "reservationId": "00000000-0000-4000-8000-000000000041",
+    "invocationId": "00000000-0000-4000-8000-000000000042",
+    "origin": "https://receipt.example",
+    "maxDecodedBytes": 512000,
+    "startedAt": "2026-09-18T00:00:00.000Z",
+    "state": "settled"
+  },
+  "terminalReceiptId": "00000000-0000-4000-8000-000000000043",
+  "containerId": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "result": {
+    "status": 200,
+    "truncated": false,
+    "retainedBodyBytes": 14,
+    "retainedBodySha256": "fd89345af6aca5dab85f2aa6a830e270a362b1fa6b5f19607ddd773a081ed651"
+  },
+  "evidenceAccepted": true
+}

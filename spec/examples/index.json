@@ -1,6 +1,16 @@
 {
   "examples": [
     {
+      "path": "examples/site-scope.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/scope-receipt.schema.json",
+      "valid": true
+    },
+    {
+      "path": "examples/invalid-site-scope.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/scope-receipt.schema.json",
+      "valid": false
+    },
+    {
       "path": "examples/tenant.json",
       "schema": "https://schemas.aios-seo.invalid/v1/domain.schema.json#/$defs/Tenant",
       "valid": true
@@ -173,6 +183,141 @@
     {
       "path": "examples/invalid-inference-fact.json",
       "schema": "https://schemas.aios-seo.invalid/v1/inference-output.schema.json",
+      "valid": false
+    },
+    {
+      "path": "examples/frontier-updated.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/event.schema.json",
+      "valid": true
+    },
+    {
+      "path": "examples/invalid-frontier-updated.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/event.schema.json",
+      "valid": false
+    },
+    {
+      "path": "examples/frontier-links-updated.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/event.schema.json",
+      "valid": true
+    },
+    {
+      "path": "examples/invalid-frontier-links-updated.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/event.schema.json",
+      "valid": false
+    },
+    {
+      "path": "examples/offline-render-manifest.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/offline-render-manifest.schema.json",
+      "valid": true
+    },
+    {
+      "path": "examples/offline-render-manifest-invalid.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/offline-render-manifest.schema.json",
+      "valid": false
+    },
+    {
+      "path": "examples/offline-render-execution.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/offline-render-execution.schema.json",
+      "valid": true
+    },
+    {
+      "path": "examples/invalid-offline-render-execution.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/offline-render-execution.schema.json",
+      "valid": false
+    },
+    {
+      "path": "examples/offline-render-retained-manifest.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/offline-render-retained-manifest.schema.json",
+      "valid": true
+    },
+    {
+      "path": "examples/invalid-offline-render-retained-manifest.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/offline-render-retained-manifest.schema.json",
+      "valid": false
+    },
+    {
+      "path": "examples/http-bootstrap-execution.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/http-bootstrap-execution.schema.json",
+      "valid": true
+    },
+    {
+      "path": "examples/invalid-http-bootstrap-execution.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/http-bootstrap-execution.schema.json",
+      "valid": false
+    },
+    {
+      "path": "examples/http-bootstrap-acceptance.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/http-bootstrap-acceptance.schema.json",
+      "valid": true
+    },
+    {
+      "path": "examples/invalid-http-bootstrap-acceptance.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/http-bootstrap-acceptance.schema.json",
+      "valid": false
+    },
+    {
+      "path": "examples/http-bootstrap-projection.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/http-bootstrap-projection.schema.json",
+      "valid": true
+    },
+    {
+      "path": "examples/invalid-http-bootstrap-projection.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/http-bootstrap-projection.schema.json",
+      "valid": false
+    },
+    {
+      "path": "examples/http-bootstrap-seed-admission.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/http-bootstrap-seed-admission.schema.json",
+      "valid": true
+    },
+    {
+      "path": "examples/invalid-http-bootstrap-seed-admission.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/http-bootstrap-seed-admission.schema.json",
+      "valid": false
+    },
+    {
+      "path": "examples/frontier-seed-classified.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/event.schema.json",
+      "valid": true
+    },
+    {
+      "path": "examples/invalid-frontier-seed-classified.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/event.schema.json",
+      "valid": false
+    },
+    {
+      "path": "examples/skill-http-seed-fixture.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/skill.schema.json",
+      "valid": true
+    },
+    {
+      "path": "examples/http-seed-execution.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/http-seed-execution.schema.json",
+      "valid": true
+    },
+    {
+      "path": "examples/invalid-http-seed-execution.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/http-seed-execution.schema.json",
+      "valid": false
+    },
+    {
+      "path": "examples/http-seed-descriptor.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/http-seed-descriptor.schema.json",
+      "valid": true
+    },
+    {
+      "path": "examples/invalid-http-seed-descriptor.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/http-seed-descriptor.schema.json",
+      "valid": false
+    },
+    {
+      "path": "examples/frontier-seed-fetch-claimed.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/event.schema.json",
+      "valid": true
+    },
+    {
+      "path": "examples/invalid-frontier-seed-fetch-claimed.json",
+      "schema": "https://schemas.aios-seo.invalid/v1/event.schema.json",
       "valid": false
     }
   ],

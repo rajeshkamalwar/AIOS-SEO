@@ -1528,6 +1528,737 @@
         "knowledge_seq"
       ],
       "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "event_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "tenant_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "site_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "schema_version": {
+          "const": 2
+        },
+        "aggregate_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "aggregate_version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "causation_id": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "correlation_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "occurred_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "recorded_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "idempotency_key": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "producer": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "event_type": {
+          "const": "job.completed"
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "job_id": {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+            },
+            "result_ref": {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+            }
+          },
+          "required": [
+            "job_id",
+            "result_ref"
+          ],
+          "additionalProperties": false
+        },
+        "knowledge_seq": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "event_id",
+        "tenant_id",
+        "site_id",
+        "schema_version",
+        "aggregate_id",
+        "aggregate_version",
+        "causation_id",
+        "correlation_id",
+        "occurred_at",
+        "recorded_at",
+        "idempotency_key",
+        "producer",
+        "event_type",
+        "payload",
+        "knowledge_seq"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "event_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "tenant_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "site_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "schema_version": {
+          "const": 2
+        },
+        "aggregate_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "aggregate_version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "causation_id": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "correlation_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "occurred_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "recorded_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "idempotency_key": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "producer": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "event_type": {
+          "const": "self_audit.failed"
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "self_audit_result_id": {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+            },
+            "effect": {
+              "enum": [
+                "degrade",
+                "reject_outputs",
+                "quarantine_run"
+              ]
+            }
+          },
+          "required": [
+            "self_audit_result_id",
+            "effect"
+          ],
+          "additionalProperties": false
+        },
+        "knowledge_seq": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "event_id",
+        "tenant_id",
+        "site_id",
+        "schema_version",
+        "aggregate_id",
+        "aggregate_version",
+        "causation_id",
+        "correlation_id",
+        "occurred_at",
+        "recorded_at",
+        "idempotency_key",
+        "producer",
+        "event_type",
+        "payload",
+        "knowledge_seq"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "event_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "tenant_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "site_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "aggregate_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "aggregate_version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "causation_id": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "correlation_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "occurred_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "recorded_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "idempotency_key": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "producer": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "event_type": {
+          "const": "frontier.updated"
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "crawl_id": {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+            },
+            "sitemap_observation_id": {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+            },
+            "robots_observation_id": {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+            },
+            "discovered_count": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 5000
+            },
+            "admitted_count": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 500
+            },
+            "excluded_count": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 5000
+            },
+            "deferred_count": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 5000
+            }
+          },
+          "required": [
+            "crawl_id",
+            "sitemap_observation_id",
+            "robots_observation_id",
+            "discovered_count",
+            "admitted_count",
+            "excluded_count",
+            "deferred_count"
+          ],
+          "additionalProperties": false
+        },
+        "knowledge_seq": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "event_id",
+        "tenant_id",
+        "site_id",
+        "schema_version",
+        "aggregate_id",
+        "aggregate_version",
+        "causation_id",
+        "correlation_id",
+        "occurred_at",
+        "recorded_at",
+        "idempotency_key",
+        "producer",
+        "event_type",
+        "payload",
+        "knowledge_seq"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "event_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "tenant_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "site_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "aggregate_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "aggregate_version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "causation_id": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "correlation_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "occurred_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "recorded_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "idempotency_key": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "producer": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "event_type": {
+          "const": "frontier.links_updated"
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "crawl_id": {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+            },
+            "robots_observation_id": {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+            },
+            "discovered_count": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 5000
+            },
+            "admitted_count": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 500
+            },
+            "excluded_count": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 5000
+            },
+            "deferred_count": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 5000
+            },
+            "page_snapshot_id": {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+            }
+          },
+          "required": [
+            "crawl_id",
+            "page_snapshot_id",
+            "robots_observation_id",
+            "discovered_count",
+            "admitted_count",
+            "excluded_count",
+            "deferred_count"
+          ],
+          "additionalProperties": false
+        },
+        "knowledge_seq": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "event_id",
+        "tenant_id",
+        "site_id",
+        "schema_version",
+        "aggregate_id",
+        "aggregate_version",
+        "causation_id",
+        "correlation_id",
+        "occurred_at",
+        "recorded_at",
+        "idempotency_key",
+        "producer",
+        "event_type",
+        "payload",
+        "knowledge_seq"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "event_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "tenant_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "site_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "aggregate_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "aggregate_version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "causation_id": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "correlation_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "occurred_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "recorded_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "idempotency_key": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "producer": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "event_type": {
+          "const": "frontier.seed_classified"
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "crawl_id": {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+            },
+            "invocation_id": {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+            },
+            "robots_observation_id": {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+            },
+            "target_id": {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+            },
+            "bundle_id": {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+            },
+            "state": {
+              "enum": [
+                "queued",
+                "excluded",
+                "deferred"
+              ]
+            },
+            "admitted": {
+              "type": "boolean"
+            },
+            "reason": {
+              "enum": [
+                null,
+                "robots_disallowed",
+                "robots_denied",
+                "robots_unknown",
+                "admission_budget"
+              ]
+            },
+            "policy_version": {
+              "const": "discovery-v1"
+            }
+          },
+          "required": [
+            "crawl_id",
+            "invocation_id",
+            "robots_observation_id",
+            "target_id",
+            "bundle_id",
+            "state",
+            "admitted",
+            "reason",
+            "policy_version"
+          ],
+          "additionalProperties": false,
+          "oneOf": [
+            {
+              "properties": {
+                "state": {
+                  "const": "queued"
+                },
+                "admitted": {
+                  "const": true
+                },
+                "reason": {
+                  "type": "null"
+                }
+              }
+            },
+            {
+              "properties": {
+                "state": {
+                  "const": "excluded"
+                },
+                "admitted": {
+                  "const": false
+                },
+                "reason": {
+                  "enum": [
+                    "robots_disallowed",
+                    "robots_denied"
+                  ]
+                }
+              }
+            },
+            {
+              "properties": {
+                "state": {
+                  "const": "deferred"
+                },
+                "admitted": {
+                  "const": false
+                },
+                "reason": {
+                  "enum": [
+                    "robots_unknown",
+                    "admission_budget"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "knowledge_seq": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "event_id",
+        "tenant_id",
+        "site_id",
+        "schema_version",
+        "aggregate_id",
+        "aggregate_version",
+        "causation_id",
+        "correlation_id",
+        "occurred_at",
+        "recorded_at",
+        "idempotency_key",
+        "producer",
+        "event_type",
+        "payload",
+        "knowledge_seq"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "event_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "tenant_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "site_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "aggregate_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "aggregate_version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "causation_id": {
+          "anyOf": [
+            {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "correlation_id": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+        },
+        "occurred_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "recorded_at": {
+          "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time"
+        },
+        "idempotency_key": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "producer": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "event_type": {
+          "const": "frontier.seed_fetch_claimed"
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "crawl_id": {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+            },
+            "target_id": {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+            },
+            "job_id": {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+            },
+            "invocation_id": {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+            },
+            "reservation_id": {
+              "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id"
+            },
+            "policy_version": {
+              "const": "discovery-v1"
+            }
+          },
+          "required": [
+            "crawl_id",
+            "target_id",
+            "job_id",
+            "invocation_id",
+            "reservation_id",
+            "policy_version"
+          ],
+          "additionalProperties": false
+        },
+        "knowledge_seq": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "event_id",
+        "tenant_id",
+        "site_id",
+        "schema_version",
+        "aggregate_id",
+        "aggregate_version",
+        "causation_id",
+        "correlation_id",
+        "occurred_at",
+        "recorded_at",
+        "idempotency_key",
+        "producer",
+        "event_type",
+        "payload",
+        "knowledge_seq"
+      ],
+      "additionalProperties": false
     }
   ]
 }

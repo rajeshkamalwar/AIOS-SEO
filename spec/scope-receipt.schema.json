@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.aios-seo.invalid/v1/scope-receipt.schema.json",
+  "type": "object",
+  "properties": {
+    "receipt_type": { "const": "site_scope" },
+    "schema_version": { "const": 1 },
+    "tenant_id": { "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id" },
+    "site_id": { "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id" },
+    "crawl_id": { "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id" },
+    "submitted_by": { "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/id" },
+    "submitted_url": { "type": "string", "minLength": 1, "maxLength": 4096 },
+    "normalized_origin": { "type": "string", "minLength": 1, "maxLength": 4096 },
+    "site_version": { "type": "integer", "minimum": 1, "maximum": 9007199254740991 },
+    "deletion_epoch": { "type": "integer", "minimum": 0, "maximum": 9007199254740991 },
+    "policy_version": { "const": "discovery-v1" },
+    "deployment_profile": { "const": "local-synthetic-v1" },
+    "authority": { "const": "fixture_only" },
+    "ownership": { "const": "not_established" },
+    "live_dispatch": { "const": false },
+    "website_write": { "const": false },
+    "issued_at": { "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time" },
+    "expires_at": { "$ref": "https://schemas.aios-seo.invalid/v1/common.schema.json#/$defs/time" }
+  },
+  "required": ["receipt_type", "schema_version", "tenant_id", "site_id", "crawl_id", "submitted_by", "submitted_url", "normalized_origin", "site_version", "deletion_epoch", "policy_version", "deployment_profile", "authority", "ownership", "live_dispatch", "website_write", "issued_at", "expires_at"],
+  "additionalProperties": false
+}
