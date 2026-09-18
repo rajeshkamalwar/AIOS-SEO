@@ -8,6 +8,7 @@ import { eligible } from '../skills/index.js';
 import { normalizeUrl } from '../perception/url.js';
 import { DeletionLedger } from '../policy/deletion.js';
 import { assertInputsEligible } from '../policy/input-eligibility.js';
+import { resolveOfflineRenderSource,prepareOfflineRenderSource,validateOfflineRenderScope,type OfflineRenderPreparation } from './offline-render-source.js';
 export interface Budget { http_requests:number; render_requests:number; render_pages:number; model_calls:number; tokens:number; cost_microusd:number; deadline:string }
 export type CrawlState='queued'|'running'|'complete_in_scope'|'partial'|'blocked'|'failed'|'cancelled';
 export interface SubmissionReceipt {runId:string; replayed:boolean; state:CrawlState}
@@ -156,6 +157,27 @@ export class Jobs {
    if(!r||actual>Number(r.amount))throw new Error('invalid_receipt');
    const digest=manifestHash({id,actual});if(r.state==='settled'){if(r.receipt_hash!==digest)throw new Error('conflict');return;}
    await c.query("UPDATE budget_reservation SET state='settled',actual=$3,receipt_hash=$4 WHERE tenant_id=$1 AND reservation_id=$2",[l.tenantId,id,actual,digest]);
+  });
+ }
+ /** Guarded preparation of retained local HTML only; not a renderer admission or job handler. */
+ async prepareOfflineRenderFixture(l:Lease,snapshotId:string):Promise<OfflineRenderPreparation>{
+  uuid(snapshotId);if(!this.artifacts)throw new Error('artifact_adapter_required');
+  const resolve=()=>transaction(this.pool,'aios_scheduler',async c=>{
+   await this.locks(c);const {j}=await this.leased(c,l);
+   if(j.kind!=='project')throw new Error('handler_not_installed');
+   return resolveOfflineRenderSource(c,l,j.input_ref,snapshotId);
+  });
+  const source=await resolve();
+  // All filesystem I/O is outside database transactions and advisory locks.
+  const bytes=new Map(await Promise.all(source.evidence.map(async row=>[row.id,await this.artifacts!.read(row.artifact_key,row.sha256,Number(row.bytes))] as const)));
+  const prepared=prepareOfflineRenderSource(l,source,bytes);
+  return transaction(this.pool,'aios_scheduler',async c=>{
+   await this.locks(c);const {r,j}=await this.leased(c,l);
+   if(j.kind!=='project')throw new Error('handler_not_installed');
+   const current=await resolveOfflineRenderSource(c,l,j.input_ref,snapshotId);
+   if(current.fingerprint!==source.fingerprint)throw new Error('source_context_changed');
+   await validateOfflineRenderScope(c,l,r.submitted_by,current,bytes,this.deletions);
+   await this.leased(c,l);return prepared;
   });
  }
  /** Deterministic persistence projection; never a discovery/network or SEO inference handler. */

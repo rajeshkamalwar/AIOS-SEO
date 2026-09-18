@@ -177,3 +177,7 @@ Reality boundary: N1 live dispatch and governed render-evidence acceptance remai
 ## Local HTTP process checkpoint — 2026-09-18, parent05a0760
 
 [Process supervision report](../../reports/HTTP-FIXTURE-PROCESS-SUPERVISION.md):405 application tests and84 compiled tests passed. Fixed local child/loopback lifecycle now produces independently recorded termination with actual close timestamps and conservative unknown-byte accounting. GAP-034 closes only this local scope; live dispatch, deployed egress, evidence acceptance and real-world capability proof remain open. No website-write capability.
+
+## Persisted-source render preparation — 2026-09-18, parent359a01d
+
+[Source preparation report](../../reports/OFFLINE-RENDER-SOURCE-PREPARATION.md):419 application and73 compiled tests passed, alongside14 isolated browser scenarios. Exact persisted source/scope/robots/typed ancestry and current audit gates now feed offline UTF-8 preparation with distinct raw/input hashes. GAP-035 closes only this source bridge. Render accounting, independent invocation and atomic acceptance remain GAP-008; no public collection or website-write authority.

@@ -1,6 +1,6 @@
 # Test traceability
 
-<!-- Derived record/source digest: d5035e7734459900780abae9cf5bf7fca85d37f9ed00bb0689639abac8be6303; regenerate with npm run vault:update. This is not a test receipt. -->
+<!-- Derived record/source digest: 178f3b9ce3e0d013422247ffda2f31f4dd8bb6c3a3db853f22ea58c4e339bc2d; regenerate with npm run vault:update. This is not a test receipt. -->
 
 Counts below are successive snapshots, **never added together**. A referenced test is not proof of full capability acceptance. Fixture/loopback/offline browser results stay TESTED. Spec validation, production dependency audit and runtime execution establish different things.
 
@@ -27,6 +27,7 @@ Counts below are successive snapshots, **never added together**. A referenced te
 | [PUBLICATION-SCOPE-HARDENING](milestones/PUBLICATION-SCOPE-HARDENING.md) | [index.ts](../packages/api/index.ts), [015-publication-authority.sql](../packages/persistence/migrations/015-publication-authority.sql) | [jobs.test.ts](../tests/jobs.test.ts), [api-scope.test.ts](../tests/api-scope.test.ts) | [PUBLICATION-AND-READ-SCOPE-HARDENING.md](../reports/PUBLICATION-AND-READ-SCOPE-HARDENING.md) / parent cd4a9d3 |
 | [HTTP-TERMINAL-AUTHORITY](milestones/HTTP-TERMINAL-AUTHORITY.md) | [http-lane.ts](../packages/jobs/http-lane.ts), [http-supervisor.ts](../packages/jobs/http-supervisor.ts), [016-http-supervisor.sql](../packages/persistence/migrations/016-http-supervisor.sql) | [http-lane.test.ts](../tests/http-lane.test.ts) | [HTTP-TERMINAL-AUTHORITY.md](../reports/HTTP-TERMINAL-AUTHORITY.md) / parent dc7ce96 |
 | [HTTP-FIXTURE-PROCESS](milestones/HTTP-FIXTURE-PROCESS.md) | [http-fixture-supervisor.ts](../packages/jobs/http-fixture-supervisor.ts), [http-fixture-worker.ts](../packages/perception/http-fixture-worker.ts) | [http-lane.test.ts](../tests/http-lane.test.ts), [test.mjs](../scripts/test.mjs) | [HTTP-FIXTURE-PROCESS-SUPERVISION.md](../reports/HTTP-FIXTURE-PROCESS-SUPERVISION.md) / parent05a0760 |
+| [OFFLINE-RENDER-SOURCE](milestones/OFFLINE-RENDER-SOURCE.md) | [index.ts](../packages/jobs/index.ts), [offline-render-source.ts](../packages/jobs/offline-render-source.ts) | [offline-render-source.test.ts](../tests/offline-render-source.test.ts), [test.mjs](../scripts/test.mjs), [test-render.mjs](../scripts/test-render.mjs) | [OFFLINE-RENDER-SOURCE-PREPARATION.md](../reports/OFFLINE-RENDER-SOURCE-PREPARATION.md) / parent359a01d |
 
 ## Capability and defect trace
 
@@ -49,6 +50,7 @@ Every [capability note](04-COVERAGE-MATRIX.md) maps its exact CAP requirement â†
 - [http-lane.test.ts](../tests/http-lane.test.ts)
 - [input-eligibility.test.ts](../tests/input-eligibility.test.ts)
 - [jobs.test.ts](../tests/jobs.test.ts)
+- [offline-render-source.test.ts](../tests/offline-render-source.test.ts)
 - [perception-persistence.test.ts](../tests/perception-persistence.test.ts)
 - [perception.test.ts](../tests/perception.test.ts)
 - [policy.test.ts](../tests/policy.test.ts)

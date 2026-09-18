@@ -1,6 +1,6 @@
 # Coverage matrix
 
-<!-- Derived record/source digest: d5035e7734459900780abae9cf5bf7fca85d37f9ed00bb0689639abac8be6303; regenerate with npm run vault:update. This is not a test receipt. -->
+<!-- Derived record/source digest: 178f3b9ce3e0d013422247ffda2f31f4dd8bb6c3a3db853f22ea58c4e339bc2d; regenerate with npm run vault:update. This is not a test receipt. -->
 
 All 36 domains / 195 canonical rows are indexed. Full-capability maturity and local prerequisite maturity are separate. **No full-capability completion is asserted.** Names are navigation labels; definitions remain in [14](../docs/14-CAPABILITY-TAXONOMY.md) and inherited contracts15/18.
 
@@ -221,11 +221,11 @@ All 36 domains / 195 canonical rows are indexed. Full-capability maturity and lo
 | Capability | Full maturity | Local evidence scope | Completion | Persistent gaps |
 | --- | --- | --- | --- | --- |
 | [CAP-JS-01](capabilities/CAP-JS-01.md) Technology and render-mode inference | DEFINED | specification_only / NOT_DEFINED | INCOMPLETE | [GAP-DOM-JS](gaps/GAP-DOM-JS.md), [GAP-008](gaps/GAP-008.md), [GAP-009](gaps/GAP-009.md) |
-| [CAP-JS-02](capabilities/CAP-JS-02.md) Raw/rendered parity | DEFINED | foundation_only / TESTED | INCOMPLETE | [GAP-DOM-JS](gaps/GAP-DOM-JS.md), [GAP-008](gaps/GAP-008.md), [GAP-009](gaps/GAP-009.md) |
-| [CAP-JS-03](capabilities/CAP-JS-03.md) Hydration stability | DEFINED | foundation_only / TESTED | INCOMPLETE | [GAP-DOM-JS](gaps/GAP-DOM-JS.md), [GAP-008](gaps/GAP-008.md), [GAP-009](gaps/GAP-009.md) |
+| [CAP-JS-02](capabilities/CAP-JS-02.md) Raw/rendered parity | DEFINED | foundation_only / TESTED | INCOMPLETE | [GAP-DOM-JS](gaps/GAP-DOM-JS.md), [GAP-008](gaps/GAP-008.md), [GAP-009](gaps/GAP-009.md), [GAP-035](gaps/GAP-035.md) |
+| [CAP-JS-03](capabilities/CAP-JS-03.md) Hydration stability | DEFINED | foundation_only / TESTED | INCOMPLETE | [GAP-DOM-JS](gaps/GAP-DOM-JS.md), [GAP-008](gaps/GAP-008.md), [GAP-009](gaps/GAP-009.md), [GAP-035](gaps/GAP-035.md) |
 | [CAP-JS-04](capabilities/CAP-JS-04.md) Client navigation discoverability | DEFINED | foundation_only / TESTED | INCOMPLETE | [GAP-DOM-JS](gaps/GAP-DOM-JS.md), [GAP-008](gaps/GAP-008.md), [GAP-009](gaps/GAP-009.md) |
 | [CAP-JS-05](capabilities/CAP-JS-05.md) Dynamic metadata consistency | DEFINED | foundation_only / TESTED | INCOMPLETE | [GAP-DOM-JS](gaps/GAP-DOM-JS.md), [GAP-008](gaps/GAP-008.md), [GAP-009](gaps/GAP-009.md) |
-| [CAP-JS-06](capabilities/CAP-JS-06.md) Blocked resource impact | DEFINED | foundation_only / TESTED | INCOMPLETE | [GAP-DOM-JS](gaps/GAP-DOM-JS.md), [GAP-008](gaps/GAP-008.md), [GAP-009](gaps/GAP-009.md) |
+| [CAP-JS-06](capabilities/CAP-JS-06.md) Blocked resource impact | DEFINED | foundation_only / TESTED | INCOMPLETE | [GAP-DOM-JS](gaps/GAP-DOM-JS.md), [GAP-008](gaps/GAP-008.md), [GAP-009](gaps/GAP-009.md), [GAP-035](gaps/GAP-035.md) |
 | [CAP-JS-07](capabilities/CAP-JS-07.md) SSR/SSG/ISR freshness | DEFINED | specification_only / NOT_DEFINED | INCOMPLETE | [GAP-DOM-JS](gaps/GAP-DOM-JS.md), [GAP-008](gaps/GAP-008.md), [GAP-009](gaps/GAP-009.md) |
 | [CAP-JS-08](capabilities/CAP-JS-08.md) Generated-site integrity | DEFINED | specification_only / NOT_DEFINED | INCOMPLETE | [GAP-DOM-JS](gaps/GAP-DOM-JS.md), [GAP-008](gaps/GAP-008.md), [GAP-009](gaps/GAP-009.md) |
 

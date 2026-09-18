@@ -8,6 +8,9 @@ import { hash } from '../packages/contracts/index.ts';
 import { prepareOfflineRenderInput } from '../packages/perception/render-input.ts';
 import { buildOfflineRenderManifest } from '../packages/perception/render-manifest.ts';
 
+const preparedSourceMode=process.argv.slice(2).includes('--prepared-source');
+if(process.argv.slice(2).some(arg=>arg!=='--prepared-source'))throw new Error('unknown_test_mode');
+
 const directory=fileURLToPath(new URL('../workers/render-fixture/',import.meta.url));
 const seccomp=fileURLToPath(new URL('../workers/render-fixture/seccomp.json',import.meta.url));
 const image='aios-seo-render-fixture';
@@ -79,6 +82,7 @@ assert.equal(imageInfo.stdout.trim(),'pwuser','renderer must use nonroot image u
 expectedBuild=(await runContainer({buildProbe:true})).stdout.trim();
 assert.match(expectedBuild,/^\d+\.\d+\.\d+\.\d+$/);
 
+async function fixtureSuite(){
 const url='https://render.example/';
 const positiveHtml=`<!doctype html><html><head><title>Fixture</title></head><body><main id="state">initial</main><script>
  setTimeout(()=>document.getElementById('state').textContent='second',500);
@@ -196,3 +200,29 @@ console.log('PASS hung page terminates without fabricated DOM');
 
 await assert.rejects(render({url,html:'<!doctype html><script>while(true){}</script>'},{timeoutMs:500}),/docker_host_timeout:run:500ms/);
 console.log('PASS host deadline kills and removes the named worker container');
+
+}
+
+async function persistedSourceCase(){
+ // Test-harness transport only: the caller test obtained this value from the
+ // current-gated database bridge. This is not an application ingestion API.
+ const chunks=[];let length=0;
+ for await(const chunk of process.stdin){length+=chunk.length;if(length>12*1024*1024)throw new Error('prepared_source_budget');chunks.push(chunk);}
+ const prepared=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(Buffer.concat(chunks)));
+ assert.equal(prepared.state,'prepared');
+ assert.equal(prepared.profile,'local-offline-replay-v3');
+ assert.equal(prepared.source.contentType,'text/html; charset=windows-1252');
+ assert.equal(prepared.inputSha256,hash(Buffer.from(prepared.html,'utf8')));
+ assert.equal(prepared.inputBytes,Buffer.byteLength(prepared.html,'utf8'));
+ assert.notEqual(prepared.source.rawSha256,prepared.inputSha256);
+ assert.match(prepared.html,/café/i);
+ const captured=await render({url:prepared.url,html:prepared.html});
+ assert.equal(captured.state,'captured');
+ assert.equal(captured.inputSha256,prepared.inputSha256);
+ assert.deepEqual(captured.samples.map(sample=>sample.offsetMs),[0,2000,5000]);
+ assert.ok(captured.samples.every(sample=>sample.dom.toLowerCase().includes('café')));
+ assert.deepEqual(captured.sandbox,{namespace:true,pid:true,network:true,seccomp:true});
+ console.log('PASS persisted-source charset and input provenance reaches isolated Chromium');
+}
+
+if(preparedSourceMode)await persistedSourceCase();else await fixtureSuite();

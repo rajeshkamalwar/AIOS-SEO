@@ -10,7 +10,7 @@
     "source_excerpt_hashes": 6,
     "catalog_records": 48,
     "skill_manifests": 9,
-    "document_links": 130
+    "document_links": 131
   },
   "not_tested": [
     "runtime_security",
