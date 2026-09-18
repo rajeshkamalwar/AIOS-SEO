@@ -24,3 +24,22 @@ test("frontier is bounded, unique and deterministic", () => {
 });
 test("renderer is fail-closed without an isolated worker", () => { assert.deepEqual(renderLocal(),{state:"disabled",evidence_id:null,reason:"isolated_renderer_required",browser_build:null}); });
 test("egress rejects IPv6 unspecified and private destinations", async () => { const { assertPublicDestination } = await import("../packages/perception/index.js"); await assert.rejects(assertPublicDestination("localhost"), /private_destination|ENOTFOUND/); });
+
+test("frontier query sampling admits twenty variants and never grows beyond 500 across repeated admission", () => {
+  const frontier = new Frontier();
+  for (let i = 0; i < 20; i++) assert.equal(frontier.add(`https://orange.example/search?q=${i}`, "sitemap", 0, 2).excluded, undefined);
+  assert.equal(frontier.add("https://orange.example/search?q=20", "link", 1, 4).excluded, "query_variants");
+  assert.equal(frontier.add("https://orange.example/search?q=0", "link", 1, 4).excluded, undefined);
+  for (let i = 0; i < 500; i++) frontier.add(`https://orange.example/old/${i}`, "link", 1, 4);
+  assert.equal(frontier.admit().length, 500);
+  frontier.add("https://orange.example/new-priority", "submitted", 0, 0);
+  assert.equal(frontier.admit().length, 500);
+});
+
+test("frontier scopes origin and rejects malformed priorities and depths", () => {
+  const frontier = new Frontier();
+  frontier.add("https://orange.example/", "submitted", 0, 0);
+  assert.equal(frontier.add("https://other.example/", "link", 1, 4).excluded, "out_of_scope");
+  assert.equal(frontier.add("https://orange.example/deep", "link", 7, 4).excluded, "budget");
+  for (const depth of [-1, NaN, Infinity, 1.5]) assert.throws(() => frontier.add("https://orange.example/a", "link", depth, 4), /frontier_input/);
+});

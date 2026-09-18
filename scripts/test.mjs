@@ -62,6 +62,8 @@ try {
       "tests/foundation.test.ts",
       "tests/jobs.test.ts",
       "tests/perception.test.ts",
+      "tests/robots.test.ts",
+      "tests/sitemap.test.ts",
       "tests/collector.test.ts",
       "tests/understanding.test.ts",
       "tests/api.test.ts",

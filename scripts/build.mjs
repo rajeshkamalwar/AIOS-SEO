@@ -6,7 +6,7 @@ execFileSync(process.execPath, ["node_modules/typescript/bin/tsc"], {
 });
 mkdirSync("dist/spec", { recursive: true });
 for (const name of readdirSync("spec").filter((n) =>
-  n.endsWith(".schema.json") || n === "quality-gates.json",
+  n.endsWith(".schema.json") || n === "quality-gates.json" || n === "discovery-policy.json",
 ))
   copyFileSync("spec/" + name, "dist/spec/" + name);
 cpSync(

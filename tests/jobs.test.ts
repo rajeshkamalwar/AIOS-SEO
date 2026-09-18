@@ -104,7 +104,7 @@ test('M2 transitive revocation blocks admission, dispatch, and result acceptance
 });
 test('M5 durable API adapter submits and reopens a persisted run',async()=>{
  await loadFixtures();
- const robots=parseRobots('User-agent: *\\nDisallow: /private\\nSitemap: https://jobs.example/sitemap.xml');
+ const robots=parseRobots('User-agent: *\nDisallow: /private\nSitemap: https://jobs.example/sitemap.xml');
  assert.equal(robots.rules.length,1); const sitemap=parseSitemap('<urlset><url><loc>https://jobs.example/</loc></url><url><loc>https://jobs.example/services</loc></url></urlset>','https://jobs.example/');assert.equal(sitemap.urls.length,2);
  const store=new PostgresReadOnlyStore(runtime,ledger,deletions),api=new ReadOnlyApi(store,'csrf');
  const accepted=await api.handle({method:'POST',path:'/v1/sites/discovery-runs',principal:p,csrf:'csrf',body:{url:'https://jobs.example/',idempotency_key:'m5-durable-0123456'}});

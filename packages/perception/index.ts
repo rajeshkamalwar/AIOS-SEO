@@ -14,53 +14,32 @@ export async function assertPublicDestination(hostname: string): Promise<void> {
   if (!results.length || results.some(({ address }) => !isGlobalAddress(address))) throw new Error("private_destination");
 }
 
-type Rule = { agent: string; allow: string[]; disallow: string[] };
-export function parseRobots(text: string, agent = policy.user_agent): { rules: Rule[]; sitemaps: string[] } {
-  if (Buffer.byteLength(text) > policy.robots_bytes) throw new Error("robots_oversize");
-  const rules: Rule[] = []; const sitemaps: string[] = []; let current: Rule | null = null;
-  for (const line of text.split(/\r?\n/)) {
-    const [rawKey, ...rest] = line.split(":"); if (!rawKey) continue;
-    const key = rawKey.trim().toLowerCase(), value = rest.join(":").trim();
-    if (key === "user-agent") { current = { agent: value.toLowerCase(), allow: [], disallow: [] }; rules.push(current); }
-    else if (key === "allow" && current && value) current.allow.push(value);
-    else if (key === "disallow" && current && value) current.disallow.push(value);
-    else if (key === "sitemap" && value) sitemaps.push(value);
-  }
-  return { rules, sitemaps };
-}
-export function robotsAllows(parsed: ReturnType<typeof parseRobots>, url: string, agent = policy.user_agent): boolean {
-  const path = new URL(url).pathname || "/";
-  const groups = parsed.rules.filter(r => r.agent === "*" || agent.toLowerCase().includes(r.agent));
-  if (!groups.length) return true;
-  const allow = groups.flatMap(g => g.allow).filter(x => path.startsWith(x)).sort((a,b) => b.length-a.length)[0] ?? "";
-  const deny = groups.flatMap(g => g.disallow).filter(x => path.startsWith(x)).sort((a,b) => b.length-a.length)[0] ?? "";
-  return allow.length >= deny.length;
-}
-
-export function parseSitemap(text: string, origin: string): { urls: string[]; links: string[] } {
-  if (Buffer.byteLength(text) > 5 * 1024 * 1024 || /<!DOCTYPE|<!ENTITY/i.test(text)) throw new Error("sitemap_invalid");
-  const urls: string[] = [], links: string[] = [];
-  for (const m of text.matchAll(/<loc\s*>([\s\S]*?)<\/loc\s*>/gi)) {
-    const loc = (m[1] ?? "").trim(); const decision = normalizeUrl(loc, origin);
-    if (decision.excluded) continue;
-    if (new URL(decision.url).origin === new URL(origin).origin) urls.push(decision.url);
-    else links.push(decision.url);
-  }
-  return { urls: [...new Set(urls)].slice(0, 5000), links: [...new Set(links)] };
-}
+export { parseRobots, robotsAllows } from "./robots.js";
+export { parseSitemap, SitemapDocuments } from "./sitemap.js";
 
 export class Frontier {
-  private discovered = new Map<string, { url: string; depth: number; seed: string; priority: number; reason?: string }>();
+  private discovered = new Map<string, { url: string; depth: number; seed: string; priority: number }>();
   private admitted = new Set<string>();
+  private variants = new Map<string, Set<string>>();
+  private origin: string | undefined;
   add(raw: string, seed: string, depth: number, priority: number): UrlDecision {
+    if (!Number.isSafeInteger(depth) || depth < 0 || !Number.isSafeInteger(priority) || priority < 0 || priority > 4 || !seed) throw new Error("frontier_input");
     const d = normalizeUrl(raw); if (d.excluded) return d;
+    const url = new URL(d.url);
+    if (this.origin && this.origin !== url.origin) return { ...d, excluded: "out_of_scope" };
+    // Equality is the full normalized URL, never the hash accelerator alone.
+    if (this.discovered.has(d.url)) return d;
     if (depth > policy.max_depth || this.discovered.size >= policy.discovered_urls) return { ...d, excluded: "budget" };
-    if (!this.discovered.has(d.key)) this.discovered.set(d.key, { url: d.url, depth, seed, priority });
+    const variants = this.variants.get(url.pathname) ?? new Set<string>();
+    if (variants.size >= 20 && !variants.has(url.search)) return { ...d, excluded: "query_variants" };
+    this.origin ??= url.origin;
+    variants.add(url.search); this.variants.set(url.pathname, variants);
+    this.discovered.set(d.url, { url: d.url, depth, seed, priority });
     return d;
   }
   admit(): string[] {
-    const values = [...this.discovered.values()].sort((a,b) => a.priority-b.priority || a.depth-b.depth || a.url.localeCompare(b.url));
-    for (const x of values.slice(0, policy.admitted_urls)) this.admitted.add(x.url);
+    const values = [...this.discovered.values()].filter(x => !this.admitted.has(x.url)).sort((a,b) => a.priority-b.priority || a.depth-b.depth || (a.url < b.url ? -1 : a.url > b.url ? 1 : 0));
+    for (const x of values.slice(0, policy.admitted_urls - this.admitted.size)) this.admitted.add(x.url);
     return [...this.admitted];
   }
   snapshot() { return { discovered: this.discovered.size, admitted: this.admitted.size, urls: [...this.admitted] }; }
