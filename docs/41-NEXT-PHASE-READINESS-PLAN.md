@@ -4,11 +4,15 @@ This plan follows the post-M5 review and preserves the read-only boundary. It is
 
 ## Phase N0 — deployment and operational foundation
 
+Implementation status: repository-side fail-closed activation and recovery contracts are implemented in `@aios/runtime` and covered by `tests/runtime.test.ts`. The operational exit remains open until an owner supplies the approved deployment profile and deployed evidence described below.
+
 Create an approved deployment profile: processing/storage regions, retention and deletion commitments, provider data-use terms, operator/reviewer identities, secret management, backup/PITR, restore drills, alert ownership and incident escalation. Replace the fixture principal with OIDC authorization-code+PKCE and server sessions. Run tenant-isolation, deletion-after-restore and support-access probes in the deployed topology.
 
 Exit evidence: signed deployment profile, security review, restore/deletion drill receipts, session/CSRF tests, private blob adapter tests and an operator-owned recovery runbook. Until this exits, customer URLs remain blocked.
 
 ## Phase N1 — real public perception
+
+Implementation status: the bounded pinned HTTP collector is implemented and tested. Durable crawl persistence, robots-first orchestration and the isolated renderer remain open.
 
 Implement the HTTP collector behind controlled egress with DNS/IP pinning, redirect revalidation, response/total budgets, origin fairness and durable CrawlTarget/PageSnapshot acceptance. Add a separate Linux nonroot Playwright worker, pinned browser/container versions, network-deny probes, resource caps and crash-resume tests. Keep robots/sitemap uncertainty and partial accounting explicit.
 

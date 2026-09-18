@@ -62,8 +62,10 @@ try {
       "tests/foundation.test.ts",
       "tests/jobs.test.ts",
       "tests/perception.test.ts",
+      "tests/collector.test.ts",
       "tests/understanding.test.ts",
       "tests/api.test.ts",
+      "tests/runtime.test.ts",
     ],
     {
       stdio: "inherit",
